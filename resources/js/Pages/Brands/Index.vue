@@ -1,0 +1,210 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import ConfirmModal from '@/Components/ConfirmModal.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
+
+// brands is a paginator object: { data, links, from, to, total, ... }
+defineProps({ brands: Object });
+
+const page = usePage();
+const showFlash = ref(false);
+let timer = null;
+
+const startTimer = () => {
+    showFlash.value = true;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+        showFlash.value = false;
+    }, 5000);
+};
+
+watch(
+    () => [page.props.flash.success, page.props.flash.danger],
+    ([newSuccess, newDanger]) => {
+        if (newSuccess || newDanger) {
+            startTimer();
+        }
+    },
+    { immediate: true }
+);
+
+// Modal Logic
+const isModalOpen = ref(false);
+const selectedBrand = ref(null);
+const brokenImages = ref({});
+
+const markImageBroken = (brandId) => {
+    brokenImages.value[brandId] = true;
+};
+
+const showBrandImage = (brand) => brand.profile_image && !brokenImages.value[brand.id];
+
+const openDeleteModal = (brand) => {
+    selectedBrand.value = brand;
+    isModalOpen.value = true;
+};
+
+const closeModal = () => {
+    isModalOpen.value = false;
+    setTimeout(() => { selectedBrand.value = null; }, 300);
+};
+
+const confirmDelete = () => {
+    if (selectedBrand.value) {
+        router.delete(route('brands.destroy', selectedBrand.value.id), {
+            onSuccess: () => closeModal(),
+            onFinish: () => closeModal(),
+        });
+    }
+};
+</script>
+
+<template>
+    <AuthenticatedLayout>
+        <Head title="Brand Management" />
+
+        <!-- Page Header -->
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Brand Management</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage and monitor system access and roles.</p>
+            </div>
+
+            <Link :href="route('brands.create')" class="theme-btn-primary">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Create New Brand
+            </Link>
+        </div>
+
+        <!-- Flash Messages -->
+        <transition name="fade">
+            <div v-if="showFlash && ($page.props.flash.success || $page.props.flash.danger)"
+                :class="[$page.props.flash.success ? 'bg-indigo-50 border-indigo-500 text-indigo-800 dark:bg-indigo-500/10 dark:text-indigo-200' : 'bg-slate-100 border-slate-400 text-slate-700 dark:bg-slate-700/80 dark:text-slate-200']"
+                class="mb-6 flex items-center p-4 border-l-4 rounded-r-xl shadow-sm"
+            >
+                <div class="flex-shrink-0">
+                    <svg v-if="$page.props.flash.success" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                    <svg v-else class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/></svg>
+                </div>
+                <p class="ml-3 text-sm font-bold">{{ $page.props.flash.success || $page.props.flash.danger }}</p>
+                <button @click="showFlash = false" class="ml-auto opacity-50 hover:opacity-100 transition-opacity">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+        </transition>
+
+        <!-- Professional Table Card -->
+        <div class="theme-table-card">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="theme-table-header">
+                            <th class="theme-table-header-cell">Name</th>
+                            <th class="theme-table-header-cell">Description</th>
+                            <th class="theme-table-header-cell">Status</th>
+                            <th class="theme-table-header-cell text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                        <tr v-for="brand in brands.data" :key="brand.id" class="theme-table-row group">
+                            <td class="px-6 py-2">
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-sm font-bold text-slate-800 tracking-tight dark:text-slate-100">{{ brand.name }}</div>
+                                </div>
+                            </td>
+
+                            <td class="px-6 py-2">
+                                <div class="text-sm text-slate-600 dark:text-slate-300">{{ brand.description || '—' }}</div>
+                            </td>
+
+                            <td class="px-6 py-2">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold"
+                                    :class="brand.status
+                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+                                        : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'"
+                                >
+                                    {{ brand.status ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-2 whitespace-nowrap text-right">
+                                <div class="theme-table-actions">
+                                    <Link
+                                        :href="route('brands.edit', brand.id)"
+                                        class="theme-table-action-btn theme-table-action-edit"
+                                        title="Edit Brand"
+                                        aria-label="Edit Brand"
+                                    >
+                                        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </Link>
+
+                                    <button
+                                        @click="openDeleteModal(brand)"
+                                        class="theme-table-action-btn theme-table-action-delete"
+                                        title="Delete Brand"
+                                        aria-label="Delete Brand"
+                                    >
+                                        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr v-if="brands.data.length === 0">
+                            <td colspan="4" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No Brands found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+                <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">
+                    Showing <span class="text-slate-900 dark:text-slate-200">{{ brands.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ brands.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ brands.total }}</span> entries
+                </div>
+
+                <div class="flex flex-wrap justify-center items-center gap-1.5">
+                    <template v-for="(link, k) in brands.links" :key="k">
+                        <Link
+                            v-if="link.url"
+                            :href="link.url"
+                            v-html="link.label"
+                            class="min-w-[30px] h-6 px-2 flex items-center justify-center text-xs font-bold rounded-lg border transition-all duration-200"
+                            :class="[link.active ? 'theme-pagination-active' : 'theme-pagination-inactive']"
+                        />
+                        <span v-else v-html="link.label" class="min-w-[30px] h-6 px-2 flex items-center justify-center text-xs font-bold text-slate-300 bg-white border border-slate-100 rounded-lg cursor-not-allowed dark:text-slate-600 dark:bg-slate-800 dark:border-slate-700" />
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <ConfirmModal
+            :show="isModalOpen"
+            title="Delete Brand Account"
+            message="Are you sure you want to permanently remove this brand account from the system?"
+            confirm-label="Yes, Delete Brand"
+            cancel-label="No, Keep Brand"
+            :badge="selectedBrand?.name"
+            :badge-initial="selectedBrand?.name?.slice(0, 1)"
+            @close="closeModal"
+            @confirm="confirmDelete"
+        />
+    </AuthenticatedLayout>
+</template>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>
