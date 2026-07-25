@@ -4,9 +4,13 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductSellingPriceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -39,6 +43,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('brands', BrandController::class);
     // ProductCategory Routes
     Route::resource('product-categories', ProductCategoryController::class);
+    // Unit Routes
+    Route::resource('units', UnitController::class);
+    // products Routes
+    Route::resource('products', ProductController::class);
+    // product-selling-prices Routes
+    Route::resource('product-selling-prices', ProductSellingPriceController::class);
+    // warehouse Routes
+    Route::resource('warehouses', WarehouseController::class);
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

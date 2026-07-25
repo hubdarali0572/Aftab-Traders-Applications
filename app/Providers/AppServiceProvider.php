@@ -32,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
             'user' => 'App\Models\User',
             'brand' => 'App\Models\Brand',
             'product-category' => 'App\Models\ProductCategory',
+            'Unit' => 'App\Models\Unit',
+            'product' => 'App\Models\Product',
+            'product-selling-price' => 'App\Models\ProductSellingPrice',
+            'warehouse' => 'App\Models\Warehouse',
             // Add other models here as needed
         ]);
     }

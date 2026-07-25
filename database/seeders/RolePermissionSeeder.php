@@ -26,6 +26,41 @@ class RolePermissionSeeder extends Seeder
     {
         $permissions = [
 
+            // for Brand
+            'view Brand',
+            'create Brand',
+            'edit Brand',
+            'show Brand',
+            'delete Brand',
+
+            // for Product Category
+            'view Product Category',
+            'create Product Category',
+            'edit Product Category',
+            'show Product Category',
+            'delete Product Category',
+
+            // for Product Unit
+            'view Product Unit',
+            'create Product Unit',
+            'edit Product Unit',
+            'show Product Unit',
+            'delete Product Unit',
+
+            // for Product Main
+            'view Product Main',
+            'create Product Main',
+            'edit Product Main',
+            'show Product Main',
+            'delete Product Main',
+
+            // for Selling Price
+            'view Selling Price',
+            'create Selling Price',
+            'edit Selling Price',
+            'show Selling Price',
+            'delete Selling Price',
+
             // for user
             'view user',
             'create user',

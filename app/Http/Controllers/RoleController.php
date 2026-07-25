@@ -25,15 +25,23 @@ class RoleController extends Controller
     {
         $allPermissions = Permission::all();
 
-        // Grouping specifically into two categories
-        $groups = [
-            'User Management' => $allPermissions->filter(function ($p) {
-                return str_contains($p->name, 'user');
-            })->values(),
-            'Role Management' => $allPermissions->filter(function ($p) {
-                return str_contains($p->name, 'role');
-            })->values(),
+        $permissionGroups = [
+            'User Management'             => 'user',
+            'Role Management'             => 'role',
+            'Brands Management'           => 'Brand',
+            'Product Category Management' => 'Product Category',
+            'Product Unit Management'     => 'Product Unit',
+            'Product Main Management'     => 'Product Main',
+            'Selling Price Management'    => 'Selling Price',
         ];
+
+        $groups = [];
+
+        foreach ($permissionGroups as $title => $keyword) {
+            $groups[$title] = $allPermissions
+                ->filter(fn($permission) => stripos($permission->name, $keyword) !== false)
+                ->values();
+        }
 
         return Inertia::render('Roles/Create', [
             'permissionGroups' => $groups

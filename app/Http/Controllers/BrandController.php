@@ -10,30 +10,33 @@ use Inertia\Inertia;
 
 class BrandController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
+       
+        $brands = Brand::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
-        $brands = Brand::latest()->paginate(10)->withQueryString();
-        return Inertia::render('Brands/Index', [
-            'brands' => $brands
+        return Inertia::render('ProductManagement/Brands/Index', [
+            'brands' => $brands,
+            'filters' => $request->only('search'),
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-
-        return Inertia::render('Brands/Create');
+        return Inertia::render('ProductManagement/Brands/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -43,39 +46,25 @@ class BrandController extends Controller
             'status' => 'nullable|boolean',
         ]);
 
-        $brand = new Brand();
-        $brand->name = $request->name;
-        $brand->slug = Str::slug($request->slug);
-        $brand->description = $request->description;
-        $brand->status = $request->status ?? 1;
-        $brand->save();
+        Brand::create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->slug),
+            'description' => $request->description,
+            'status' => $request->status ?? true,
+        ]);
 
         return redirect()->route('brands.index')->with('success', 'Brand created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $brand = Brand::findOrFail($id);
 
-        return Inertia::render('Brands/Edit', [
+        return Inertia::render('ProductManagement/Brands/Edit', [
             'brand' => $brand,
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $brand = Brand::findOrFail($id);
@@ -87,11 +76,12 @@ class BrandController extends Controller
             'status' => 'nullable|boolean',
         ]);
 
-        $brand->name = $request->name;
-        $brand->slug = Str::slug($request->slug);
-        $brand->description = $request->description;
-        $brand->status = $request->status ?? 1;
-        $brand->save();
+        $brand->update([
+            'name' => $request->name,
+            'slug' => Str::slug($request->slug),
+            'description' => $request->description,
+            'status' => $request->status ?? true,
+        ]);
 
         return redirect()->route('brands.index')->with('success', 'Brand updated successfully');
     }

@@ -6,8 +6,5 @@ use Inertia\Inertia;
 
 Route::controller(PublicSitePageController::class)->group(function () {
     Route::get('/home', 'home')->name('publicSite.home');
-    Route::get('/', function () {
-    return Inertia::render('login');
-});
     Route::get('/about', 'about')->name('publicSite.about');
 });

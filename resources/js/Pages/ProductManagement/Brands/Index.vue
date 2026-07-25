@@ -4,11 +4,14 @@ import ConfirmModal from '@/Components/ConfirmModal.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 
-// brands is a paginator object: { data, links, from, to, total, ... }
-defineProps({ brands: Object });
+const props = defineProps({
+    brands: Object,
+    filters: Object,
+});
 
 const page = usePage();
 const showFlash = ref(false);
+const searchQuery = ref(props.filters?.search ?? '');
 let timer = null;
 
 const startTimer = () => {
@@ -29,16 +32,8 @@ watch(
     { immediate: true }
 );
 
-// Modal Logic
 const isModalOpen = ref(false);
 const selectedBrand = ref(null);
-const brokenImages = ref({});
-
-const markImageBroken = (brandId) => {
-    brokenImages.value[brandId] = true;
-};
-
-const showBrandImage = (brand) => brand.profile_image && !brokenImages.value[brand.id];
 
 const openDeleteModal = (brand) => {
     selectedBrand.value = brand;
@@ -58,13 +53,24 @@ const confirmDelete = () => {
         });
     }
 };
+
+const applySearch = () => {
+    router.get(route('brands.index'), { search: searchQuery.value || undefined }, {
+        preserveState: true,
+        replace: true,
+    });
+};
+
+const clearSearch = () => {
+    searchQuery.value = '';
+    applySearch();
+};
 </script>
 
 <template>
     <AuthenticatedLayout>
         <Head title="Brand Management" />
 
-        <!-- Page Header -->
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Brand Management</h2>
@@ -79,7 +85,6 @@ const confirmDelete = () => {
             </Link>
         </div>
 
-        <!-- Flash Messages -->
         <transition name="fade">
             <div v-if="showFlash && ($page.props.flash.success || $page.props.flash.danger)"
                 :class="[$page.props.flash.success ? 'bg-indigo-50 border-indigo-500 text-indigo-800 dark:bg-indigo-500/10 dark:text-indigo-200' : 'bg-slate-100 border-slate-400 text-slate-700 dark:bg-slate-700/80 dark:text-slate-200']"
@@ -96,8 +101,22 @@ const confirmDelete = () => {
             </div>
         </transition>
 
-        <!-- Professional Table Card -->
         <div class="theme-table-card">
+            <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+                <form @submit.prevent="applySearch" class="flex flex-col sm:flex-row gap-3">
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        class="theme-form-input flex-1"
+                        placeholder="Search brands..."
+                    />
+                    <div class="flex gap-2">
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -111,15 +130,11 @@ const confirmDelete = () => {
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         <tr v-for="brand in brands.data" :key="brand.id" class="theme-table-row group">
                             <td class="px-6 py-2">
-                                <div class="flex items-center space-x-4">
-                                    <div class="text-sm font-bold text-slate-800 tracking-tight dark:text-slate-100">{{ brand.name }}</div>
-                                </div>
+                                <div class="text-sm font-bold text-slate-800 tracking-tight dark:text-slate-100">{{ brand.name }}</div>
                             </td>
-
                             <td class="px-6 py-2">
                                 <div class="text-sm text-slate-600 dark:text-slate-300">{{ brand.description || '—' }}</div>
                             </td>
-
                             <td class="px-6 py-2">
                                 <span
                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold"
@@ -130,7 +145,6 @@ const confirmDelete = () => {
                                     {{ brand.status ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-
                             <td class="px-6 py-2 whitespace-nowrap text-right">
                                 <div class="theme-table-actions">
                                     <Link
@@ -143,7 +157,6 @@ const confirmDelete = () => {
                                             <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </Link>
-
                                     <button
                                         @click="openDeleteModal(brand)"
                                         class="theme-table-action-btn theme-table-action-delete"
@@ -157,7 +170,6 @@ const confirmDelete = () => {
                                 </div>
                             </td>
                         </tr>
-
                         <tr v-if="brands.data.length === 0">
                             <td colspan="4" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No Brands found.</td>
                         </tr>
@@ -165,12 +177,10 @@ const confirmDelete = () => {
                 </table>
             </div>
 
-            <!-- Pagination Footer -->
             <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
                 <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">
                     Showing <span class="text-slate-900 dark:text-slate-200">{{ brands.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ brands.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ brands.total }}</span> entries
                 </div>
-
                 <div class="flex flex-wrap justify-center items-center gap-1.5">
                     <template v-for="(link, k) in brands.links" :key="k">
                         <Link
@@ -201,10 +211,6 @@ const confirmDelete = () => {
 </template>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.4s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
