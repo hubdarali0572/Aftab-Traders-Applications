@@ -54,7 +54,7 @@ class ProductSellingPriceController extends Controller
 
         $authUser = Auth::user();
         $price = new ProductSellingPrice($validated);
-        $price->user_id = $authUser;
+        $price->user_id = $authUser->id;
         $price->save();
 
         return redirect()

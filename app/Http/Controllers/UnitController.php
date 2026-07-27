@@ -48,7 +48,7 @@ class UnitController extends Controller
         $authUser = Auth::user();
         
         Unit::create([
-            'user_id' =>  $authUser,
+            'user_id' =>  $authUser->id,
             'name' => $request->name,
             'short_name' => $request->short_name,
             'base_value' => $request->base_value,

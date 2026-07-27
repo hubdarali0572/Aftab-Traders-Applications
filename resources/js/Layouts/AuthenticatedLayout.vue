@@ -60,17 +60,17 @@ const navItems = [
                 active: route().current("brands.*"),
             },
             {
-                name: "Category",
+                name: "Categories",
                 route: "product-categories.index",
                 active: route().current("product-categories.*"),
             },
             {
-                name: "Unit",
+                name: "Units",
                 route: "units.index",
                 active: route().current("units.*"),
             },
             {
-                name: "Product Main",
+                name: "Products",
                 route: "products.index",
                 active: route().current("products.*"),
             },

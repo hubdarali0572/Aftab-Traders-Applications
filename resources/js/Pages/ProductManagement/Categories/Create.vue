@@ -74,7 +74,7 @@ const submit = () => {
                             </div>
                             <div class="flex flex-col">
                                 <InputLabel for="category_type" value="Category Type" class="theme-form-label ml-1" />
-                                <TextInput id="category_type" type="text" class="theme-form-input" v-model="form.category_type" required placeholder="e.g. Physical" />
+                                <TextInput id="category_type" type="text" class="theme-form-input" v-model="form.category_type" required placeholder="e.g. Indoor" />
                                 <InputError :message="form.errors.category_type" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col md:col-span-2">

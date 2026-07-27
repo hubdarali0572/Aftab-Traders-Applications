@@ -55,7 +55,7 @@ class ProductController extends Controller
         Product::create([
             ...$validated,
             'slug' => Str::slug($validated['slug']),
-            'user_id' => $authUser,
+              'user_id' =>  $authUser->id,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully');

@@ -64,7 +64,7 @@ class WarehouseController extends Controller
  
          $authUser=Auth::user();
         Warehouse::create([
-            'user_id' =>$authUser,
+            'user_id' =>$authUser->id,
             'code' => $request->code,
             'name' => $request->name,
             'contact_person' => $request->contact_person,
