@@ -104,7 +104,7 @@ const submit = () => {
                         
                         <label class="inline-flex items-center cursor-pointer group">
                             <input type="checkbox" @change="toggleGroup(permissions, $event)" :checked="isGroupFull(permissions)" class="theme-form-checkbox h-4 w-4">
-                            <span class="ml-2 text-[12px] font-bold text-white uppercase">Toggle All</span>
+                            <span class="ml-2 text-[12px] font-bold text-indigo-700 dark:text-white uppercase">Toggle All</span>
                         </label>
                     </div>
 

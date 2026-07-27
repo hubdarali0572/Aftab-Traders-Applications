@@ -50,7 +50,7 @@ class BrandController extends Controller
         $authUser = Auth::user();
 
         Brand::create([
-            'user_id' =>  $authUser,
+           'user_id' =>  $authUser->id,
             'name' => $request->name,
             'slug' => Str::slug($request->slug),
             'description' => $request->description,

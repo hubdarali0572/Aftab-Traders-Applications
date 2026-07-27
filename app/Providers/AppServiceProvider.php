@@ -45,6 +45,14 @@ class AppServiceProvider extends ServiceProvider
             'stock-transfer' => 'App\Models\StockTransfer',
             'damaged-stock' => 'App\Models\DamagedStock',
             'damaged-stock-detail' => 'App\Models\DamagedStockDetail',
+            'purchases' => 'App\Models\Purchase',
+            'purchase-details' => 'App\Models\PurchaseDetail',
+            'purchase-return-detail' => 'App\Models\PurchaseReturnDetail',
+            'purchase-expense' => 'App\Models\PurchaseExpense',
+            'customers' => 'App\Models\Customer',
+            'customer-ledgers' => 'App\Models\CustomerLedger',
+            'sales' => 'App\Models\Sale',
+            'sale-details' => 'App\Models\SaleDetail',
             // Add other models here as needed
         ]);
     }

@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('damaged_stock_details', function (Blueprint $table) {
+        Schema::create('sale_details', function (Blueprint $table) {
+
             $table->id();
 
             /*
@@ -24,7 +25,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->foreignId('damaged_stock_id')
+            $table->foreignId('sale_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
@@ -40,6 +41,21 @@ return new class extends Migration
 
             /*
             |--------------------------------------------------------------------------
+            | Selling Unit
+            |--------------------------------------------------------------------------
+            */
+
+            $table->enum('selling_unit', [
+                'piece',
+                'carton',
+                'box',
+                'dozen',
+                'bundle',
+                'pair',
+            ])->default('piece');
+
+            /*
+            |--------------------------------------------------------------------------
             | Quantity
             |--------------------------------------------------------------------------
             */
@@ -48,32 +64,29 @@ return new class extends Migration
 
             /*
             |--------------------------------------------------------------------------
-            | Cost
+            | Price
             |--------------------------------------------------------------------------
             */
 
-            $table->decimal('unit_cost', 18, 2);
+            $table->decimal('unit_price', 18, 2);
 
-            $table->decimal('total_cost', 18, 2);
+            $table->decimal('discount', 18, 2)->default(0);
+
+            $table->decimal('tax', 18, 2)->default(0);
+
+            $table->decimal('line_total', 18, 2);
 
             /*
             |--------------------------------------------------------------------------
-            | Damage Information
+            | Remarks
             |--------------------------------------------------------------------------
             */
 
-            $table->string('damage_reason');
-
-            $table->string('batch_no')->nullable();
-
-            $table->string('serial_no')->nullable();
-
-            $table->date('expiry_date')->nullable();
-
             $table->text('remarks')->nullable();
-             $table->boolean('status')->default(true);
+            $table->boolean('status')->default(true);
 
             $table->timestamps();
+            $table->softDeletes();
 
             /*
             |--------------------------------------------------------------------------
@@ -81,15 +94,15 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->index('damaged_stock_id');
-
             $table->index('user_id');
+            $table->index('sale_id');
+
             $table->index('product_id');
 
-            $table->index('damage_reason');
+            $table->index('selling_unit');
 
             $table->unique([
-                'damaged_stock_id',
+                'sale_id',
                 'product_id'
             ]);
         });
@@ -100,6 +113,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('damaged_stock_details');
+        Schema::dropIfExists('sale_details');
     }
 };

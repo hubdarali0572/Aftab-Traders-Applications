@@ -40,13 +40,13 @@ const navItems = [
     { category: "MAIN MODULES" },
     {
         name: "User Management",
-        icon: "M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z",
+        icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
         route: "users.index",
         active: route().current("users.*"),
     },
     {
         name: "Product Management",
-        icon: "M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z",
+        icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
         active:
             route().current("brands.*") ||
             route().current("product-categories.*") ||
@@ -82,20 +82,82 @@ const navItems = [
         ],
     },
     {
-        name: "WareHose Management",
-        icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z",
+        name: "Warehouse Management", // Fixed typo
+        icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
         route: "warehouses.index",
         active: route().current("warehouses.*"),
     },
     {
+        name: "Inventory Management",
+        icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
+        active:
+            route().current("warehouse-stocks.*") ||
+            route().current("warehouse-stocks-detail.*") ||
+            route().current("opening-stocks.*") ||
+            route().current("opening-stock-details.*") ||
+            route().current("stock-adjustments.*") ||
+            route().current("stock-adjustment-details.*") ||
+            route().current("stock-transfers.*") ||
+            route().current("stock-transfer-details.*") ||
+            route().current("damaged-stocks.*") ||
+            route().current("damaged-stock-details.*"),
+        children: [
+            {
+                name: "Warehouse Stocks",
+                route: "warehouse-stocks.index",
+                active: route().current("warehouse-stocks.*"),
+            },
+            {
+                name: "Warehouse Stock Details",
+                route: "warehouse-stocks-detail.index",
+                active: route().current("warehouse-stocks-detail.*"),
+            },
+            {
+                name: "Opening Stocks",
+                route: "opening-stocks.index",
+                active: route().current("opening-stocks.*"),
+            },
+            {
+                name: "Opening Stock Details",
+                route: "opening-stock-details.index",
+                active: route().current("opening-stock-details.*"),
+            },
+            {
+                name: "Stock Adjustment Details",
+                route: "stock-adjustment-details.index",
+                active: route().current("stock-adjustment-details.*"),
+            },
+            {
+                name: "Stock Transfer",
+                route: "stock-transfers.index",
+                active: route().current("stock-transfers.*"),
+            },
+            {
+                name: "Stock Transfer Details",
+                route: "stock-transfer-details.index",
+                active: route().current("stock-transfer-details.*"),
+            },
+            {
+                name: "Damaged Stocks",
+                route: "damaged-stocks.index",
+                active: route().current("damaged-stocks.*"),
+            },
+            {
+                name: "Damaged Stock Details",
+                route: "damaged-stock-details.index",
+                active: route().current("damaged-stock-details.*"),
+            },
+        ],
+    },
+    {
         name: "Roles & Permissions",
-        icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z",
+        icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
         route: "roles.index",
         active: route().current("roles.*"),
     },
     {
         name: "Activity Logs",
-        icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01",
+        icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
         route: "activity.index",
         active: route().current("activity.*"),
     },
@@ -144,30 +206,23 @@ const toggleDropdown = (name) => {
         >
             <!-- Sidebar Header -->
             <div
-                class="p-6 border-b border-slate-200 shrink-0 flex items-center justify-between dark:border-slate-700"
+                class="p-3 border-b border-slate-200 shrink-0 flex items-center justify-center dark:border-slate-700 relative"
             >
-                <div class="flex items-center space-x-3">
-                    <div
-                        class="bg-indigo-600 p-2 rounded-lg shadow-lg shadow-indigo-600/30"
-                    >
-                        <svg
-                            class="w-6 h-6 text-white"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                            ></path>
-                        </svg>
-                    </div>
-                    <span
-                        class="font-bold text-sm lg:text-base tracking-wide text-slate-800 dark:text-white"
-                        >Sample Project</span
-                    >
+                <!-- Centered Logo -->
+                <div
+                    class=" bg-white rounded-sm shadow-sm border border-slate-200 overflow-hidden dark:bg-slate-800 dark:border-slate-700"
+                >
+                    <img
+                        src="/storage/images/logo.png"
+                        alt="AFTAB Traders"
+                        class="w-14 h-12 object-contain scale-110"
+                    />
                 </div>
+
+                <!-- Close Button (Positioned absolutely to keep logo in dead center) -->
                 <button
                     @click="isSidebarOpen = false"
-                    class="lg:hidden p-2 text-slate-700 dark:text-white"
+                    class="absolute right-6 lg:hidden p-2 text-slate-700 dark:text-white"
                 >
                     <svg
                         class="w-6 h-6"
@@ -176,7 +231,11 @@ const toggleDropdown = (name) => {
                         viewBox="0 0 24 24"
                         stroke-width="2"
                     >
-                        <path d="M6 18L18 6M6 6l12 12" />
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
                     </svg>
                 </button>
             </div>
@@ -184,7 +243,10 @@ const toggleDropdown = (name) => {
             <!-- Scrollable Nav Links -->
             <!-- Scrollable Nav Links -->
             <nav class="flex-1 overflow-y-auto py-4 custom-scrollbar">
-                <template v-for="item in navItems" :key="item.name">
+                <template
+                    v-for="item in navItems"
+                    :key="item.name || item.category"
+                >
                     <!-- Category Header -->
                     <div
                         v-if="item.category"
@@ -205,9 +267,9 @@ const toggleDropdown = (name) => {
                                     : 'theme-sidebar-nav-inactive'
                             "
                         >
-                            <span class="flex items-center">
+                            <span class="flex items-center text-left">
                                 <svg
-                                    class="w-5 h-5 mr-3 transition-colors duration-200"
+                                    class="w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-200"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -220,7 +282,7 @@ const toggleDropdown = (name) => {
                                     />
                                 </svg>
                                 <span
-                                    class="text-sm font-semibold tracking-wide"
+                                    class="text-sm font-semibold tracking-wide whitespace-nowrap"
                                 >
                                     {{ item.name }}
                                 </span>
@@ -228,7 +290,7 @@ const toggleDropdown = (name) => {
 
                             <!-- Chevron -->
                             <svg
-                                class="w-4 h-4 transition-transform duration-200"
+                                class="w-4 h-4 flex-shrink-0 transition-transform duration-200"
                                 :class="{
                                     'rotate-180': openDropdowns[item.name],
                                 }"
@@ -254,7 +316,7 @@ const toggleDropdown = (name) => {
                                 v-for="child in item.children"
                                 :key="child.name"
                                 :href="route(child.route)"
-                                class="block px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ease-in-out"
+                                class="block px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ease-in-out whitespace-nowrap"
                                 :class="
                                     child.active
                                         ? 'theme-sidebar-nav-active'
@@ -278,7 +340,7 @@ const toggleDropdown = (name) => {
                             "
                         >
                             <svg
-                                class="w-5 h-5 mr-3 transition-colors duration-200"
+                                class="w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-200"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -290,7 +352,9 @@ const toggleDropdown = (name) => {
                                     stroke-linejoin="round"
                                 />
                             </svg>
-                            <span class="text-sm font-semibold tracking-wide">
+                            <span
+                                class="text-sm font-semibold tracking-wide whitespace-nowrap text-left"
+                            >
                                 {{ item.name }}
                             </span>
                         </Link>

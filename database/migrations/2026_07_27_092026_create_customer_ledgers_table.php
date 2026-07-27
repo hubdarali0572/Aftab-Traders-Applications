@@ -11,69 +11,84 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('damaged_stock_details', function (Blueprint $table) {
+        Schema::create('customer_ledgers', function (Blueprint $table) {
             $table->id();
 
             /*
             |--------------------------------------------------------------------------
-            | Header
+            | Customer
             |--------------------------------------------------------------------------
             */
 
-            $table->foreignId('user_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
-            $table->foreignId('damaged_stock_id')
+            $table->foreignId('customer_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
             /*
             |--------------------------------------------------------------------------
-            | Product
+            | Transaction
             |--------------------------------------------------------------------------
             */
 
-            $table->foreignId('product_id')
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->date('transaction_date');
+
+            $table->enum('transaction_type', [
+                'opening_balance',
+                'sale',
+                'sale_return',
+                'payment_received',
+                'debit_note',
+                'credit_note',
+                'adjustment'
+            ]);
 
             /*
             |--------------------------------------------------------------------------
-            | Quantity
+            | Reference
             |--------------------------------------------------------------------------
             */
 
-            $table->decimal('quantity', 18, 2);
+            $table->string('reference_type')->nullable();
+
+            $table->unsignedBigInteger('reference_id')->nullable();
+
+            $table->string('reference_no')->nullable();
 
             /*
             |--------------------------------------------------------------------------
-            | Cost
+            | Amount
             |--------------------------------------------------------------------------
             */
 
-            $table->decimal('unit_cost', 18, 2);
+            $table->decimal('debit', 18, 2)->default(0);
 
-            $table->decimal('total_cost', 18, 2);
+            $table->decimal('credit', 18, 2)->default(0);
+
+            // Running balance after this transaction
+            $table->decimal('balance', 18, 2)->default(0);
 
             /*
             |--------------------------------------------------------------------------
-            | Damage Information
+            | Remarks
             |--------------------------------------------------------------------------
             */
-
-            $table->string('damage_reason');
-
-            $table->string('batch_no')->nullable();
-
-            $table->string('serial_no')->nullable();
-
-            $table->date('expiry_date')->nullable();
 
             $table->text('remarks')->nullable();
              $table->boolean('status')->default(true);
 
+            /*
+            |--------------------------------------------------------------------------
+            | Users
+            |--------------------------------------------------------------------------
+            */
+
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
             $table->timestamps();
+             $table->softDeletes();
 
             /*
             |--------------------------------------------------------------------------
@@ -81,17 +96,13 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->index('damaged_stock_id');
+            $table->index('customer_id');
 
-            $table->index('user_id');
-            $table->index('product_id');
+            $table->index('transaction_date');
 
-            $table->index('damage_reason');
+            $table->index('transaction_type');
 
-            $table->unique([
-                'damaged_stock_id',
-                'product_id'
-            ]);
+            $table->index(['reference_type', 'reference_id']);
         });
     }
 
@@ -100,6 +111,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('damaged_stock_details');
+        Schema::dropIfExists('customer_ledgers');
     }
 };

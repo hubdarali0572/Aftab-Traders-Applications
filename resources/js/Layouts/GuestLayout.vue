@@ -31,10 +31,8 @@ const highlights = [
                 class="relative z-10 flex w-full flex-col justify-between p-10 xl:p-16"
             >
                 <Link href="/" class="flex w-fit items-center gap-3">
-                    <ApplicationLogo class="h-9 w-9 shrink-0 fill-indigo-400" />
-                    <span class="text-sm font-bold tracking-tight"
-                        >Unified Media</span
-                    >
+                    <ApplicationLogo class="h-20 w-20 shrink-0 fill-indigo-400 rounded-3xl" />
+                   
                 </Link>
 
                 <div class="max-w-md">
@@ -85,7 +83,7 @@ const highlights = [
                 </div>
 
                 <p class="text-xs text-white/40">
-                    &copy; {{ new Date().getFullYear() }} Unified Media Platform
+                    &copy; {{ new Date().getFullYear() }} AFTAB TRADERS PLATFORM
                 </p>
             </div>
         </div>
@@ -100,14 +98,14 @@ const highlights = [
                 <Link
                     href="/"
                     class="flex min-w-0 items-center gap-2 lg:invisible lg:pointer-events-none"
-                    aria-label="Unified Media home"
+                    aria-label="Aftab Traders home"
                 >
                     <ApplicationLogo
                         class="h-7 w-7 shrink-0 fill-indigo-600 sm:h-8 sm:w-8 dark:fill-indigo-400"
                     />
                     <span
                         class="truncate text-sm font-bold text-slate-800 dark:text-white"
-                        >Unified Media</span
+                        >Aftab Traders</span
                     >
                 </Link>
 

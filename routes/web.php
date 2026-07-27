@@ -2,15 +2,34 @@
 
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerLedgerController;
+use App\Http\Controllers\DamagedStockController;
+use App\Http\Controllers\DamagedStockDetailController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\OpeningStockController;
+use App\Http\Controllers\OpeningStockDetailController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSellingPriceController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\PurchaseDetailController;
+use App\Http\Controllers\PurchaseExpenseController;
+use App\Http\Controllers\PurchaseReturnController;
+use App\Http\Controllers\PurchaseReturnDetailController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleDetailController;
+use App\Http\Controllers\StockAdjustmentController;
+use App\Http\Controllers\StockAdjustmentDetailController;
+use App\Http\Controllers\StockTransferController;
+use App\Http\Controllers\StockTransferDetailController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WarehouseDetailController;
+use App\Http\Controllers\WarehouseStockController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -51,6 +70,44 @@ Route::middleware('auth')->group(function () {
     Route::resource('product-selling-prices', ProductSellingPriceController::class);
     // warehouse Routes
     Route::resource('warehouses', WarehouseController::class);
+    // warehouse-stocks Routes
+    Route::resource('warehouse-stocks', WarehouseStockController::class);
+    // warehouse-stocks-detail Routes
+    Route::resource('warehouse-stocks-detail', WarehouseDetailController::class);
+    // opening_stocks Routes
+    Route::resource('opening-stocks', OpeningStockController::class);
+    // opening_stocks Routes
+    Route::resource('opening-stock-details', OpeningStockDetailController::class);
+    // stock_adjustments Routes
+    Route::resource('stock-adjustments', StockAdjustmentController::class);
+    // stock_adjustment_details Routes
+    Route::resource('stock-adjustment-details', StockAdjustmentDetailController::class);
+    // stock_transfers Routes
+    Route::resource('stock-transfers', StockTransferController::class);
+    // stock_transfer_details Routes
+    Route::resource('stock-transfer-details', StockTransferDetailController::class);
+    // damaged_stocks Routes
+    Route::resource('damaged-stocks', DamagedStockController::class);
+    // damaged_stock_details Routes
+    Route::resource('damaged-stock-details', DamagedStockDetailController::class);
+    // purchases Routes
+    Route::resource('purchases', PurchaseController::class);
+    // purchase Detail Routes
+    Route::resource('purchase-details', PurchaseDetailController::class);
+    // purchase Return Routes
+    Route::resource('purchase-returns', PurchaseReturnController::class);
+    // purchase Return Detail Routes
+    Route::resource('purchase-return-details', PurchaseReturnDetailController::class);
+    // purchase Expenses Routes
+    Route::resource('purchase-expenses', PurchaseExpenseController::class);
+    // customers Routes
+    Route::resource('customers', CustomerController::class);
+    // customer Ledger Routes
+    Route::resource('customer-ledgers', CustomerLedgerController::class);
+    // sales Routes
+    Route::resource('sales', SaleController::class);
+    // sale Detail Routes
+    Route::resource('sale-details', SaleDetailController::class);
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

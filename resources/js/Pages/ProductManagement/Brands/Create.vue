@@ -64,12 +64,12 @@ const submit = () => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                             <div class="flex flex-col">
                                 <InputLabel for="name" value="Name" class="theme-form-label ml-1" />
-                                <TextInput id="name" type="text" class="theme-form-input" v-model="form.name" required placeholder="e.g. Nike" />
+                                <TextInput id="name" type="text" class="theme-form-input" v-model="form.name" required placeholder="e.g. SparkLite" />
                                 <InputError :message="form.errors.name" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
                                 <InputLabel for="slug" value="Slug" class="theme-form-label ml-1" />
-                                <TextInput id="slug" type="text" class="theme-form-input" v-model="form.slug" @input="onSlugInput" required placeholder="e.g. nike" />
+                                <TextInput id="slug" type="text" class="theme-form-input" v-model="form.slug" @input="onSlugInput" required placeholder="e.g. SparkLite" />
                                 <InputError :message="form.errors.slug" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col md:col-span-2">
