@@ -43,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
             'stock-adjustment' => 'App\Models\StockAdjustment',
             'stock-adjustment-detail' => 'App\Models\StockAdjustmentDetail',
             'stock-transfer' => 'App\Models\StockTransfer',
+            'damaged-stock' => 'App\Models\DamagedStock',
+            'damaged-stock-detail' => 'App\Models\DamagedStockDetail',
             // Add other models here as needed
         ]);
     }

@@ -28,11 +28,22 @@ class RoleController extends Controller
         $permissionGroups = [
             'User Management'             => 'user',
             'Role Management'             => 'role',
-            'Brands Management'           => 'Brand',
-            'Product Category Management' => 'Product Category',
-            'Product Unit Management'     => 'Product Unit',
-            'Product Main Management'     => 'Product Main',
-            'Selling Price Management'    => 'Selling Price',
+            'Brands'           => 'Brand',
+            'Product Category' => 'Product Category',
+            'Product Unit '     => 'Product Unit',
+            'Product Main '     => 'Product Main',
+            'Selling Price '    => 'Selling Price',
+            'Warehouse Management'    => 'Warehouse',
+            'Warehouse Stock'    => 'Warehouse Stock',
+            'Stock Ledgers'    => 'Stock Ledgers',
+            'Opening Stocks'    => 'Opening Stocks',
+            'Opening Stock Details'    => 'Opening Stock Details',
+            'Stock Adjustments'    => 'Stock Adjustments',
+            'Stock Adjustments Detail'    => 'Stock Adjustments Detail',
+            'Stock Transfers'    => 'Stock Transfers',
+            'Stock Transfer Detail'    => 'Stock Transfer Detail',
+            'Damaged Stocks'    => 'Damaged Stocks',
+            'Damaged Stock Details'    => 'Damaged Stock Details',
         ];
 
         $groups = [];
