@@ -23,6 +23,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleDetailController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\StockAdjustmentDetailController;
+use App\Http\Controllers\StockLedgerController;
 use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\StockTransferDetailController;
 use App\Http\Controllers\UnitController;
@@ -72,8 +73,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('warehouses', WarehouseController::class);
     // warehouse-stocks Routes
     Route::resource('warehouse-stocks', WarehouseStockController::class);
-    // warehouse-stocks-detail Routes
-    Route::resource('warehouse-stocks-detail', WarehouseDetailController::class);
+    // stock-ledgers Routes
+    Route::resource('stock-ledgers', StockLedgerController::class);
     // opening_stocks Routes
     Route::resource('opening-stocks', OpeningStockController::class);
     // opening_stocks Routes

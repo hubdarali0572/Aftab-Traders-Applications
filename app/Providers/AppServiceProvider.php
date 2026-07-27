@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
             'product-selling-price' => 'App\Models\ProductSellingPrice',
             'warehouse' => 'App\Models\Warehouse',
             'warehouse-stock' => 'App\Models\WarehouseStock',
-            'warehouse-ledger' => 'App\Models\WarehouseLedger',
+            'stock-ledger' => 'App\Models\StockLedger',
             'opening-stock' => 'App\Models\OpeningStock',
             'opening-stock-detail' => 'App\Models\OpeningStockDetail',
             'stock-adjustment' => 'App\Models\StockAdjustment',

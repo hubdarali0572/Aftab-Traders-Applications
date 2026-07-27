@@ -92,7 +92,7 @@ const navItems = [
         icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
         active:
             route().current("warehouse-stocks.*") ||
-            route().current("warehouse-stocks-detail.*") ||
+            route().current("stock-ledgers.*") ||
             route().current("opening-stocks.*") ||
             route().current("opening-stock-details.*") ||
             route().current("stock-adjustments.*") ||
@@ -108,9 +108,9 @@ const navItems = [
                 active: route().current("warehouse-stocks.*"),
             },
             {
-                name: "Warehouse Stock Details",
-                route: "warehouse-stocks-detail.index",
-                active: route().current("warehouse-stocks-detail.*"),
+                name: "Stock Ledger",
+                route: "stock-ledgers.index",
+                active: route().current("stock-ledgers.*"),
             },
             {
                 name: "Opening Stocks",
@@ -121,6 +121,11 @@ const navItems = [
                 name: "Opening Stock Details",
                 route: "opening-stock-details.index",
                 active: route().current("opening-stock-details.*"),
+            },
+            {
+                name: "Stock Adjustments",
+                route: "stock-adjustments.index",
+                active: route().current("stock-adjustments.*"),
             },
             {
                 name: "Stock Adjustment Details",

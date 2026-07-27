@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Product;
+use App\Models\StockAdjustment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -9,7 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class StockAdjustmentDetail extends Model
 {
-      use SoftDeletes, LogsActivity;
+    use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -24,6 +26,14 @@ class StockAdjustmentDetail extends Model
         'remarks',
         'status',
     ];
+    public function stockAdjustment()
+    {
+        return $this->belongsTo(StockAdjustment::class);
+    }
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
