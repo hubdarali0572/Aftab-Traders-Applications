@@ -12,7 +12,7 @@ class Brand extends Model
     // Use the traits inside the class
     use SoftDeletes, LogsActivity;
 
-    protected $fillable = ['name', 'slug', 'description', 'status'];
+    protected $fillable = ['user_id', 'name', 'slug', 'description', 'status'];
 
     protected function casts(): array
     {

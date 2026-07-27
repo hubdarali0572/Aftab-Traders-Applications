@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -60,8 +61,10 @@ class WarehouseController extends Controller
             'is_default' => 'nullable|boolean',
             'status' => 'nullable|boolean',
         ]);
-
+ 
+         $authUser=Auth::user();
         Warehouse::create([
+            'user_id' =>$authUser,
             'code' => $request->code,
             'name' => $request->name,
             'contact_person' => $request->contact_person,

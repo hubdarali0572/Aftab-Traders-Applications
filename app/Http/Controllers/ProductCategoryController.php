@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -49,8 +50,10 @@ class ProductCategoryController extends Controller
             'description' => 'nullable|string',
             'status' => 'nullable|boolean',
         ]);
+         $authUser = Auth::user();
 
         ProductCategory::create([
+            'user_id' =>  $authUser,
             'code' => $request->code,
             'name' => $request->name,
             'slug' => Str::slug($request->slug),

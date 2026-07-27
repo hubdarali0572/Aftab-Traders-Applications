@@ -3,36 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Unit extends Model
+class StockLedger extends Model
 {
     use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'user_id',
-        'name',
-        'short_name',
-        'base_value',
-        'description',
+        'warehouse_id',
+        'product_id',
+        'transaction_type',
+        'reference_type',
+        'reference_id',
+        'reference_no',
+        'transaction_date',
+        'quantity_in',
+        'quantity_out',
+        'balance_quantity',
+        'unit_cost',
+        'total_cost',
+        'remarks',
         'status',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'base_value' => 'decimal:4',
-            'status' => 'boolean',
-        ];
-    }
-
-    public function products(): HasMany
-    {
-        return $this->hasMany(Product::class);
-    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -40,6 +35,6 @@ class Unit extends Model
             ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
-            ->useLogName('unit');
+            ->useLogName('warehouse-ledger');
     }
 }

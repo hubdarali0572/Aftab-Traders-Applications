@@ -36,6 +36,13 @@ class AppServiceProvider extends ServiceProvider
             'product' => 'App\Models\Product',
             'product-selling-price' => 'App\Models\ProductSellingPrice',
             'warehouse' => 'App\Models\Warehouse',
+            'warehouse-stock' => 'App\Models\WarehouseStock',
+            'warehouse-ledger' => 'App\Models\WarehouseLedger',
+            'opening-stock' => 'App\Models\OpeningStock',
+            'opening-stock-detail' => 'App\Models\OpeningStockDetail',
+            'stock-adjustment' => 'App\Models\StockAdjustment',
+            'stock-adjustment-detail' => 'App\Models\StockAdjustmentDetail',
+            'stock-transfer' => 'App\Models\StockTransfer',
             // Add other models here as needed
         ]);
     }

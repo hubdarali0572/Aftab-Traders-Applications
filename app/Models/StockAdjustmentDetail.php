@@ -7,21 +7,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Warehouse extends Model
+class StockAdjustmentDetail extends Model
 {
-
-    use SoftDeletes, LogsActivity;
+      use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'user_id',
-        'code',
-        'name',
-        'contact_person',
-        'phone',
-        'email',
-        'city',
-        'address',
-        'is_default',
+        'product_id',
+        'stock_adjustment_id',
+        'system_quantity',
+        'physical_quantity',
+        'adjustment_quantity',
+        'unit_cost',
+        'total_cost',
+        'reason',
+        'remarks',
         'status',
     ];
 
@@ -31,6 +31,6 @@ class Warehouse extends Model
             ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
-            ->useLogName('warehouse');
+            ->useLogName('stock-adjustment-detail');
     }
 }

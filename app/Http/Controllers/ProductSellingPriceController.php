@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductSellingPrice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -51,7 +52,10 @@ class ProductSellingPriceController extends Controller
     {
         $validated = $request->validate($this->rules());
 
-        ProductSellingPrice::create($validated);
+        $authUser = Auth::user();
+        $price = new ProductSellingPrice($validated);
+        $price->user_id = $authUser;
+        $price->save();
 
         return redirect()
             ->route('product-selling-prices.index')

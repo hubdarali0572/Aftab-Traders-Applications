@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -44,8 +45,10 @@ class UnitController extends Controller
             'description' => 'nullable|string',
             'status' => 'nullable|boolean',
         ]);
-
+        $authUser = Auth::user();
+        
         Unit::create([
+            'user_id' =>  $authUser,
             'name' => $request->name,
             'short_name' => $request->short_name,
             'base_value' => $request->base_value,

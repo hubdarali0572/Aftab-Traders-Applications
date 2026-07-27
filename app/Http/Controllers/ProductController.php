@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -49,10 +50,12 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateProduct($request);
+         $authUser = Auth::user();
 
         Product::create([
             ...$validated,
             'slug' => Str::slug($validated['slug']),
+            'user_id' => $authUser,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully');

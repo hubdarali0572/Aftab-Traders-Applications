@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
+              $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
             $table->string('code', 30)->unique();
             $table->string('name');

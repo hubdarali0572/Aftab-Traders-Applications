@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -46,7 +47,10 @@ class BrandController extends Controller
             'status' => 'nullable|boolean',
         ]);
 
+        $authUser = Auth::user();
+
         Brand::create([
+            'user_id' =>  $authUser,
             'name' => $request->name,
             'slug' => Str::slug($request->slug),
             'description' => $request->description,

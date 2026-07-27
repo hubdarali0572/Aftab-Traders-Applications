@@ -13,6 +13,7 @@ class Product extends Model
     use SoftDeletes, LogsActivity;
 
     protected $fillable = [
+        'user_id',
         'product_category_id',
         'brand_id',
         'unit_id',

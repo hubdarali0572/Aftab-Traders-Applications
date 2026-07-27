@@ -12,7 +12,7 @@ class ProductCategory extends Model
     // Use the traits inside the class
     use SoftDeletes, LogsActivity;
 
-    protected $fillable = ['code', 'name', 'slug', 'category_type', 'image', 'description', 'status'];
+    protected $fillable = ['user_id', 'code', 'name', 'slug', 'category_type', 'image', 'description', 'status'];
 
     protected function casts(): array
     {

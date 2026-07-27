@@ -12,8 +12,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class ProductSellingPrice extends Model
 {
 
-  use SoftDeletes, LogsActivity;
+    use SoftDeletes, LogsActivity;
     protected $fillable = [
+        'user_id',
         'product_id',
         'purchase_price',
         'landing_cost',
@@ -57,7 +58,7 @@ class ProductSellingPrice extends Model
     {
         return $this->belongsTo(Product::class);
     }
-      public function getActivitylogOptions(): LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logFillable()
