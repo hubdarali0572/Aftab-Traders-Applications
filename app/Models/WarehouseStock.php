@@ -29,7 +29,23 @@ class WarehouseStock extends Model
         'reorder_level',
         'last_received_at',
         'last_issued_at',
+        'last_updated_at',
         'status',
+    ];
+
+    protected $casts = [
+        'quantity' => 'decimal:2',
+        'reserved_quantity' => 'decimal:2',
+        'available_quantity' => 'decimal:2',
+        'average_cost' => 'decimal:2',
+        'stock_value' => 'decimal:2',
+        'minimum_stock' => 'decimal:2',
+        'maximum_stock' => 'decimal:2',
+        'reorder_level' => 'decimal:2',
+        'last_received_at' => 'datetime',
+        'last_issued_at' => 'datetime',
+        'last_updated_at' => 'datetime',
+        'status' => 'boolean',
     ];
 
     public function warehouse()

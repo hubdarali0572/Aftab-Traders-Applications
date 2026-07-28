@@ -88,7 +88,7 @@ class PurchaseReturnController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $purchaseReturn = PurchaseReturn::findOrFail($id);
+        $purchaseReturn = PurchaseReturn::withCount('details')->findOrFail($id);
 
         $request->validate([
             'reference_no' => 'required|string|unique:purchase_returns,reference_no,' . $id,
@@ -101,7 +101,24 @@ class PurchaseReturnController extends Controller
             'status' => 'boolean',
         ]);
 
-        $purchaseReturn->update($request->all());
+        $mustResync = $purchaseReturn->details_count > 0 && (
+            $purchaseReturn->warehouse_id != $request->warehouse_id ||
+            $purchaseReturn->purchase_id != $request->purchase_id ||
+            $purchaseReturn->return_date->format('Y-m-d') !== $request->return_date ||
+            $purchaseReturn->reference_no !== $request->reference_no
+        );
+
+        try {
+            DB::transaction(function () use ($purchaseReturn, $request, $mustResync) {
+                $purchaseReturn->update($request->all());
+
+                if ($mustResync) {
+                    $this->posting->syncPurchaseReturnStock($purchaseReturn->fresh());
+                }
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('purchase-returns.index')->with('success', 'Purchase return updated successfully');
     }
@@ -114,6 +131,7 @@ class PurchaseReturnController extends Controller
             DB::transaction(function () use ($purchaseReturn) {
                 foreach ($purchaseReturn->details as $detail) {
                     $this->posting->reversePurchaseReturnDetail($detail);
+                    $detail->delete();
                 }
                 $purchaseReturn->delete();
             });

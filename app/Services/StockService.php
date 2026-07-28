@@ -150,6 +150,7 @@ class StockService
         $stock->quantity = $balance;
         $stock->available_quantity = $balance - (float) $stock->reserved_quantity;
         $stock->stock_value = round($balance * (float) $stock->average_cost, 2);
+        $stock->last_updated_at = now();
         $stock->save();
     }
 
@@ -184,9 +185,7 @@ class StockService
         $available = $this->getAvailableQuantity($warehouseId, $productId);
 
         if ($quantityOut > $available + 0.0001) {
-            throw new InvalidArgumentException(
-                "Insufficient stock. Available: {$available}, requested: {$quantityOut}."
-            );
+            throw new InvalidArgumentException('Insufficient stock in the selected warehouse.');
         }
     }
 
@@ -229,6 +228,7 @@ class StockService
         $stock->quantity = round($oldQty + $deltaQty, 2);
         $stock->available_quantity = round((float) $stock->quantity - (float) $stock->reserved_quantity, 2);
         $stock->stock_value = round((float) $stock->quantity * (float) $stock->average_cost, 2);
+        $stock->last_updated_at = now();
         $stock->save();
     }
 

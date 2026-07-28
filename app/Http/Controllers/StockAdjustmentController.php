@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\StockAdjustment;
 use App\Models\Warehouse;
+use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use InvalidArgumentException;
 
 class StockAdjustmentController extends Controller
 {
+    public function __construct(
+        protected InventoryPostingService $posting
+    ) {
+    }
+
     public function index(Request $request)
     {
         $adjustments = StockAdjustment::query()
@@ -73,7 +81,7 @@ class StockAdjustmentController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $adjustment = StockAdjustment::findOrFail($id);
+        $adjustment = StockAdjustment::withCount('details')->findOrFail($id);
 
         $request->validate([
             'reference_no' => 'required|string|unique:stock_adjustments,reference_no,' . $id,
@@ -85,14 +93,45 @@ class StockAdjustmentController extends Controller
             'status' => 'boolean',
         ]);
 
-        $adjustment->update($request->all());
+        $mustResync = $adjustment->details_count > 0 && (
+            $adjustment->warehouse_id != $request->warehouse_id ||
+            $adjustment->adjustment_type !== $request->adjustment_type ||
+            $adjustment->adjustment_date->format('Y-m-d') !== $request->adjustment_date ||
+            $adjustment->reference_no !== $request->reference_no
+        );
+
+        try {
+            DB::transaction(function () use ($adjustment, $request, $mustResync) {
+                $adjustment->update($request->all());
+
+                if ($mustResync) {
+                    $this->posting->syncAdjustmentStock($adjustment->fresh());
+                }
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('stock-adjustments.index')->with('success', 'Adjustment updated successfully');
     }
 
     public function destroy(string $id)
     {
-        StockAdjustment::findOrFail($id)->delete();
+        $adjustment = StockAdjustment::with('details')->findOrFail($id);
+
+        try {
+            DB::transaction(function () use ($adjustment) {
+                foreach ($adjustment->details as $detail) {
+                    $this->posting->reverseAdjustmentDetail($detail);
+                    $detail->delete();
+                }
+
+                $adjustment->delete();
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Adjustment deleted');
     }
 }

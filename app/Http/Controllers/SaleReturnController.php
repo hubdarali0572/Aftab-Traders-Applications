@@ -100,15 +100,32 @@ class SaleReturnController extends Controller
             return redirect()->back()->withInput()->with('error', 'You cannot change the invoice once return line items have been added.');
         }
 
-        $saleReturn->update([
-            'sale_id' => $sale->id,
-            'customer_id' => $sale->customer_id,
-            'warehouse_id' => $sale->warehouse_id,
-            'reference_no' => $request->reference_no,
-            'return_date' => $request->return_date,
-            'remarks' => $request->remarks,
-            'status' => $request->boolean('status', true),
-        ]);
+        $mustResync = $saleReturn->details_count > 0 && (
+            $saleReturn->warehouse_id != $sale->warehouse_id ||
+            $saleReturn->customer_id != $sale->customer_id ||
+            $saleReturn->return_date->format('Y-m-d') !== $request->return_date ||
+            $saleReturn->reference_no !== $request->reference_no
+        );
+
+        try {
+            DB::transaction(function () use ($saleReturn, $sale, $request, $mustResync) {
+                $saleReturn->update([
+                    'sale_id' => $sale->id,
+                    'customer_id' => $sale->customer_id,
+                    'warehouse_id' => $sale->warehouse_id,
+                    'reference_no' => $request->reference_no,
+                    'return_date' => $request->return_date,
+                    'remarks' => $request->remarks,
+                    'status' => $request->boolean('status', true),
+                ]);
+
+                if ($mustResync) {
+                    $this->posting->syncSaleReturnStock($saleReturn->fresh());
+                }
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('sale-returns.index')->with('success', 'Sales return updated successfully');
     }

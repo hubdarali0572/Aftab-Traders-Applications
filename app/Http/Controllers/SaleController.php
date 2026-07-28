@@ -142,19 +142,26 @@ class SaleController extends Controller
             'status' => 'boolean',
         ]);
 
-        $oldStatus = $sale->sale_status;
+        $mustResyncStock = $sale->sale_status !== $request->sale_status
+            || ($request->sale_status === 'completed' && (
+                $sale->warehouse_id != $request->warehouse_id ||
+                $sale->sale_date->format('Y-m-d') !== $request->sale_date ||
+                $sale->invoice_no !== $request->invoice_no
+            ));
+        $mustResyncLedger = $sale->sale_status === 'completed'
+            || $request->sale_status === 'completed';
 
         $data = $request->all();
         if (empty($data['customer_id'])) {
             $data['customer_id'] = null;
         }
 
-        DB::transaction(function () use ($data, $sale, $oldStatus, $request) {
+        DB::transaction(function () use ($data, $sale, $request, $mustResyncStock, $mustResyncLedger) {
             $sale->update($data);
 
-            if ($oldStatus !== $request->sale_status) {
+            if ($mustResyncStock) {
                 $this->posting->syncSaleStock($sale->fresh());
-            } elseif ($sale->sale_status === 'completed') {
+            } elseif ($mustResyncLedger && $sale->sale_status === 'completed') {
                 $this->posting->syncSaleCustomerLedger($sale->fresh());
             }
         });

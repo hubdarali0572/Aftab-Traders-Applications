@@ -97,13 +97,19 @@ class StockTransferController extends Controller
             'status' => 'boolean',
         ]);
 
-        $statusChanged = $transfer->stock_status !== $request->stock_status;
+        $mustResync = $transfer->stock_status !== $request->stock_status
+            || ($request->stock_status === 'completed' && (
+                $transfer->from_warehouse_id != $request->from_warehouse_id ||
+                $transfer->to_warehouse_id != $request->to_warehouse_id ||
+                $transfer->transfer_date->format('Y-m-d') !== $request->transfer_date ||
+                $transfer->reference_no !== $request->reference_no
+            ));
 
         try {
-            DB::transaction(function () use ($request, $transfer, $statusChanged) {
+            DB::transaction(function () use ($request, $transfer, $mustResync) {
                 $transfer->update($request->all());
 
-                if ($statusChanged) {
+                if ($mustResync) {
                     $this->posting->syncTransferStock($transfer->fresh());
                 }
             });
@@ -122,6 +128,7 @@ class StockTransferController extends Controller
             DB::transaction(function () use ($transfer) {
                 foreach ($transfer->details as $detail) {
                     $this->posting->reverseTransferDetail($detail);
+                    $detail->delete();
                 }
                 $transfer->delete();
             });

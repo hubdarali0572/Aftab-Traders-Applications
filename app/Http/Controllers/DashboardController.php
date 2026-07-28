@@ -12,6 +12,7 @@ use App\Models\PurchaseExpense;
 use App\Models\PurchaseReturn;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\SaleReturn;
 use App\Models\StockAdjustment;
 use App\Models\StockTransfer;
 use App\Models\Warehouse;
@@ -30,6 +31,7 @@ class DashboardController extends Controller
         $salesAmount = (float) Sale::where('sale_status', 'completed')->sum('grand_total');
         $purchaseExpenseTotal = (float) PurchaseExpense::sum('amount');
         $purchaseReturnAmount = (float) PurchaseReturn::sum('total_amount');
+        $saleReturnAmount = (float) SaleReturn::sum('total_amount');
 
         // COGS approximation: sum of sale line quantities × warehouse average cost
         $cogs = (float) SaleDetail::query()
@@ -180,6 +182,7 @@ class DashboardController extends Controller
                 'total_purchases' => Purchase::count(),
                 'total_sales' => Sale::count(),
                 'total_purchase_returns' => PurchaseReturn::count(),
+                'total_sales_returns' => SaleReturn::count(),
                 'total_transfers' => StockTransfer::count(),
                 'total_adjustments' => StockAdjustment::count(),
                 'total_damaged' => DamagedStock::count(),
@@ -189,6 +192,10 @@ class DashboardController extends Controller
                 'sales_amount' => $salesAmount,
                 'purchase_expenses' => $purchaseExpenseTotal,
                 'purchase_return_amount' => $purchaseReturnAmount,
+                'sales_return_amount' => $saleReturnAmount,
+                'purchase_today' => (float) Purchase::whereDate('purchase_date', today())->sum('grand_total'),
+                'sales_today' => (float) Sale::where('sale_status', 'completed')->whereDate('sale_date', today())->sum('grand_total'),
+                'stock_transfers_today' => StockTransfer::whereDate('transfer_date', today())->count(),
                 'gross_profit' => $grossProfit,
                 'net_profit' => $netProfit,
                 'outstanding_balance' => $allOutstanding,
@@ -228,6 +235,9 @@ class DashboardController extends Controller
         }
         foreach (Sale::latest()->limit(5)->get() as $s) {
             $items->push(['type' => 'Sale', 'ref' => $s->invoice_no, 'date' => $s->sale_date?->format('Y-m-d'), 'amount' => $s->grand_total, 'id' => $s->id]);
+        }
+        foreach (SaleReturn::latest()->limit(3)->get() as $sr) {
+            $items->push(['type' => 'Sale Return', 'ref' => $sr->reference_no, 'date' => $sr->return_date?->format('Y-m-d'), 'amount' => $sr->total_amount, 'id' => $sr->id]);
         }
         foreach (StockTransfer::latest()->limit(3)->get() as $t) {
             $items->push(['type' => 'Transfer', 'ref' => $t->reference_no, 'date' => $t->transfer_date?->format('Y-m-d'), 'amount' => $t->total_amount, 'id' => $t->id]);

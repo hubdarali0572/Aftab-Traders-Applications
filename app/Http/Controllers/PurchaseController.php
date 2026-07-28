@@ -107,15 +107,20 @@ class PurchaseController extends Controller
             'status' => 'boolean',
         ]);
 
-        $statusChanged = $purchase->purchase_status !== $validated['purchase_status'];
+        $mustResync = $purchase->purchase_status !== $validated['purchase_status']
+            || ($validated['purchase_status'] === 'received' && (
+                $purchase->warehouse_id != $validated['warehouse_id']
+                || $purchase->purchase_date->format('Y-m-d') !== $validated['purchase_date']
+                || $purchase->purchase_no !== $validated['purchase_no']
+            ));
         $subtotal = (float) $purchase->details()->sum('line_total');
         $amounts = $this->computePaymentFields($validated, $subtotal);
 
         try {
-            DB::transaction(function () use ($purchase, $validated, $amounts, $statusChanged) {
+            DB::transaction(function () use ($purchase, $validated, $amounts, $mustResync) {
                 $purchase->update(array_merge($validated, $amounts));
 
-                if ($statusChanged) {
+                if ($mustResync) {
                     $this->posting->syncPurchaseStock($purchase->fresh());
                 }
             });
@@ -134,6 +139,7 @@ class PurchaseController extends Controller
             DB::transaction(function () use ($purchase) {
                 foreach ($purchase->details as $detail) {
                     $this->posting->reversePurchaseDetail($detail);
+                    $detail->delete();
                 }
                 $purchase->delete();
             });

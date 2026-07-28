@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\OpeningStock;
 use App\Models\Warehouse;
+use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use InvalidArgumentException;
 
 class OpeningStockController extends Controller
 {
+    public function __construct(
+        protected InventoryPostingService $posting
+    ) {
+    }
+
     public function index(Request $request)
     {
         $stocks = OpeningStock::query()
@@ -70,7 +78,7 @@ class OpeningStockController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $stock = OpeningStock::findOrFail($id);
+        $stock = OpeningStock::withCount('details')->findOrFail($id);
 
         $request->validate([
             'reference_no' => 'required|string|unique:opening_stocks,reference_no,' . $id,
@@ -82,14 +90,44 @@ class OpeningStockController extends Controller
             'status' => 'boolean',
         ]);
 
-        $stock->update($request->all());
+        $mustResync = $stock->details_count > 0 && (
+            $stock->warehouse_id != $request->warehouse_id ||
+            $stock->opening_date->format('Y-m-d') !== $request->opening_date ||
+            $stock->reference_no !== $request->reference_no
+        );
+
+        try {
+            DB::transaction(function () use ($stock, $request, $mustResync) {
+                $stock->update($request->all());
+
+                if ($mustResync) {
+                    $this->posting->syncOpeningStock($stock->fresh());
+                }
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('opening-stocks.index')->with('success', 'Opening stock updated successfully');
     }
 
     public function destroy(string $id)
     {
-        OpeningStock::findOrFail($id)->delete();
+        $stock = OpeningStock::with('details')->findOrFail($id);
+
+        try {
+            DB::transaction(function () use ($stock) {
+                foreach ($stock->details as $detail) {
+                    $this->posting->reverseOpeningDetail($detail);
+                    $detail->delete();
+                }
+
+                $stock->delete();
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Opening stock deleted successfully');
     }
 }

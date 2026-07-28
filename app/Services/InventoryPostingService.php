@@ -78,6 +78,19 @@ class InventoryPostingService
         ]);
     }
 
+    public function syncOpeningStock(OpeningStock $header): void
+    {
+        $header->load('details');
+
+        foreach ($header->details as $detail) {
+            $this->stock->reverse('opening-stock-detail', $detail->id);
+        }
+
+        foreach ($header->details as $detail) {
+            $this->postOpeningDetail($detail);
+        }
+    }
+
     /* ------------------------------------------------------------------ */
     /* Stock Adjustment                                                    */
     /* ------------------------------------------------------------------ */
@@ -132,6 +145,19 @@ class InventoryPostingService
             'total_quantity' => $header->details()->sum(DB::raw('ABS(adjustment_quantity)')),
             'total_amount' => $header->details()->sum('total_cost'),
         ]);
+    }
+
+    public function syncAdjustmentStock(StockAdjustment $header): void
+    {
+        $header->load('details');
+
+        foreach ($header->details as $detail) {
+            $this->stock->reverse('stock-adjustment-detail', $detail->id);
+        }
+
+        foreach ($header->details as $detail) {
+            $this->postAdjustmentDetail($detail);
+        }
     }
 
     /* ------------------------------------------------------------------ */
@@ -393,6 +419,19 @@ class InventoryPostingService
         ]);
     }
 
+    public function syncPurchaseReturnStock(PurchaseReturn $purchaseReturn): void
+    {
+        $purchaseReturn->load('details');
+
+        foreach ($purchaseReturn->details as $detail) {
+            $this->stock->reverse('purchase-return-detail', $detail->id);
+        }
+
+        foreach ($purchaseReturn->details as $detail) {
+            $this->postPurchaseReturnDetail($detail);
+        }
+    }
+
     /* ------------------------------------------------------------------ */
     /* Sale                                                                */
     /* ------------------------------------------------------------------ */
@@ -555,6 +594,19 @@ class InventoryPostingService
             'total_quantity' => $header->details()->sum('quantity'),
             'total_amount' => $header->details()->sum('line_total'),
         ]);
+    }
+
+    public function syncSaleReturnStock(SaleReturn $saleReturn): void
+    {
+        $saleReturn->load('details');
+
+        foreach ($saleReturn->details as $detail) {
+            $this->stock->reverse('sale-return-detail', $detail->id);
+        }
+
+        foreach ($saleReturn->details as $detail) {
+            $this->postSaleReturnDetail($detail);
+        }
     }
 
     public function syncSaleReturnCustomerLedger(SaleReturn $saleReturn): void
