@@ -1,5 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import ReportBarChart from "@/Components/Reports/ReportBarChart.vue";
+import ReportHBarChart from "@/Components/Reports/ReportHBarChart.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { computed } from "vue";
 
@@ -32,10 +34,6 @@ const lowStock = computed(() => props.tables?.low_stock || []);
 const outOfStock = computed(() => props.tables?.out_of_stock || []);
 const outstandingCustomers = computed(() => props.tables?.outstanding_customers || []);
 
-const monthlyMax = computed(() =>
-    Math.max(maxOf(monthly.value, "purchases"), maxOf(monthly.value, "sales")),
-);
-const warehouseMax = computed(() => maxOf(warehouseDist.value, "quantity"));
 const categoryMax = computed(() => maxOf(categoryInv.value, "quantity"));
 
 const orderStatusCards = computed(() => {
@@ -209,6 +207,26 @@ const quickActions = [
             "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
     },
 ];
+
+const moneyShort = (v) => {
+    const n = Number(v || 0);
+    if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
+    if (n >= 1000) return `$${(n / 1000).toFixed(1)}K`;
+    return `$${n.toFixed(0)}`;
+};
+
+const monthlyLabels = computed(() =>
+    monthly.value.map((m) => m.label?.split(" ")[0] || m.month),
+);
+const monthlyPurchases = computed(() =>
+    monthly.value.map((m) => Number(m.purchases || 0)),
+);
+const monthlySalesVals = computed(() =>
+    monthly.value.map((m) => Number(m.sales || 0)),
+);
+const warehouseItems = computed(() =>
+    warehouseDist.value.map((w) => ({ name: w.name, amount: Number(w.quantity || 0) })),
+);
 
 const barHeight = (value, max) =>
     `${Math.max((Number(value || 0) / max) * 100, value > 0 ? 4 : 0)}%`;
@@ -417,73 +435,40 @@ const barHeight = (value, max) =>
             </div>
 
             <!-- Charts Section -->
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6">
-                <div class="theme-form-card xl:col-span-2 overflow-hidden">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6 items-start">
+                <div class="theme-form-card xl:col-span-2 overflow-hidden self-start">
                     <div class="theme-form-section-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
                             <h3 class="theme-form-section-title">Monthly Purchases vs Sales</h3>
-                            <p class="mt-1 text-xs text-slate-400">Last 12 months comparison</p>
-                        </div>
-                        <div class="flex items-center gap-4 text-[10px] font-bold uppercase tracking-wider">
-                            <span class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                                <span class="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span>
-                                Purchases
-                            </span>
-                            <span class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                                <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
-                                Sales
-                            </span>
+                            <p class="mt-1 text-xs text-slate-400">Last 12 months comparison · fixed chart height</p>
                         </div>
                     </div>
                     <div class="p-4 lg:p-6">
-                        <div v-if="monthly.length" class="flex items-end gap-1 sm:gap-2 h-48 lg:h-56">
-                            <div
-                                v-for="m in monthly"
-                                :key="m.month"
-                                class="flex-1 flex flex-col items-center gap-1 min-w-0"
-                            >
-                                <div class="flex items-end gap-0.5 w-full h-40 lg:h-48">
-                                    <div
-                                        class="flex-1 bg-indigo-500/90 rounded-t-sm dark:bg-indigo-500"
-                                        :style="{ height: barHeight(m.purchases, monthlyMax) }"
-                                        :title="`Purchases: $${money(m.purchases)}`"
-                                    ></div>
-                                    <div
-                                        class="flex-1 bg-emerald-500/90 rounded-t-sm dark:bg-emerald-500"
-                                        :style="{ height: barHeight(m.sales, monthlyMax) }"
-                                        :title="`Sales: $${money(m.sales)}`"
-                                    ></div>
-                                </div>
-                                <span class="text-[9px] sm:text-[10px] text-slate-400 font-medium truncate w-full text-center dark:text-slate-500">
-                                    {{ m.label?.split(" ")[0] }}
-                                </span>
-                            </div>
-                        </div>
-                        <p v-else class="text-center text-sm text-slate-400 py-12">No monthly data available.</p>
+                        <ReportBarChart
+                            :labels="monthlyLabels"
+                            :series="[
+                                { key: 'purchases', label: 'Purchases', color: '#4f46e5', data: monthlyPurchases },
+                                { key: 'sales', label: 'Sales', color: '#10b981', data: monthlySalesVals },
+                            ]"
+                            :height="280"
+                            :format-value="moneyShort"
+                        />
                     </div>
                 </div>
 
-                <div class="theme-form-card overflow-hidden">
+                <div class="theme-form-card overflow-hidden self-start">
                     <div class="theme-form-section-header">
                         <h3 class="theme-form-section-title">Warehouse Stock</h3>
                         <p class="mt-1 text-xs text-slate-400">Quantity by location</p>
                     </div>
-                    <div class="p-4 lg:p-6 space-y-3">
-                        <template v-if="warehouseDist.length">
-                            <div v-for="wh in warehouseDist" :key="wh.name" class="space-y-1">
-                                <div class="flex justify-between text-xs">
-                                    <span class="font-medium text-slate-700 truncate mr-2 dark:text-slate-300">{{ wh.name }}</span>
-                                    <span class="text-slate-500 shrink-0 dark:text-slate-400">{{ num(wh.quantity) }}</span>
-                                </div>
-                                <div class="h-2 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-700">
-                                    <div
-                                        class="h-full bg-indigo-500 rounded-full"
-                                        :style="{ width: barHeight(wh.quantity, warehouseMax) }"
-                                    ></div>
-                                </div>
-                            </div>
-                        </template>
-                        <p v-else class="text-center text-sm text-slate-400 py-8">No warehouse data.</p>
+                    <div class="p-4 lg:p-6">
+                        <ReportHBarChart
+                            :items="warehouseItems"
+                            color="#4f46e5"
+                            :height="280"
+                            :format-value="(v) => Number(v || 0).toLocaleString()"
+                            empty-text="No warehouse data."
+                        />
                     </div>
                 </div>
             </div>
@@ -491,28 +476,33 @@ const barHeight = (value, max) =>
             <!-- Category Inventory -->
             <div class="theme-form-card overflow-hidden">
                 <div class="theme-form-section-header">
-                    <h3 class="theme-form-section-title">Product Stocks </h3>
-                    <p class="mt-1 text-xs text-slate-400">Top Products by quantity</p>
+                    <h3 class="theme-form-section-title">Product Stocks</h3>
+                    <p class="mt-1 text-xs text-slate-400">Top products by quantity · fixed chart height</p>
                 </div>
                 <div class="p-4 lg:p-6">
-                    <div v-if="categoryInv.length" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <div v-for="cat in categoryInv" :key="cat.name" class="flex flex-col items-center">
-                            <div class="w-full flex items-end justify-center h-32 bg-slate-50 rounded-lg p-2 dark:bg-slate-700/50">
-                                <div
-                                    class="w-3/5 max-w-[40px] bg-indigo-500 rounded-t-sm dark:bg-indigo-400"
-                                    :style="{ height: barHeight(cat.quantity, categoryMax) }"
-                                    :title="`${cat.name}: ${num(cat.quantity)} units`"
-                                ></div>
+                    <div v-if="categoryInv.length" class="h-[220px] overflow-x-auto">
+                        <div class="flex h-full min-w-full items-end gap-3 px-1">
+                            <div
+                                v-for="cat in categoryInv"
+                                :key="cat.name"
+                                class="flex h-full w-[72px] shrink-0 flex-col items-center justify-end sm:w-[88px]"
+                            >
+                                <span class="mb-1 text-[10px] font-bold tabular-nums text-slate-500">{{ num(cat.quantity) }}</span>
+                                <div class="flex w-full flex-1 items-end justify-center rounded-md bg-slate-50 px-2 pt-2 dark:bg-slate-800/60">
+                                    <div
+                                        class="w-8 rounded-t-md bg-gradient-to-t from-indigo-600 to-indigo-400 transition-all duration-300 dark:from-indigo-500 dark:to-indigo-300 sm:w-10"
+                                        :style="{ height: barHeight(cat.quantity, categoryMax) }"
+                                        :title="`${cat.name}: ${num(cat.quantity)} units`"
+                                    ></div>
+                                </div>
+                                <p class="mt-2 w-full truncate text-center text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                                    {{ cat.name }}
+                                </p>
+                                <p class="text-[10px] text-slate-400 dark:text-slate-500">${{ money(cat.value) }}</p>
                             </div>
-                            <p class="mt-2 text-[10px] font-bold text-slate-600 text-center truncate w-full dark:text-slate-300">
-                                {{ cat.name }}
-                            </p>
-                            <p class="text-[10px] text-slate-400 dark:text-slate-500">
-                                {{ num(cat.quantity) }} · ${{ money(cat.value) }}
-                            </p>
                         </div>
                     </div>
-                    <p v-else class="text-center text-sm text-slate-400 py-8">No category data.</p>
+                    <p v-else class="py-8 text-center text-sm text-slate-400">No category data.</p>
                 </div>
             </div>
 

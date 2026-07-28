@@ -319,6 +319,88 @@ const navItems = [
         ],
     },
     {
+        name: "Report Management",
+        icon: "M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+        active: route().current("reports.*"),
+        children: [
+            {
+                name: "All Reports",
+                route: "reports.index",
+                active: route().current("reports.index"),
+            },
+            {
+                name: "Daily Sales",
+                route: "reports.sales.daily",
+                active: route().current("reports.sales.daily"),
+            },
+            {
+                name: "Monthly Sales",
+                route: "reports.sales.monthly",
+                active: route().current("reports.sales.monthly"),
+            },
+            {
+                name: "Customer-wise Sales",
+                route: "reports.sales.customer-wise",
+                active: route().current("reports.sales.customer-wise"),
+            },
+            {
+                name: "Product-wise Sales",
+                route: "reports.sales.product-wise",
+                active: route().current("reports.sales.product-wise"),
+            },
+            {
+                name: "Current Stock",
+                route: "reports.inventory.current-stock",
+                active: route().current("reports.inventory.current-stock"),
+            },
+            {
+                name: "Low Stock",
+                route: "reports.inventory.low-stock",
+                active: route().current("reports.inventory.low-stock"),
+            },
+            {
+                name: "Stock Movement",
+                route: "reports.inventory.stock-movement",
+                active: route().current("reports.inventory.stock-movement"),
+            },
+            {
+                name: "Damaged Stock",
+                route: "reports.inventory.damaged-stock",
+                active: route().current("reports.inventory.damaged-stock"),
+            },
+            {
+                name: "Customer Ledger",
+                route: "reports.customers.ledger",
+                active: route().current("reports.customers.ledger"),
+            },
+            {
+                name: "Outstanding Balance",
+                route: "reports.customers.outstanding",
+                active: route().current("reports.customers.outstanding"),
+            },
+            {
+                name: "Payment History",
+                route: "reports.customers.payment-history",
+                active: route().current("reports.customers.payment-history"),
+            },
+            {
+                name: "Sales History",
+                route: "reports.customers.sales-history",
+                active: route().current("reports.customers.sales-history"),
+            },
+            {
+                name: "Expense Report",
+                route: "reports.financial.expenses",
+                active: route().current("reports.financial.expenses"),
+            },
+            {
+                name: "Profit & Loss",
+                route: "reports.financial.profit-loss",
+                active: route().current("reports.financial.profit-loss"),
+            },
+        ],
+    },
+    {
         name: "Roles & Permissions",
         icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
         route: "roles.index",

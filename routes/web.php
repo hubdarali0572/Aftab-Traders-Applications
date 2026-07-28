@@ -39,6 +39,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseStockController;
+use App\Http\Controllers\Reports\CustomerReportController;
+use App\Http\Controllers\Reports\FinancialReportController;
+use App\Http\Controllers\Reports\InventoryReportController;
+use App\Http\Controllers\Reports\ReportController;
+use App\Http\Controllers\Reports\SalesReportController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -140,6 +145,28 @@ Route::middleware('auth')->group(function () {
     Route::resource('expense-heads', ExpenseHeadController::class);
     Route::resource('expenses', ExpenseController::class);
 
+    // Report Management
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+
+        Route::get('/sales/daily', [SalesReportController::class, 'daily'])->name('sales.daily');
+        Route::get('/sales/monthly', [SalesReportController::class, 'monthly'])->name('sales.monthly');
+        Route::get('/sales/customer-wise', [SalesReportController::class, 'customerWise'])->name('sales.customer-wise');
+        Route::get('/sales/product-wise', [SalesReportController::class, 'productWise'])->name('sales.product-wise');
+
+        Route::get('/inventory/current-stock', [InventoryReportController::class, 'currentStock'])->name('inventory.current-stock');
+        Route::get('/inventory/low-stock', [InventoryReportController::class, 'lowStock'])->name('inventory.low-stock');
+        Route::get('/inventory/stock-movement', [InventoryReportController::class, 'stockMovement'])->name('inventory.stock-movement');
+        Route::get('/inventory/damaged-stock', [InventoryReportController::class, 'damagedStock'])->name('inventory.damaged-stock');
+
+        Route::get('/customers/ledger', [CustomerReportController::class, 'ledger'])->name('customers.ledger');
+        Route::get('/customers/outstanding', [CustomerReportController::class, 'outstanding'])->name('customers.outstanding');
+        Route::get('/customers/payment-history', [CustomerReportController::class, 'paymentHistory'])->name('customers.payment-history');
+        Route::get('/customers/sales-history', [CustomerReportController::class, 'salesHistory'])->name('customers.sales-history');
+
+        Route::get('/financial/expenses', [FinancialReportController::class, 'expenses'])->name('financial.expenses');
+        Route::get('/financial/profit-loss', [FinancialReportController::class, 'profitLoss'])->name('financial.profit-loss');
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
