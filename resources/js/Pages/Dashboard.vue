@@ -606,45 +606,6 @@ const barHeight = (value, max) =>
                     <p v-if="!recentActivities.length" class="px-6 py-10 text-center text-sm text-slate-400">No recent activity.</p>
                 </div>
             </section>
-
-            <!-- Quick Actions -->
-            <section class="theme-form-card overflow-hidden">
-                <div class="theme-form-section-header flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h3 class="theme-form-section-title">Quick Actions</h3>
-                        <p class="mt-1 text-xs text-slate-400">Jump to common inventory workflows.</p>
-                    </div>
-                    <span class="inline-flex w-fit items-center rounded-full bg-slate-700/60 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-300">
-                        {{ quickActions.length }} shortcuts
-                    </span>
-                </div>
-
-                <div class="p-2 sm:p-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-px overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-700">
-                        <Link
-                            v-for="action in quickActions"
-                            :key="action.title"
-                            :href="route(action.route)"
-                            class="group flex items-center gap-4 bg-white p-4 lg:p-5 transition-colors hover:bg-indigo-50/80 dark:bg-slate-800 dark:hover:bg-indigo-500/10"
-                        >
-                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition-all duration-300 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-105 dark:bg-indigo-500/15 dark:text-indigo-400">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="action.iconPath" />
-                                </svg>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <div class="flex items-center justify-between gap-2">
-                                    <h4 class="truncate text-sm font-bold text-slate-800 dark:text-slate-100">{{ action.title }}</h4>
-                                    <svg class="h-4 w-4 shrink-0 text-slate-300 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-indigo-500 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </div>
-                                <p class="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{{ action.description }}</p>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
-            </section>
         </div>
     </AuthenticatedLayout>
 </template>
