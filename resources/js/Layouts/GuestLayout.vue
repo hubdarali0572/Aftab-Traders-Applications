@@ -6,9 +6,9 @@ import { useDarkMode } from "@/composables/useDarkMode";
 const { isDark, toggleDarkMode } = useDarkMode();
 
 const highlights = [
-    "Role-based access control",
-    "Media library & image processing",
-    "Activity logs & audit trails",
+    "Inventory & multi-warehouse stock control",
+    "Wholesale & retail sales management",
+    "Purchases, expenses & business reports",
 ];
 </script>
 
@@ -39,19 +39,19 @@ const highlights = [
                     <p
                         class="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300"
                     >
-                        Platform
+                        Aftab Traders
                     </p>
                     <h1
                         class="mt-3 text-3xl font-extrabold leading-tight tracking-tight xl:text-4xl"
                     >
-                        Precision-Engineered
-                        <span class="text-indigo-300">Governance</span>
-                        for Digital Media
+                        Decoration Lights
+                        <span class="text-indigo-300">Wholesale &amp; Retail</span>
+                        ERP System
                     </h1>
                     <p class="mt-4 text-sm leading-relaxed text-white/70">
-                        Secure user management, rich media handling, and
-                        complete operational transparency — all in one cohesive
-                        platform.
+                        Run inventory, sales, purchases, and customer accounts
+                        for your decoration lights business — wholesale and
+                        retail operations in one secure system.
                     </p>
 
                     <ul class="mt-8 space-y-3">
@@ -83,7 +83,7 @@ const highlights = [
                 </div>
 
                 <p class="text-xs text-white/40">
-                    &copy; {{ new Date().getFullYear() }} AFTAB TRADERS PLATFORM
+                    &copy; {{ new Date().getFullYear() }} Aftab Traders · Decoration Lights ERP
                 </p>
             </div>
         </div>
@@ -98,14 +98,14 @@ const highlights = [
                 <Link
                     href="/"
                     class="flex min-w-0 items-center gap-2 lg:invisible lg:pointer-events-none"
-                    aria-label="Aftab Traders home"
+                    aria-label="Decoration Lights ERP home"
                 >
                     <ApplicationLogo
                         class="h-7 w-7 shrink-0 fill-indigo-600 sm:h-8 sm:w-8 dark:fill-indigo-400"
                     />
                     <span
                         class="truncate text-sm font-bold text-slate-800 dark:text-white"
-                        >Aftab Traders</span
+                        >Decoration Lights ERP</span
                     >
                 </Link>
 

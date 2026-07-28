@@ -96,16 +96,19 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Log in" />
+        <Head title="Sign In" />
 
         <div class="mb-6 text-center sm:mb-8">
+            <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-400">
+                Decoration Lights ERP
+            </p>
             <h2
-                class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white"
+                class="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white"
             >
-                Welcome back
+                Sign in to your account
             </h2>
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                Please enter your details to sign in.
+                Access wholesale &amp; retail operations for Aftab Traders.
             </p>
         </div>
 

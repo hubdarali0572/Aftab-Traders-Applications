@@ -465,7 +465,7 @@ const toggleDropdown = (name) => {
                 >
                     <img
                         src="/storage/images/logo.png"
-                        alt="AFTAB Traders"
+                        alt="Decoration Lights ERP"
                         class="w-14 h-12 object-contain scale-110"
                     />
                 </div>
@@ -781,7 +781,7 @@ const toggleDropdown = (name) => {
                         <p
                             class="hidden sm:block text-[10px] text-slate-400 uppercase tracking-widest mt-1 dark:text-slate-500"
                         >
-                            Laravel Inertia Vue Admin
+                            Decoration Lights Wholesale &amp; Retail ERP
                         </p>
                     </div>
                 </div>
@@ -886,7 +886,7 @@ const toggleDropdown = (name) => {
                     class="mt-1 pt-8 pb-3 border-t border-slate-200 text-center text-slate-500 text-[10px] lg:text-xs dark:border-slate-700 dark:text-slate-500"
                 >
                     <div class="uppercase tracking-widest font-bold">
-                        AFTAB TRADERS APPLICATIONS
+                        Decoration Lights Wholesale &amp; Retail ERP
                     </div>
                 </footer>
             </main>

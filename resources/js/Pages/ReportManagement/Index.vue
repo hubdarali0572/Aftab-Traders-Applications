@@ -14,7 +14,7 @@ defineProps({
         <div class="mb-8">
             <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Report Management</h2>
             <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">
-                Real-time ERP reports from sales, inventory, customers and financials.
+                Sales, inventory, customer, and financial reports for Decoration Lights wholesale &amp; retail.
             </p>
         </div>
 

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
         name="description"
-        content="Precision-engineered governance for unified digital media. Secure user management, media libraries, and operational transparency with Laravel, Inertia, and Vue 3."
+        content="Decoration Lights Wholesale & Retail ERP System by Aftab Traders — manage inventory, sales, purchases, warehouses, expenses, and customers in one platform."
     >
     <meta name="robots" content="index, follow">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

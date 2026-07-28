@@ -242,12 +242,15 @@ const barHeight = (value, max) =>
                 class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-900 rounded-xl p-6 lg:p-10 text-white relative overflow-hidden shadow-lg"
             >
                 <div class="relative z-10">
-                    <h2 class="text-xs lg:text-3xl font-bold opacity-90 uppercase tracking-widest">
-                        Inventory ERP Overview
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-300">
+                        Aftab Traders
+                    </p>
+                    <h2 class="mt-2 text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
+                        Decoration Lights Wholesale &amp; Retail ERP
                     </h2>
                     <p class="mt-3 text-white/80 text-sm lg:text-base max-w-2xl leading-relaxed">
-                        Real-time snapshot of inventory, sales, purchases, stock
-                        levels, and customer balances across your warehouses.
+                        Live overview of inventory, sales, purchases, stock levels,
+                        and customer balances across your wholesale and retail operations.
                     </p>
                 </div>
                 <div class="absolute -right-10 -top-10 w-40 h-40 lg:w-64 lg:h-64 bg-white/10 rounded-full blur-2xl"></div>
