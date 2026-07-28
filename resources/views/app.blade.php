@@ -13,6 +13,10 @@
 
     <title inertia>{{ config('app.name', 'Sample Application') }}</title>
 
+    <link rel="icon" type="image/png" href="/storage/images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="/storage/images/logo.png">
+    <link rel="apple-touch-icon" href="/storage/images/logo.png">
+
     {{-- Apply theme before paint to avoid flash of incorrect theme --}}
     <script>
         (function () {
