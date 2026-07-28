@@ -9,6 +9,10 @@ use App\Http\Controllers\DamagedStockDetailController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OpeningStockController;
 use App\Http\Controllers\OpeningStockDetailController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDetailController;
+use App\Http\Controllers\OrderReturnController;
+use App\Http\Controllers\OrderReturnDetailController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSellingPriceController;
@@ -104,6 +108,11 @@ Route::middleware('auth')->group(function () {
     // purchase Expenses Routes
     Route::resource('purchase-expenses', PurchaseExpenseController::class);
     // customers Routes
+    Route::get('customers/wholesale', [CustomerController::class, 'wholesale'])->name('customers.wholesale');
+    Route::get('customers/retail', [CustomerController::class, 'retail'])->name('customers.retail');
+    Route::get('customers/opening-balances', [CustomerController::class, 'openingBalances'])->name('customers.opening-balances');
+    Route::get('customers/outstanding', [CustomerController::class, 'outstanding'])->name('customers.outstanding');
+    Route::get('customers/sales-history', [CustomerController::class, 'salesHistory'])->name('customers.sales-history');
     Route::resource('customers', CustomerController::class);
     // customer Ledger Routes
     Route::resource('customer-ledgers', CustomerLedgerController::class);
@@ -115,6 +124,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('sale-returns', SaleReturnController::class);
     // sale Return Detail Routes
     Route::resource('sale-return-details', SaleReturnDetailController::class);
+
+    // Order Management
+    Route::post('orders/{order}/convert-to-sale', [OrderController::class, 'convertToSale'])
+        ->name('orders.convert-to-sale');
+    Route::resource('orders', OrderController::class);
+    Route::resource('order-details', OrderDetailController::class);
+    Route::post('order-returns/{order_return}/convert-to-sale-return', [OrderReturnController::class, 'convertToSaleReturn'])
+        ->name('order-returns.convert-to-sale-return');
+    Route::resource('order-returns', OrderReturnController::class);
+    Route::resource('order-return-details', OrderReturnDetailController::class);
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

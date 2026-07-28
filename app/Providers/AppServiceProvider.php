@@ -57,6 +57,10 @@ class AppServiceProvider extends ServiceProvider
             'sale-details' => 'App\Models\SaleDetail',
             'sale-return' => 'App\Models\SaleReturn',
             'sale-return-detail' => 'App\Models\SaleReturnDetail',
+            'orders' => 'App\Models\Order',
+            'order-details' => 'App\Models\OrderDetail',
+            'order-return' => 'App\Models\OrderReturn',
+            'order-return-detail' => 'App\Models\OrderReturnDetail',
             // Add other models here as needed
         ]);
     }

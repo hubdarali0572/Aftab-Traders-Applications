@@ -47,11 +47,12 @@ class CustomerLedgerController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return Inertia::render('InventoryManagement/CustomerLedgers/Create', [
-            'customers' => Customer::select('id', 'customer_name', 'customer_code')->get(),
+            'customers' => Customer::select('id', 'customer_name', 'customer_code')->orderBy('customer_name')->get(),
             'transactionTypes' => $this->transactionTypes,
+            'defaultCustomerId' => $request->query('customer_id'),
         ]);
     }
 

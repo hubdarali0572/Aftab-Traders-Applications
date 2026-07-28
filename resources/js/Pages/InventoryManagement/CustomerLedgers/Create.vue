@@ -6,12 +6,16 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
-const props = defineProps({ customers: Array, transactionTypes: Array });
+const props = defineProps({
+    customers: Array,
+    transactionTypes: Array,
+    defaultCustomerId: [String, Number],
+});
 
 const form = useForm({
-    customer_id: '',
+    customer_id: props.defaultCustomerId ? Number(props.defaultCustomerId) : '',
     transaction_date: new Date().toISOString().split('T')[0],
-    transaction_type: 'adjustment',
+    transaction_type: 'debit_note',
     reference_no: '',
     debit: 0,
     credit: 0,
@@ -24,9 +28,12 @@ const submit = () => form.post(route('customer-ledgers.store'));
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Create Ledger Entry" />
+        <Head title="Debit / Credit Entry" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-900">New Ledger Entry</h2>
+            <div>
+                <h2 class="text-2xl font-black text-slate-900">Debit / Credit Entry</h2>
+                <p class="text-sm text-slate-500 font-medium">Post a manual ledger debit or credit for a customer.</p>
+            </div>
             <Link :href="route('customer-ledgers.index')" class="theme-form-back-link">Back</Link>
         </div>
 

@@ -6,11 +6,11 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
-const props = defineProps({ customerTypes: Array });
+const props = defineProps({ customerTypes: Array, defaultType: { type: String, default: 'retail' } });
 
 const form = useForm({
     customer_code: 'CUS-' + Date.now(),
-    customer_type: 'retail',
+    customer_type: props.defaultType || 'retail',
     company_name: '',
     customer_name: '',
     phone: '',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Sale;
 use App\Services\CustomerLedgerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,40 @@ class CustomerController extends Controller
     }
 
     public function index(Request $request)
+    {
+        return $this->renderCustomerIndex($request, [
+            'title' => 'Customers',
+            'subtitle' => 'Manage customer accounts and contact information.',
+            'indexRoute' => 'customers.index',
+            'lockedType' => null,
+        ]);
+    }
+
+    public function wholesale(Request $request)
+    {
+        $request->merge(['customer_type' => 'wholesale']);
+
+        return $this->renderCustomerIndex($request, [
+            'title' => 'Wholesale Customers',
+            'subtitle' => 'Wholesale account list and balances.',
+            'indexRoute' => 'customers.wholesale',
+            'lockedType' => 'wholesale',
+        ]);
+    }
+
+    public function retail(Request $request)
+    {
+        $request->merge(['customer_type' => 'retail']);
+
+        return $this->renderCustomerIndex($request, [
+            'title' => 'Retail Customers',
+            'subtitle' => 'Retail account list and balances.',
+            'indexRoute' => 'customers.retail',
+            'lockedType' => 'retail',
+        ]);
+    }
+
+    protected function renderCustomerIndex(Request $request, array $meta)
     {
         $customers = Customer::query()
             ->with('user')
@@ -43,13 +78,23 @@ class CustomerController extends Controller
             'customers' => $customers,
             'filters' => $request->only('search', 'customer_type'),
             'customerTypes' => $this->customerTypes,
+            'pageTitle' => $meta['title'],
+            'pageSubtitle' => $meta['subtitle'],
+            'indexRoute' => $meta['indexRoute'],
+            'lockedType' => $meta['lockedType'],
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $defaultType = $request->query('customer_type');
+        if (! in_array($defaultType, $this->customerTypes, true)) {
+            $defaultType = 'retail';
+        }
+
         return Inertia::render('InventoryManagement/Customers/Create', [
             'customerTypes' => $this->customerTypes,
+            'defaultType' => $defaultType,
         ]);
     }
 
@@ -78,22 +123,7 @@ class CustomerController extends Controller
         DB::transaction(function () use ($request) {
             $customer = Customer::create(array_merge($request->all(), ['user_id' => Auth::id()]));
 
-            if ((float) $request->opening_balance > 0) {
-                $debit = $request->opening_balance_type === 'debit' ? (float) $request->opening_balance : 0;
-                $credit = $request->opening_balance_type === 'credit' ? (float) $request->opening_balance : 0;
-
-                $this->ledgerService->post(
-                    (int) $customer->id,
-                    'opening_balance',
-                    now()->toDateString(),
-                    'customers',
-                    (int) $customer->id,
-                    $customer->customer_code,
-                    $debit,
-                    $credit,
-                    'Opening balance'
-                );
-            }
+            $this->syncOpeningBalanceLedger($customer);
         });
 
         return redirect()->route('customers.index')->with('success', 'Customer created successfully');
@@ -101,14 +131,24 @@ class CustomerController extends Controller
 
     public function show(string $id)
     {
-        $customer = Customer::with(['user', 'ledgers' => fn ($q) => $q->latest()->limit(10)])
-            ->findOrFail($id);
+        $customer = Customer::with([
+            'user',
+            'ledgers' => fn ($q) => $q->latest('transaction_date')->latest('id')->limit(10),
+            'sales' => fn ($q) => $q->with('warehouse:id,name')->latest('sale_date')->latest('id')->limit(20),
+        ])->findOrFail($id);
 
         $outstanding = $this->ledgerService->getOutstanding((int) $customer->id);
+
+        $salesSummary = [
+            'total_invoices' => $customer->sales()->count(),
+            'completed_amount' => (float) $customer->sales()->where('sale_status', 'completed')->sum('grand_total'),
+            'due_amount' => (float) $customer->sales()->where('sale_status', 'completed')->sum('due_amount'),
+        ];
 
         return Inertia::render('InventoryManagement/Customers/Show', [
             'customer' => $customer,
             'outstanding' => $outstanding,
+            'salesSummary' => $salesSummary,
         ]);
     }
 
@@ -144,9 +184,12 @@ class CustomerController extends Controller
             'status' => 'boolean',
         ]);
 
-        $customer->update($request->all());
+        DB::transaction(function () use ($request, $customer) {
+            $customer->update($request->all());
+            $this->syncOpeningBalanceLedger($customer->fresh());
+        });
 
-        return redirect()->route('customers.index')->with('success', 'Customer updated successfully');
+        return redirect()->route('customers.show', $customer->id)->with('success', 'Customer updated successfully');
     }
 
     public function destroy(string $id)
@@ -163,5 +206,119 @@ class CustomerController extends Controller
         });
 
         return redirect()->back()->with('success', 'Customer deleted successfully');
+    }
+
+    public function openingBalances(Request $request)
+    {
+        $customers = Customer::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('customer_code', 'like', "%{$search}%")
+                        ->orWhere('customer_name', 'like', "%{$search}%")
+                        ->orWhere('company_name', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->filled('customer_type'), fn ($q) => $q->where('customer_type', $request->customer_type))
+            ->orderByDesc('opening_balance')
+            ->paginate(15)
+            ->withQueryString();
+
+        return Inertia::render('InventoryManagement/Customers/OpeningBalances', [
+            'customers' => $customers,
+            'filters' => $request->only('search', 'customer_type'),
+            'customerTypes' => $this->customerTypes,
+        ]);
+    }
+
+    public function outstanding(Request $request)
+    {
+        $customers = Customer::query()
+            ->with('user')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('customer_code', 'like', "%{$search}%")
+                        ->orWhere('customer_name', 'like', "%{$search}%")
+                        ->orWhere('company_name', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->filled('customer_type'), fn ($q) => $q->where('customer_type', $request->customer_type))
+            ->get()
+            ->map(function (Customer $customer) {
+                $customer->outstanding = $this->ledgerService->getOutstanding((int) $customer->id);
+
+                return $customer;
+            })
+            ->filter(fn (Customer $customer) => abs((float) $customer->outstanding) > 0.0001)
+            ->sortByDesc(fn (Customer $customer) => abs((float) $customer->outstanding))
+            ->values();
+
+        if ($request->filled('only_due') && $request->boolean('only_due')) {
+            $customers = $customers->filter(fn (Customer $customer) => (float) $customer->outstanding > 0)->values();
+        }
+
+        $totalOutstanding = (float) $customers->sum(fn (Customer $c) => max(0, (float) $c->outstanding));
+
+        return Inertia::render('InventoryManagement/Customers/Outstanding', [
+            'customers' => $customers,
+            'totalOutstanding' => $totalOutstanding,
+            'filters' => $request->only('search', 'customer_type', 'only_due'),
+            'customerTypes' => $this->customerTypes,
+        ]);
+    }
+
+    public function salesHistory(Request $request)
+    {
+        $sales = Sale::query()
+            ->with(['customer:id,customer_name,customer_code,customer_type', 'warehouse:id,name'])
+            ->whereNotNull('customer_id')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('invoice_no', 'like', "%{$search}%")
+                        ->orWhereHas('customer', function ($c) use ($search) {
+                            $c->where('customer_name', 'like', "%{$search}%")
+                                ->orWhere('customer_code', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when($request->filled('customer_id'), fn ($q) => $q->where('customer_id', $request->customer_id))
+            ->when($request->filled('sale_status'), fn ($q) => $q->where('sale_status', $request->sale_status))
+            ->latest('sale_date')
+            ->latest('id')
+            ->paginate(15)
+            ->withQueryString();
+
+        return Inertia::render('InventoryManagement/Customers/SalesHistory', [
+            'sales' => $sales,
+            'customers' => Customer::select('id', 'customer_name', 'customer_code')->orderBy('customer_name')->get(),
+            'filters' => $request->only('search', 'customer_id', 'sale_status'),
+            'saleStatuses' => ['draft', 'completed', 'cancelled'],
+        ]);
+    }
+
+    protected function syncOpeningBalanceLedger(Customer $customer): void
+    {
+        $this->ledgerService->reverse('customers', (int) $customer->id);
+
+        if ((float) $customer->opening_balance <= 0) {
+            return;
+        }
+
+        $debit = $customer->opening_balance_type === 'debit' ? (float) $customer->opening_balance : 0;
+        $credit = $customer->opening_balance_type === 'credit' ? (float) $customer->opening_balance : 0;
+
+        $this->ledgerService->post(
+            (int) $customer->id,
+            'opening_balance',
+            now()->toDateString(),
+            'customers',
+            (int) $customer->id,
+            $customer->customer_code,
+            $debit,
+            $credit,
+            'Opening balance'
+        );
     }
 }

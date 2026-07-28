@@ -39,6 +39,41 @@ const monthlyMax = computed(() =>
 const warehouseMax = computed(() => maxOf(warehouseDist.value, "quantity"));
 const categoryMax = computed(() => maxOf(categoryInv.value, "quantity"));
 
+const orderStatusCards = computed(() => {
+    const byStatus = props.kpis?.orders_by_status || {};
+    const meta = {
+        pending: {
+            title: "Pending",
+            iconPath: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+            tone: "text-amber-600 dark:text-amber-400",
+        },
+        confirmed: {
+            title: "Confirmed",
+            iconPath: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+            tone: "text-sky-600 dark:text-sky-400",
+        },
+        completed: {
+            title: "Completed",
+            iconPath: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
+            tone: "text-emerald-600 dark:text-emerald-400",
+        },
+        cancelled: {
+            title: "Cancelled",
+            iconPath: "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
+            tone: "text-rose-600 dark:text-rose-400",
+        },
+    };
+
+    return Object.keys(meta).map((status) => ({
+        status,
+        title: meta[status].title,
+        iconPath: meta[status].iconPath,
+        tone: meta[status].tone,
+        amount: byStatus[status]?.amount || 0,
+        count: byStatus[status]?.count || 0,
+    }));
+});
+
 const kpiCards = computed(() => [
     {
         title: "Products",
@@ -228,6 +263,76 @@ const barHeight = (value, max) =>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="stat.iconPath" />
                         </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders by Status -->
+            <div class="space-y-3">
+                <div class="flex items-end justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider dark:text-slate-100">
+                            Orders by Status
+                        </h3>
+                        <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                            Total first, then amount and count for each order status
+                        </p>
+                    </div>
+                    <Link
+                        :href="route('orders.index')"
+                        class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+                    >
+                        View orders
+                    </Link>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 lg:gap-4">
+                    <div
+                        class="group bg-white p-4 lg:p-5 rounded-sm shadow-sm border border-indigo-100 flex justify-between items-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300 dark:bg-slate-800 dark:border-indigo-500/30 dark:hover:border-indigo-500/50"
+                    >
+                        <div class="min-w-0 pr-2">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
+                                Total Orders
+                            </p>
+                            <p class="text-xl lg:text-2xl font-black mt-1.5 truncate text-slate-800 dark:text-slate-100">
+                                ${{ money(kpis.all_orders_amount ?? kpis.orders_amount) }}
+                            </p>
+                            <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
+                                {{ num(kpis.all_orders_count ?? kpis.total_orders) }}
+                                {{ Number((kpis.all_orders_count ?? kpis.total_orders) || 0) === 1 ? 'order' : 'orders' }}
+                            </p>
+                        </div>
+                        <div class="bg-indigo-50 p-2 rounded-sm text-indigo-600 shrink-0 dark:bg-indigo-500/15 dark:text-indigo-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                                />
+                            </svg>
+                        </div>
+                    </div>
+                    <div
+                        v-for="stat in orderStatusCards"
+                        :key="stat.status"
+                        class="group bg-white p-4 lg:p-5 rounded-sm shadow-sm border border-slate-100 flex justify-between items-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-indigo-500/40"
+                    >
+                        <div class="min-w-0 pr-2">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
+                                {{ stat.title }}
+                            </p>
+                            <p class="text-xl lg:text-2xl font-black mt-1.5 truncate" :class="stat.tone">
+                                ${{ money(stat.amount) }}
+                            </p>
+                            <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
+                                {{ num(stat.count) }} {{ stat.count === 1 ? 'order' : 'orders' }}
+                            </p>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded-sm text-slate-400 shrink-0 transition-all duration-300 group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-700 dark:text-slate-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="stat.iconPath" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>

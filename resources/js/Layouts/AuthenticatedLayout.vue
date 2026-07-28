@@ -199,14 +199,72 @@ const navItems = [
             route().current("customer-ledgers.*"),
         children: [
             {
-                name: "Customers",
-                route: "customers.index",
-                active: route().current("customers.*"),
+                name: "Wholesale Customers",
+                route: "customers.wholesale",
+                active: route().current("customers.wholesale"),
             },
             {
-                name: "Customer Ledgers",
+                name: "Retail Customers",
+                route: "customers.retail",
+                active: route().current("customers.retail"),
+            },
+            {
+                name: "Customer Profile",
+                route: "customers.index",
+                active:
+                    route().current("customers.index") ||
+                    route().current("customers.show") ||
+                    route().current("customers.create") ||
+                    route().current("customers.edit"),
+            },
+            {
+                name: "Opening Balance",
+                route: "customers.opening-balances",
+                active: route().current("customers.opening-balances"),
+            },
+            {
+                name: "Customer Ledger",
                 route: "customer-ledgers.index",
-                active: route().current("customer-ledgers.*"),
+                active:
+                    route().current("customer-ledgers.index") ||
+                    route().current("customer-ledgers.show") ||
+                    route().current("customer-ledgers.edit"),
+            },
+            {
+                name: "Outstanding Balance",
+                route: "customers.outstanding",
+                active: route().current("customers.outstanding"),
+            }
+        ],
+    },
+    {
+        name: "Order Management",
+        icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
+        active:
+            route().current("orders.*") ||
+            route().current("order-details.*") ||
+            route().current("order-returns.*") ||
+            route().current("order-return-details.*"),
+        children: [
+            {
+                name: "Orders",
+                route: "orders.index",
+                active: route().current("orders.*"),
+            },
+            {
+                name: "Order Details",
+                route: "order-details.index",
+                active: route().current("order-details.*"),
+            },
+            {
+                name: "Order Returns",
+                route: "order-returns.index",
+                active: route().current("order-returns.*"),
+            },
+            {
+                name: "Order Return Details",
+                route: "order-return-details.index",
+                active: route().current("order-return-details.*"),
             },
         ],
     },

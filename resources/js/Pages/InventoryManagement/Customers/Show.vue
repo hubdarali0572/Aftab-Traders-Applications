@@ -2,21 +2,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-const props = defineProps({ customer: Object, outstanding: Number });
+const props = defineProps({
+    customer: Object,
+    outstanding: Number,
+    salesSummary: Object,
+});
 
 const formatType = (type) => type?.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) ?? '—';
 const formatTxn = (type) => type?.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) ?? '—';
+const formatMoney = (v) => Number(v || 0).toFixed(2);
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="customer.customer_name" />
-        <div class="max-w-8xl mx-auto mb-8 flex justify-between items-center">
+        <Head :title="`${customer.customer_name} — Profile`" />
+        <div class="max-w-8xl mx-auto mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-indigo-500 mb-1">Customer Profile</p>
                 <h2 class="text-2xl font-black text-slate-900 dark:text-slate-100">{{ customer.customer_name }}</h2>
-                <p class="text-sm text-slate-500 font-medium">{{ customer.customer_code }}</p>
+                <p class="text-sm text-slate-500 font-medium">{{ customer.customer_code }} · {{ formatType(customer.customer_type) }}</p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-3">
+                <Link :href="route('customer-ledgers.create', { customer_id: customer.id })" class="theme-form-back-link px-4 py-2">Add Debit / Credit</Link>
+                <Link :href="route('customers.sales-history', { customer_id: customer.id })" class="theme-form-back-link px-4 py-2">Sales History</Link>
                 <Link :href="route('customers.edit', customer.id)" class="theme-btn-primary px-6 py-2 rounded-full">Edit</Link>
                 <Link :href="route('customers.index')" class="theme-form-back-link">Back</Link>
             </div>
@@ -36,25 +44,30 @@ const formatTxn = (type) => type?.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.t
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="theme-form-card p-10 bg-indigo-50 dark:bg-indigo-900/10 text-center border-indigo-100 dark:border-indigo-800">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="theme-form-card p-8 bg-indigo-50 dark:bg-indigo-900/10 text-center border-indigo-100 dark:border-indigo-800">
                     <dt class="text-xs font-black uppercase text-indigo-400 mb-2">Opening Balance</dt>
-                    <dd class="text-3xl font-black text-indigo-700 dark:text-indigo-300">
-                        {{ customer.opening_balance_type === 'credit' ? 'Cr' : 'Dr' }} {{ customer.opening_balance }}
+                    <dd class="text-2xl font-black text-indigo-700 dark:text-indigo-300">
+                        {{ customer.opening_balance_type === 'credit' ? 'Cr' : 'Dr' }} {{ formatMoney(customer.opening_balance) }}
                     </dd>
-                    <p class="text-[10px] text-indigo-400 mt-2 uppercase font-bold tracking-widest">{{ customer.opening_balance_type }} side</p>
                 </div>
-                <div class="theme-form-card p-10 bg-emerald-50 dark:bg-emerald-900/10 text-center border-emerald-100 dark:border-emerald-800">
-                    <dt class="text-xs font-black uppercase text-emerald-400 mb-2">Current Outstanding</dt>
-                    <dd class="text-3xl font-black text-emerald-700 dark:text-emerald-300">{{ outstanding }}</dd>
+                <div class="theme-form-card p-8 bg-emerald-50 dark:bg-emerald-900/10 text-center border-emerald-100 dark:border-emerald-800">
+                    <dt class="text-xs font-black uppercase text-emerald-400 mb-2">Outstanding</dt>
+                    <dd class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ formatMoney(outstanding) }}</dd>
                 </div>
-                <div class="theme-form-card p-10 bg-slate-50 dark:bg-slate-800/50 text-center">
+                <div class="theme-form-card p-8 bg-slate-50 dark:bg-slate-800/50 text-center">
                     <dt class="text-xs font-black uppercase text-slate-400 mb-2">Credit Limit</dt>
-                    <dd class="text-3xl font-black text-slate-700 dark:text-slate-300">{{ customer.credit_limit }}</dd>
+                    <dd class="text-2xl font-black text-slate-700 dark:text-slate-300">{{ formatMoney(customer.credit_limit) }}</dd>
+                </div>
+                <div class="theme-form-card p-8 bg-amber-50 dark:bg-amber-900/10 text-center border-amber-100 dark:border-amber-800">
+                    <dt class="text-xs font-black uppercase text-amber-500 mb-2">Completed Sales</dt>
+                    <dd class="text-2xl font-black text-amber-700 dark:text-amber-300">${{ formatMoney(salesSummary?.completed_amount) }}</dd>
+                    <p class="text-[10px] text-amber-500 mt-2 uppercase font-bold tracking-widest">{{ salesSummary?.total_invoices || 0 }} invoices</p>
                 </div>
             </div>
 
-            <div class="theme-form-card" v-if="customer.ledgers?.length">
+
+            <div class="theme-form-card">
                 <div class="p-8 md:p-10">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Recent Ledger Entries</h3>
@@ -75,9 +88,12 @@ const formatTxn = (type) => type?.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.t
                                 <tr v-for="entry in customer.ledgers" :key="entry.id" class="theme-table-row">
                                     <td class="px-4 py-3 text-sm">{{ entry.transaction_date }}</td>
                                     <td class="px-4 py-3 text-sm font-bold">{{ formatTxn(entry.transaction_type) }}</td>
-                                    <td class="px-4 py-3 text-sm text-right">{{ entry.debit }}</td>
-                                    <td class="px-4 py-3 text-sm text-right">{{ entry.credit }}</td>
-                                    <td class="px-4 py-3 text-sm text-right font-bold">{{ entry.balance }}</td>
+                                    <td class="px-4 py-3 text-sm text-right">{{ formatMoney(entry.debit) }}</td>
+                                    <td class="px-4 py-3 text-sm text-right">{{ formatMoney(entry.credit) }}</td>
+                                    <td class="px-4 py-3 text-sm text-right font-bold">{{ formatMoney(entry.balance) }}</td>
+                                </tr>
+                                <tr v-if="!customer.ledgers?.length">
+                                    <td colspan="5" class="px-4 py-10 text-center text-slate-400 font-medium">No ledger entries yet.</td>
                                 </tr>
                             </tbody>
                         </table>

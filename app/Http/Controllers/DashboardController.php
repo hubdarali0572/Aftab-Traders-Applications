@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\CustomerLedger;
 use App\Models\DamagedStock;
 use App\Models\OpeningStock;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseExpense;
@@ -29,6 +30,33 @@ class DashboardController extends Controller
 
         $purchaseAmount = (float) Purchase::where('purchase_status', '!=', 'cancelled')->sum('grand_total');
         $salesAmount = (float) Sale::where('sale_status', 'completed')->sum('grand_total');
+        $orderStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
+        $orderStatusStats = Order::query()
+            ->selectRaw('order_status, COUNT(*) as count, COALESCE(SUM(grand_total), 0) as amount')
+            ->groupBy('order_status')
+            ->get()
+            ->keyBy('order_status');
+
+        $ordersByStatus = collect($orderStatuses)->mapWithKeys(function ($status) use ($orderStatusStats) {
+            $row = $orderStatusStats->get($status);
+
+            return [
+                $status => [
+                    'count' => (int) ($row->count ?? 0),
+                    'amount' => (float) ($row->amount ?? 0),
+                ],
+            ];
+        })->all();
+
+        // Include any other statuses (e.g. processing) in totals only
+        $allOrdersCount = (int) $orderStatusStats->sum('count');
+        $allOrdersAmount = (float) $orderStatusStats->sum('amount');
+        $totalOrdersCount = (int) $orderStatusStats
+            ->reject(fn ($row, $status) => $status === 'cancelled')
+            ->sum('count');
+        $ordersAmount = (float) $orderStatusStats
+            ->reject(fn ($row, $status) => $status === 'cancelled')
+            ->sum('amount');
         $purchaseExpenseTotal = (float) PurchaseExpense::sum('amount');
         $purchaseReturnAmount = (float) PurchaseReturn::sum('total_amount');
         $saleReturnAmount = (float) SaleReturn::sum('total_amount');
@@ -181,6 +209,11 @@ class DashboardController extends Controller
                 'total_suppliers' => $uniqueSuppliers,
                 'total_purchases' => Purchase::count(),
                 'total_sales' => Sale::count(),
+                'total_orders' => $totalOrdersCount,
+                'orders_amount' => $ordersAmount,
+                'all_orders_count' => $allOrdersCount,
+                'all_orders_amount' => $allOrdersAmount,
+                'orders_by_status' => $ordersByStatus,
                 'total_purchase_returns' => PurchaseReturn::count(),
                 'total_sales_returns' => SaleReturn::count(),
                 'total_transfers' => StockTransfer::count(),
