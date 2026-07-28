@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class StockTransfer extends Model
 {
-   use SoftDeletes, LogsActivity;
+    use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -23,6 +25,33 @@ class StockTransfer extends Model
         'remarks',
         'status',
     ];
+
+    protected $casts = [
+        'transfer_date' => 'date:Y-m-d',
+        'status' => 'boolean',
+        'total_quantity' => 'decimal:2',
+        'total_amount' => 'decimal:2',
+    ];
+
+    public function fromWarehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class, 'from_warehouse_id');
+    }
+
+    public function toWarehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class, 'to_warehouse_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function details(): HasMany
+    {
+        return $this->hasMany(StockTransferDetail::class);
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

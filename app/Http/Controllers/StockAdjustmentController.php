@@ -59,7 +59,7 @@ class StockAdjustmentController extends Controller
     public function show(string $id)
     {
         return Inertia::render('InventoryManagement/StockAdjustments/Show', [
-            'adjustment' => StockAdjustment::with(['warehouse', 'user'])->findOrFail($id),
+            'adjustment' => StockAdjustment::with(['warehouse', 'user', 'details.product'])->findOrFail($id),
         ]);
     }
 

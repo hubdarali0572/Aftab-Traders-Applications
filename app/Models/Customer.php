@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -31,6 +33,27 @@ class Customer extends Model
         'remarks',
         'status',
     ];
+
+    protected $casts = [
+        'status' => 'boolean',
+        'opening_balance' => 'decimal:2',
+        'credit_limit' => 'decimal:2',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function ledgers(): HasMany
+    {
+        return $this->hasMany(CustomerLedger::class);
+    }
+
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Sale::class);
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

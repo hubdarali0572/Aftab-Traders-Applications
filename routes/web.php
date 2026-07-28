@@ -28,8 +28,8 @@ use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\StockTransferDetailController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
-use App\Http\Controllers\WarehouseDetailController;
 use App\Http\Controllers\WarehouseStockController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -49,9 +49,9 @@ Route::get('/api/activities/{module}/{id}', [ActivityLogController::class, 'getL
 Route::get('/media/{media}/{conversion?}', [MediaController::class, 'show'])
     ->name('media.show');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 

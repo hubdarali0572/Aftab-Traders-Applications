@@ -1,0 +1,135 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+
+const props = defineProps({ customer: Object, customerTypes: Array });
+
+const form = useForm({
+    customer_code: props.customer.customer_code,
+    customer_type: props.customer.customer_type,
+    company_name: props.customer.company_name ?? '',
+    customer_name: props.customer.customer_name,
+    phone: props.customer.phone,
+    alternate_phone: props.customer.alternate_phone ?? '',
+    email: props.customer.email ?? '',
+    address: props.customer.address ?? '',
+    city: props.customer.city ?? '',
+    state: props.customer.state ?? '',
+    country: props.customer.country ?? '',
+    opening_balance: props.customer.opening_balance,
+    opening_balance_type: props.customer.opening_balance_type,
+    credit_limit: props.customer.credit_limit,
+    tax_number: props.customer.tax_number ?? '',
+    remarks: props.customer.remarks ?? '',
+    status: Boolean(props.customer.status),
+});
+
+const submit = () => form.put(route('customers.update', props.customer.id));
+</script>
+
+<template>
+    <AuthenticatedLayout>
+        <Head title="Edit Customer" />
+        <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
+            <h2 class="text-2xl font-black text-slate-800 dark:text-slate-100">Edit Customer</h2>
+            <Link :href="route('customers.index')" class="theme-form-back-link font-bold">Back to List</Link>
+        </div>
+
+        <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <InputLabel value="Customer Code" />
+                    <TextInput v-model="form.customer_code" class="w-full" required />
+                    <InputError :message="form.errors.customer_code" />
+                </div>
+                <div>
+                    <InputLabel value="Customer Type" />
+                    <select v-model="form.customer_type" class="theme-form-input w-full" required>
+                        <option v-for="t in customerTypes" :key="t" :value="t">{{ t.replace(/_/g, ' ') }}</option>
+                    </select>
+                </div>
+                <div>
+                    <InputLabel value="Customer Name" />
+                    <TextInput v-model="form.customer_name" class="w-full" required />
+                    <InputError :message="form.errors.customer_name" />
+                </div>
+                <div>
+                    <InputLabel value="Company Name" />
+                    <TextInput v-model="form.company_name" class="w-full" />
+                </div>
+                <div>
+                    <InputLabel value="Phone" />
+                    <TextInput v-model="form.phone" class="w-full" required />
+                    <InputError :message="form.errors.phone" />
+                </div>
+                <div>
+                    <InputLabel value="Alternate Phone" />
+                    <TextInput v-model="form.alternate_phone" class="w-full" />
+                </div>
+                <div>
+                    <InputLabel value="Email" />
+                    <TextInput type="email" v-model="form.email" class="w-full" />
+                </div>
+                <div>
+                    <InputLabel value="Tax Number" />
+                    <TextInput v-model="form.tax_number" class="w-full" />
+                </div>
+                <div>
+                    <InputLabel value="Credit Limit" />
+                    <TextInput type="number" step="0.01" v-model="form.credit_limit" class="w-full" />
+                </div>
+                <div>
+                    <InputLabel value="Opening Balance" />
+                    <TextInput type="number" step="0.01" v-model="form.opening_balance" class="w-full" />
+                </div>
+                <div>
+                    <InputLabel value="Opening Balance Type" />
+                    <select v-model="form.opening_balance_type" class="theme-form-input w-full">
+                        <option value="debit">Debit (Receivable)</option>
+                        <option value="credit">Credit (Payable)</option>
+                    </select>
+                </div>
+                <div>
+                    <InputLabel value="Status" />
+                    <button type="button" @click="form.status = !form.status" class="mt-2 relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
+                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <InputLabel value="Address" />
+                    <textarea v-model="form.address" class="theme-form-input w-full h-24"></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <InputLabel value="City" />
+                        <TextInput v-model="form.city" class="w-full" />
+                    </div>
+                    <div>
+                        <InputLabel value="State" />
+                        <TextInput v-model="form.state" class="w-full" />
+                    </div>
+                    <div>
+                        <InputLabel value="Country" />
+                        <TextInput v-model="form.country" class="w-full" />
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <InputLabel value="Remarks" />
+                <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
+            </div>
+
+            <div class="flex justify-center pt-4">
+                <PrimaryButton :disabled="form.processing">Update Customer</PrimaryButton>
+            </div>
+        </form>
+    </AuthenticatedLayout>
+</template>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StockLedger;
 use App\Models\Warehouse;
 use App\Models\Product;
+use App\Services\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,11 @@ use Inertia\Inertia;
 
 class StockLedgerController extends Controller
 {
+    public function __construct(
+        protected StockService $stock
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -101,7 +107,7 @@ class StockLedgerController extends Controller
                 'balance_quantity' => 0, // Will be updated by recalculateBalances
             ]);
 
-            $this->recalculateBalances($request->product_id, $request->warehouse_id);
+            $this->stock->recalculateBalances($request->product_id, $request->warehouse_id);
         });
 
         return redirect()->route('stock-ledgers.index')->with('success', 'Ledger entry created successfully');
@@ -182,7 +188,7 @@ class StockLedgerController extends Controller
             ]);
 
             // If product or warehouse changed, recalculate both old and new
-            $this->recalculateBalances($request->product_id, $request->warehouse_id);
+            $this->stock->recalculateBalances($request->product_id, $request->warehouse_id);
         });
 
         return redirect()->route('stock-ledgers.index')->with('success', 'Ledger entry updated successfully');
@@ -200,27 +206,8 @@ class StockLedgerController extends Controller
         $ledger->delete();
 
         // Recalculate balances after deletion to fix the running totals
-        $this->recalculateBalances($p_id, $w_id);
+        $this->stock->recalculateBalances($p_id, $w_id);
 
         return redirect()->back()->with('success', 'Ledger entry deleted successfully');
-    }
-
-    /**
-     * Helper to recalculate running balances for a specific product in a warehouse.
-     * This ensures 'balance_quantity' is always correct chronologically.
-     */
-    protected function recalculateBalances($productId, $warehouseId)
-    {
-        $entries = StockLedger::where('product_id', $productId)
-            ->where('warehouse_id', $warehouseId)
-            ->orderBy('transaction_date', 'asc')
-            ->orderBy('id', 'asc')
-            ->get();
-
-        $runningBalance = 0;
-        foreach ($entries as $entry) {
-            $runningBalance += ($entry->quantity_in - $entry->quantity_out);
-            $entry->update(['balance_quantity' => $runningBalance]);
-        }
     }
 }

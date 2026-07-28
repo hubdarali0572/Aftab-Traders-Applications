@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Purchase extends Model
 {
-  use SoftDeletes, LogsActivity;
+    use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -31,6 +33,44 @@ class Purchase extends Model
         'remarks',
         'status',
     ];
+
+    protected $casts = [
+        'purchase_date' => 'date:Y-m-d',
+        'status' => 'boolean',
+        'subtotal' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'tax' => 'decimal:2',
+        'shipping_cost' => 'decimal:2',
+        'other_charges' => 'decimal:2',
+        'grand_total' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
+        'due_amount' => 'decimal:2',
+    ];
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function details(): HasMany
+    {
+        return $this->hasMany(PurchaseDetail::class);
+    }
+
+    public function returns(): HasMany
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(PurchaseExpense::class);
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

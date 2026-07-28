@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\StockAdjustmentDetail;
 use App\Models\StockAdjustment;
 use App\Models\Product;
+use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use InvalidArgumentException;
 
 class StockAdjustmentDetailController extends Controller
 {
+    public function __construct(
+        protected InventoryPostingService $posting
+    ) {
+    }
+
     public function index(Request $request)
     {
         $details = StockAdjustmentDetail::query()
@@ -65,10 +73,18 @@ class StockAdjustmentDetailController extends Controller
 
         $adjQty = $request->physical_quantity - $request->system_quantity;
 
-        StockAdjustmentDetail::create(array_merge($request->all(), [
-            'adjustment_quantity' => $adjQty,
-            'total_cost' => abs($adjQty) * $request->unit_cost
-        ]));
+        try {
+            DB::transaction(function () use ($request, $adjQty) {
+                $detail = StockAdjustmentDetail::create(array_merge($request->all(), [
+                    'adjustment_quantity' => $adjQty,
+                    'total_cost' => abs($adjQty) * $request->unit_cost
+                ]));
+
+                $this->posting->postAdjustmentDetail($detail);
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('stock-adjustment-details.index')->with('success', 'Adjustment item added');
     }
@@ -103,17 +119,35 @@ class StockAdjustmentDetailController extends Controller
 
         $adjQty = $request->physical_quantity - $request->system_quantity;
 
-        $detail->update(array_merge($request->all(), [
-            'adjustment_quantity' => $adjQty,
-            'total_cost' => abs($adjQty) * $request->unit_cost
-        ]));
+        try {
+            DB::transaction(function () use ($request, $detail, $adjQty) {
+                $detail->update(array_merge($request->all(), [
+                    'adjustment_quantity' => $adjQty,
+                    'total_cost' => abs($adjQty) * $request->unit_cost
+                ]));
+
+                $this->posting->postAdjustmentDetail($detail);
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('stock-adjustment-details.index')->with('success', 'Adjustment item updated');
     }
 
     public function destroy(string $id)
     {
-        StockAdjustmentDetail::findOrFail($id)->delete();
+        $detail = StockAdjustmentDetail::findOrFail($id);
+
+        try {
+            DB::transaction(function () use ($detail) {
+                $this->posting->reverseAdjustmentDetail($detail);
+                $detail->delete();
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Item removed');
     }
 }

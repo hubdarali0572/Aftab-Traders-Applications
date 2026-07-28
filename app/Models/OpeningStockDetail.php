@@ -2,20 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\OpeningStock;
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class OpeningStockDetail extends Model
 {
-
     use SoftDeletes, LogsActivity;
 
     protected $fillable = [
-        'user_id',
         'opening_stock_id',
         'product_id',
         'quantity',
@@ -27,6 +24,7 @@ class OpeningStockDetail extends Model
         'remarks',
         'status',
     ];
+
     protected $casts = [
         'expiry_date' => 'date:Y-m-d',
         'status' => 'boolean',
@@ -35,11 +33,12 @@ class OpeningStockDetail extends Model
         'total_cost' => 'decimal:2',
     ];
 
-    public function openingStock()
+    public function openingStock(): BelongsTo
     {
         return $this->belongsTo(OpeningStock::class);
     }
-    public function product()
+
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }

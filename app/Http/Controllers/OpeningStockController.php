@@ -56,7 +56,7 @@ class OpeningStockController extends Controller
     public function show(string $id)
     {
         return Inertia::render('InventoryManagement/OpeningStocks/Show', [
-            'stock' => OpeningStock::with(['warehouse', 'user'])->findOrFail($id),
+            'stock' => OpeningStock::with(['warehouse', 'user', 'details.product'])->findOrFail($id),
         ]);
     }
 

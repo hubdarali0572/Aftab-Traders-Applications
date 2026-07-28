@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\OpeningStockDetail;
 use App\Models\OpeningStock;
 use App\Models\Product;
+use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use InvalidArgumentException;
 
 class OpeningStockDetailController extends Controller
 {
+    public function __construct(
+        protected InventoryPostingService $posting
+    ) {
+    }
+
     public function index(Request $request)
     {
         $details = OpeningStockDetail::query()
@@ -54,9 +62,17 @@ class OpeningStockDetailController extends Controller
             'status' => 'boolean',
         ]);
 
-        OpeningStockDetail::create(array_merge($request->all(), [
-            'total_cost' => $request->quantity * $request->unit_cost
-        ]));
+        try {
+            DB::transaction(function () use ($request) {
+                $detail = OpeningStockDetail::create(array_merge($request->all(), [
+                    'total_cost' => $request->quantity * $request->unit_cost
+                ]));
+
+                $this->posting->postOpeningDetail($detail);
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('opening-stock-details.index')->with('success', 'Line item added successfully');
     }
@@ -96,16 +112,34 @@ class OpeningStockDetailController extends Controller
             'status' => 'boolean',
         ]);
 
-        $detail->update(array_merge($request->all(), [
-            'total_cost' => $request->quantity * $request->unit_cost
-        ]));
+        try {
+            DB::transaction(function () use ($request, $detail) {
+                $detail->update(array_merge($request->all(), [
+                    'total_cost' => $request->quantity * $request->unit_cost
+                ]));
+
+                $this->posting->postOpeningDetail($detail);
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('opening-stock-details.index')->with('success', 'Line item updated');
     }
 
     public function destroy(string $id)
     {
-        OpeningStockDetail::findOrFail($id)->delete();
+        $detail = OpeningStockDetail::findOrFail($id);
+
+        try {
+            DB::transaction(function () use ($detail) {
+                $this->posting->reverseOpeningDetail($detail);
+                $detail->delete();
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Line item removed');
     }
 }

@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Product;
-use App\Models\StockAdjustment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -14,9 +13,8 @@ class StockAdjustmentDetail extends Model
     use SoftDeletes, LogsActivity;
 
     protected $fillable = [
-        'user_id',
-        'product_id',
         'stock_adjustment_id',
+        'product_id',
         'system_quantity',
         'physical_quantity',
         'adjustment_quantity',
@@ -26,11 +24,22 @@ class StockAdjustmentDetail extends Model
         'remarks',
         'status',
     ];
-    public function stockAdjustment()
+
+    protected $casts = [
+        'status' => 'boolean',
+        'system_quantity' => 'decimal:2',
+        'physical_quantity' => 'decimal:2',
+        'adjustment_quantity' => 'decimal:2',
+        'unit_cost' => 'decimal:2',
+        'total_cost' => 'decimal:2',
+    ];
+
+    public function stockAdjustment(): BelongsTo
     {
         return $this->belongsTo(StockAdjustment::class);
     }
-    public function product()
+
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
