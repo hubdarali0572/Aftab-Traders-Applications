@@ -4,10 +4,18 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
-const props = defineProps({ detail: Object, sales: Array, products: Array, sellingUnits: Array });
+const props = defineProps({
+    detail: Object,
+    sales: Array,
+    products: Array,
+    sellingUnits: Array,
+    warehouseStocks: Array,
+});
+
+const page = usePage();
 
 const form = useForm({
     sale_id: props.detail.sale_id,
@@ -19,6 +27,16 @@ const form = useForm({
     tax: props.detail.tax,
     remarks: props.detail.remarks ?? '',
     status: Boolean(props.detail.status),
+});
+
+const selectedSale = computed(() => props.sales.find((s) => s.id == form.sale_id));
+
+const availableStock = computed(() => {
+    if (!selectedSale.value || !form.product_id) return null;
+    const row = props.warehouseStocks.find(
+        (s) => s.warehouse_id == selectedSale.value.warehouse_id && s.product_id == form.product_id
+    );
+    return row ? Number(row.available_quantity) : 0;
 });
 
 const lineTotal = computed(() => {
@@ -40,12 +58,28 @@ const submit = () => form.put(route('sale-details.update', props.detail.id));
             <Link :href="route('sale-details.index')" class="theme-form-back-link">Back to List</Link>
         </div>
 
+        <div
+            v-if="page.props.flash?.error"
+            class="mb-6 flex items-center p-4 border-l-4 border-red-500 bg-red-50 text-red-800 rounded-r-xl shadow-sm dark:bg-red-500/10 dark:text-red-200"
+        >
+            <p class="text-sm font-bold">{{ page.props.flash.error }}</p>
+        </div>
+
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
+            <div
+                v-if="selectedSale?.sale_status === 'completed'"
+                class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+            >
+                This invoice is <strong>completed</strong>. Saving will re-sync stock for this line. Available: {{ availableStock ?? 0 }}.
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <InputLabel value="Sale Invoice" />
                     <select v-model="form.sale_id" class="theme-form-input w-full" required>
-                        <option v-for="s in sales" :key="s.id" :value="s.id">{{ s.invoice_no }}</option>
+                        <option v-for="s in sales" :key="s.id" :value="s.id">
+                            {{ s.invoice_no }} ({{ s.sale_status }})
+                        </option>
                     </select>
                     <InputError :message="form.errors.sale_id" />
                 </div>
@@ -65,10 +99,12 @@ const submit = () => form.put(route('sale-details.update', props.detail.id));
                 <div>
                     <InputLabel value="Quantity" />
                     <TextInput type="number" step="0.01" v-model="form.quantity" class="w-full" required />
+                    <InputError :message="form.errors.quantity" />
                 </div>
                 <div>
                     <InputLabel value="Unit Price" />
                     <TextInput type="number" step="0.01" v-model="form.unit_price" class="w-full" required />
+                    <InputError :message="form.errors.unit_price" />
                 </div>
                 <div>
                     <InputLabel value="Discount" />
@@ -94,7 +130,7 @@ const submit = () => form.put(route('sale-details.update', props.detail.id));
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
             <div class="flex justify-center pt-4">
-                <PrimaryButton :disabled="form.processing">Update Item</PrimaryButton>
+                <PrimaryButton type="submit" :disabled="form.processing">Update Item</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

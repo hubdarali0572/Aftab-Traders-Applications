@@ -1,8 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     details: Object,
@@ -10,10 +10,18 @@ const props = defineProps({
     filters: Object,
 });
 
+const page = usePage();
+const showFlash = ref(false);
 const searchQuery = ref(props.filters?.search ?? '');
 const saleId = ref(props.filters?.sale_id ?? '');
 const isModalOpen = ref(false);
 const selectedId = ref(null);
+
+watch(
+    () => [page.props.flash?.success, page.props.flash?.error],
+    ([s, e]) => { if (s || e) showFlash.value = true; },
+    { immediate: true }
+);
 
 const openDeleteModal = (id) => { selectedId.value = id; isModalOpen.value = true; };
 
@@ -52,6 +60,16 @@ const clearSearch = () => {
                 </svg>
                 Add Sale Item
             </Link>
+        </div>
+
+        <div
+            v-if="showFlash && (page.props.flash?.success || page.props.flash?.error)"
+            class="mb-6 flex items-center p-4 border-l-4 rounded-r-xl shadow-sm"
+            :class="page.props.flash?.success
+                ? 'bg-indigo-50 border-indigo-500 text-indigo-800 dark:bg-indigo-500/10 dark:text-indigo-200'
+                : 'bg-red-50 border-red-500 text-red-800 dark:bg-red-500/10 dark:text-red-200'"
+        >
+            <p class="ml-3 text-sm font-bold">{{ page.props.flash?.success || page.props.flash?.error }}</p>
         </div>
 
         <div class="theme-table-card">

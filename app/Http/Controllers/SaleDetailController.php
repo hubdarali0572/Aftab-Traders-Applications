@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\WarehouseStock;
 use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use InvalidArgumentException;
+use Throwable;
 
 class SaleDetailController extends Controller
 {
@@ -48,9 +50,10 @@ class SaleDetailController extends Controller
     public function create()
     {
         return Inertia::render('InventoryManagement/SaleDetails/Create', [
-            'sales' => Sale::select('id', 'invoice_no')->get(),
+            'sales' => Sale::select('id', 'invoice_no', 'sale_status', 'warehouse_id')->get(),
             'products' => Product::select('id', 'name')->get(),
             'sellingUnits' => $this->sellingUnits,
+            'warehouseStocks' => WarehouseStock::select('warehouse_id', 'product_id', 'available_quantity')->get(),
         ]);
     }
 
@@ -59,9 +62,14 @@ class SaleDetailController extends Controller
         $request->validate([
             'sale_id' => [
                 'required',
-                Rule::unique('sale_details')->where(fn ($q) => $q->where('product_id', $request->product_id)),
+                'exists:sales,id',
             ],
-            'product_id' => 'required|exists:products,id',
+            'product_id' => [
+                'required',
+                'exists:products,id',
+                Rule::unique('sale_details')
+                    ->where(fn ($q) => $q->where('sale_id', $request->sale_id)->whereNull('deleted_at')),
+            ],
             'selling_unit' => 'required|in:' . implode(',', $this->sellingUnits),
             'quantity' => 'required|numeric|min:0.01',
             'unit_price' => 'required|numeric|min:0',
@@ -69,6 +77,8 @@ class SaleDetailController extends Controller
             'tax' => 'required|numeric|min:0',
             'remarks' => 'nullable|string',
             'status' => 'boolean',
+        ], [
+            'product_id.unique' => 'This product is already added on the selected sale invoice.',
         ]);
 
         $lineTotal = ((float) $request->quantity * (float) $request->unit_price)
@@ -76,24 +86,47 @@ class SaleDetailController extends Controller
 
         try {
             DB::transaction(function () use ($request, $lineTotal) {
-                $detail = SaleDetail::create([
-                    'user_id' => Auth::id(),
-                    'sale_id' => $request->sale_id,
-                    'product_id' => $request->product_id,
-                    'selling_unit' => $request->selling_unit,
-                    'quantity' => $request->quantity,
-                    'unit_price' => $request->unit_price,
-                    'discount' => $request->discount,
-                    'tax' => $request->tax,
-                    'line_total' => $lineTotal,
-                    'remarks' => $request->remarks,
-                    'status' => $request->boolean('status', true),
-                ]);
+                $trashed = SaleDetail::onlyTrashed()
+                    ->where('sale_id', $request->sale_id)
+                    ->where('product_id', $request->product_id)
+                    ->first();
+
+                if ($trashed) {
+                    $trashed->restore();
+                    $trashed->update([
+                        'user_id' => Auth::id(),
+                        'selling_unit' => $request->selling_unit,
+                        'quantity' => $request->quantity,
+                        'unit_price' => $request->unit_price,
+                        'discount' => $request->discount,
+                        'tax' => $request->tax,
+                        'line_total' => $lineTotal,
+                        'remarks' => $request->remarks,
+                        'status' => $request->boolean('status', true),
+                    ]);
+                    $detail = $trashed->fresh();
+                } else {
+                    $detail = SaleDetail::create([
+                        'user_id' => Auth::id(),
+                        'sale_id' => $request->sale_id,
+                        'product_id' => $request->product_id,
+                        'selling_unit' => $request->selling_unit,
+                        'quantity' => $request->quantity,
+                        'unit_price' => $request->unit_price,
+                        'discount' => $request->discount,
+                        'tax' => $request->tax,
+                        'line_total' => $lineTotal,
+                        'remarks' => $request->remarks,
+                        'status' => $request->boolean('status', true),
+                    ]);
+                }
 
                 $this->posting->postSaleDetail($detail);
             });
         } catch (InvalidArgumentException $e) {
             return redirect()->back()->withInput()->with('error', $e->getMessage());
+        } catch (Throwable $e) {
+            return redirect()->back()->withInput()->with('error', 'Could not save sale item: ' . $e->getMessage());
         }
 
         return redirect()->route('sale-details.index')->with('success', 'Sale item added successfully');
@@ -109,10 +142,11 @@ class SaleDetailController extends Controller
     public function edit(string $id)
     {
         return Inertia::render('InventoryManagement/SaleDetails/Edit', [
-            'detail' => SaleDetail::findOrFail($id),
-            'sales' => Sale::select('id', 'invoice_no')->get(),
+            'detail' => SaleDetail::with('sale:id,invoice_no,sale_status,warehouse_id')->findOrFail($id),
+            'sales' => Sale::select('id', 'invoice_no', 'sale_status', 'warehouse_id')->get(),
             'products' => Product::select('id', 'name')->get(),
             'sellingUnits' => $this->sellingUnits,
+            'warehouseStocks' => WarehouseStock::select('warehouse_id', 'product_id', 'available_quantity')->get(),
         ]);
     }
 
@@ -123,11 +157,15 @@ class SaleDetailController extends Controller
         $request->validate([
             'sale_id' => [
                 'required',
+                'exists:sales,id',
+            ],
+            'product_id' => [
+                'required',
+                'exists:products,id',
                 Rule::unique('sale_details')
-                    ->where(fn ($q) => $q->where('product_id', $request->product_id))
+                    ->where(fn ($q) => $q->where('sale_id', $request->sale_id)->whereNull('deleted_at'))
                     ->ignore($id),
             ],
-            'product_id' => 'required|exists:products,id',
             'selling_unit' => 'required|in:' . implode(',', $this->sellingUnits),
             'quantity' => 'required|numeric|min:0.01',
             'unit_price' => 'required|numeric|min:0',
@@ -135,6 +173,8 @@ class SaleDetailController extends Controller
             'tax' => 'required|numeric|min:0',
             'remarks' => 'nullable|string',
             'status' => 'boolean',
+        ], [
+            'product_id.unique' => 'This product is already added on the selected sale invoice.',
         ]);
 
         $lineTotal = ((float) $request->quantity * (float) $request->unit_price)
@@ -159,6 +199,8 @@ class SaleDetailController extends Controller
             });
         } catch (InvalidArgumentException $e) {
             return redirect()->back()->withInput()->with('error', $e->getMessage());
+        } catch (Throwable $e) {
+            return redirect()->back()->withInput()->with('error', 'Could not update sale item: ' . $e->getMessage());
         }
 
         return redirect()->route('sale-details.index')->with('success', 'Sale item updated successfully');
@@ -175,6 +217,8 @@ class SaleDetailController extends Controller
             });
         } catch (InvalidArgumentException $e) {
             return redirect()->back()->with('error', $e->getMessage());
+        } catch (Throwable $e) {
+            return redirect()->back()->with('error', 'Could not remove sale item: ' . $e->getMessage());
         }
 
         return redirect()->back()->with('success', 'Sale item removed successfully');
