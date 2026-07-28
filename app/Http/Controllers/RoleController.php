@@ -53,6 +53,8 @@ class RoleController extends Controller
             'Customer Ledgers'          => 'customer ledgers',
             'Sale Management'           => 'sale',
             'Sale Detail Management'    => 'sale detail',
+            'Sale Return Management'    => 'sale return',
+            'Sale Return Details'    => 'sale return detail',
         ];
 
         $groups = [];
@@ -155,6 +157,8 @@ class RoleController extends Controller
             'Customer Ledgers'          => 'customer ledgers',
             'Sale Management'           => 'sale',
             'Sale Detail Management'    => 'sale detail',
+            'Sale Return Management'    => 'sale return',
+            'Sale Return Details'    => 'sale return detail',
         ];
 
         $groups = [];

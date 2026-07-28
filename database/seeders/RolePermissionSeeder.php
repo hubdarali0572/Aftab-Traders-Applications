@@ -52,6 +52,8 @@ class RolePermissionSeeder extends Seeder
             'customer ledgers',
             'sale',
             'sale detail',
+            'sale Returns',
+            'sale Return Details',
         ];
 
         $actions = ['view', 'create', 'edit', 'show', 'delete'];

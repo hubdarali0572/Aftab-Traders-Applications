@@ -727,8 +727,7 @@ const toggleDropdown = (name) => {
                     class="mt-1 pt-8 pb-3 border-t border-slate-200 text-center text-slate-500 text-[10px] lg:text-xs dark:border-slate-700 dark:text-slate-500"
                 >
                     <div class="uppercase tracking-widest font-bold">
-                        Sample Project for Laravel Inertia Vue3 Admin Dashboard
-                        Layout
+                        AFTAB TRADERS APPLICATIONS
                     </div>
                 </footer>
             </main>
