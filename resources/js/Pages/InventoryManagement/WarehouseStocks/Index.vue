@@ -110,6 +110,7 @@ const clearSearch = () => {
                             <th class="theme-table-header-cell">Quantity</th>
                             <th class="theme-table-header-cell">Reserved</th>
                             <th class="theme-table-header-cell">Available</th>
+                            <th class="theme-table-header-cell">Minimum Stock</th>
                             <th class="theme-table-header-cell">Avg Cost</th>
                             <th class="theme-table-header-cell">Stock Value</th>
                             <th class="theme-table-header-cell">Reorder Level</th>
@@ -124,6 +125,7 @@ const clearSearch = () => {
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ stock.quantity }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ stock.reserved_quantity }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ stock.available_quantity }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ stock.minimum_stock  }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ stock.average_cost }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ stock.stock_value }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ stock.reorder_level }}</div></td>
@@ -150,7 +152,7 @@ const clearSearch = () => {
                             </td>
                         </tr>
                         <tr v-if="stocks.data.length === 0">
-                            <td colspan="10" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No stock records found.</td>
+                            <td colspan="11" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No stock records found.</td>
                         </tr>
                     </tbody>
                 </table>

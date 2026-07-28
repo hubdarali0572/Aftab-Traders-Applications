@@ -29,8 +29,8 @@ const submit = () => form.post(route('stock-adjustment-details.store'));
     <AuthenticatedLayout>
         <Head title="Add Adjustment Item" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-900">Add Line Item</h2>
-            <Link :href="route('stock-adjustment-details.index')" class="theme-form-back-link">Back</Link>
+            <h2 class="text-2xl font-black text-slate-900">Add Stock Adjustment Detail</h2>
+            <Link :href="route('stock-adjustment-details.index')" class="theme-form-back-link">Back to Stock List</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
