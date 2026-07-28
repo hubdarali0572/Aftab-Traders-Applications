@@ -55,6 +55,8 @@ class AppServiceProvider extends ServiceProvider
             'customer-ledgers' => 'App\Models\CustomerLedger',
             'sales' => 'App\Models\Sale',
             'sale-details' => 'App\Models\SaleDetail',
+            'sale-return' => 'App\Models\SaleReturn',
+            'sale-return-detail' => 'App\Models\SaleReturnDetail',
             // Add other models here as needed
         ]);
     }

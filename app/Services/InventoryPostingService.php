@@ -12,6 +12,8 @@ use App\Models\PurchaseReturn;
 use App\Models\PurchaseReturnDetail;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\SaleReturn;
+use App\Models\SaleReturnDetail;
 use App\Models\StockAdjustment;
 use App\Models\StockAdjustmentDetail;
 use App\Models\StockTransfer;
@@ -502,5 +504,105 @@ class InventoryPostingService
                 'Payment against sale'
             );
         }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Sale Return                                                         */
+    /* ------------------------------------------------------------------ */
+
+    public function postSaleReturnDetail(SaleReturnDetail $detail): void
+    {
+        $header = $detail->saleReturn ?? SaleReturn::find($detail->sale_return_id);
+        if (! $header) {
+            return;
+        }
+
+        $this->stock->reverse('sale-return-detail', $detail->id);
+
+        $unitCost = $this->getSaleReturnUnitCost($header->sale_id, $detail->product_id);
+
+        $this->stock->post(
+            (int) $header->warehouse_id,
+            (int) $detail->product_id,
+            'sale_return',
+            'sale-return-detail',
+            (int) $detail->id,
+            $header->reference_no,
+            $header->return_date,
+            (float) $detail->quantity,
+            0,
+            $unitCost,
+            $detail->reason ?? $detail->remarks
+        );
+
+        $this->recalcSaleReturnTotals($header);
+        $this->syncSaleReturnCustomerLedger($header);
+    }
+
+    public function reverseSaleReturnDetail(SaleReturnDetail $detail): void
+    {
+        $this->stock->reverse('sale-return-detail', $detail->id);
+        $header = SaleReturn::find($detail->sale_return_id);
+        if ($header) {
+            $this->recalcSaleReturnTotals($header);
+            $this->syncSaleReturnCustomerLedger($header);
+        }
+    }
+
+    protected function recalcSaleReturnTotals(SaleReturn $header): void
+    {
+        $header->update([
+            'total_quantity' => $header->details()->sum('quantity'),
+            'total_amount' => $header->details()->sum('line_total'),
+        ]);
+    }
+
+    public function syncSaleReturnCustomerLedger(SaleReturn $saleReturn): void
+    {
+        $this->customerLedger->reverse('sale-return', $saleReturn->id);
+
+        if (! $saleReturn->customer_id) {
+            return;
+        }
+
+        $saleReturn->refresh();
+
+        if ((float) $saleReturn->total_amount > 0) {
+            $this->customerLedger->post(
+                (int) $saleReturn->customer_id,
+                'sale_return',
+                $saleReturn->return_date,
+                'sale-return',
+                (int) $saleReturn->id,
+                $saleReturn->reference_no,
+                0,
+                (float) $saleReturn->total_amount,
+                'Sales return credit note'
+            );
+        }
+    }
+
+    protected function getSaleReturnUnitCost(int $saleId, int $productId): float
+    {
+        $saleDetail = SaleDetail::where('sale_id', $saleId)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($saleDetail) {
+            $ledger = DB::table('stock_ledgers')
+                ->where('reference_type', 'sale-details')
+                ->where('reference_id', $saleDetail->id)
+                ->orderByDesc('id')
+                ->first();
+
+            if ($ledger && $ledger->unit_cost !== null) {
+                return (float) $ledger->unit_cost;
+            }
+        }
+
+        return (float) DB::table('warehouse_stocks')
+            ->where('warehouse_id', Sale::whereKey($saleId)->value('warehouse_id'))
+            ->where('product_id', $productId)
+            ->value('average_cost');
     }
 }

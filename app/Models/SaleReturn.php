@@ -9,41 +9,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Sale extends Model
+class SaleReturn extends Model
 {
     use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'user_id',
+        'sale_id',
         'customer_id',
         'warehouse_id',
-        'invoice_no',
-        'sale_date',
-        'sale_type',
-        'payment_method',
-        'subtotal',
-        'discount',
-        'tax',
-        'other_charges',
-        'grand_total',
-        'paid_amount',
-        'due_amount',
-        'sale_status',
+        'reference_no',
+        'return_date',
+        'total_quantity',
+        'total_amount',
         'remarks',
         'status',
     ];
 
     protected $casts = [
-        'sale_date' => 'date:Y-m-d',
+        'return_date' => 'date:Y-m-d',
         'status' => 'boolean',
-        'subtotal' => 'decimal:2',
-        'discount' => 'decimal:2',
-        'tax' => 'decimal:2',
-        'other_charges' => 'decimal:2',
-        'grand_total' => 'decimal:2',
-        'paid_amount' => 'decimal:2',
-        'due_amount' => 'decimal:2',
+        'total_quantity' => 'decimal:2',
+        'total_amount' => 'decimal:2',
     ];
+
+    public function sale(): BelongsTo
+    {
+        return $this->belongsTo(Sale::class);
+    }
 
     public function customer(): BelongsTo
     {
@@ -62,12 +55,7 @@ class Sale extends Model
 
     public function details(): HasMany
     {
-        return $this->hasMany(SaleDetail::class);
-    }
-
-    public function saleReturns(): HasMany
-    {
-        return $this->hasMany(SaleReturn::class);
+        return $this->hasMany(SaleReturnDetail::class);
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -76,6 +64,6 @@ class Sale extends Model
             ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
-            ->useLogName('sales');
+            ->useLogName('sale-return');
     }
 }

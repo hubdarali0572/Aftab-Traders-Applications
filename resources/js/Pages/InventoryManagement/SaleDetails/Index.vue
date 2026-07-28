@@ -117,9 +117,10 @@ const clearSearch = () => {
                 <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest">
                     Showing {{ details.from || 0 }} to {{ details.to || 0 }} of {{ details.total }} entries
                 </div>
-                <div class="flex gap-1.5">
+                <div class="flex flex-wrap justify-center items-center gap-1.5 mt-4 sm:mt-0">
                     <template v-for="(link, k) in details.links" :key="k">
                         <Link v-if="link.url" :href="link.url" v-html="link.label" class="min-w-[30px] h-6 px-2 flex items-center justify-center text-xs font-bold rounded-lg border transition-all" :class="[link.active ? 'theme-pagination-active' : 'theme-pagination-inactive']" />
+                        <span v-else v-html="link.label" class="min-w-[30px] h-6 px-2 flex items-center justify-center text-xs font-bold text-slate-300 bg-white border border-slate-100 rounded-lg cursor-not-allowed dark:text-slate-600 dark:bg-slate-800" />
                     </template>
                 </div>
             </div>

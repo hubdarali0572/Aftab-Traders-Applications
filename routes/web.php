@@ -21,6 +21,8 @@ use App\Http\Controllers\PurchaseReturnDetailController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleDetailController;
+use App\Http\Controllers\SaleReturnController;
+use App\Http\Controllers\SaleReturnDetailController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\StockAdjustmentDetailController;
 use App\Http\Controllers\StockLedgerController;
@@ -109,6 +111,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('sales', SaleController::class);
     // sale Detail Routes
     Route::resource('sale-details', SaleDetailController::class);
+    // sale Return Routes
+    Route::resource('sale-returns', SaleReturnController::class);
+    // sale Return Detail Routes
+    Route::resource('sale-return-details', SaleReturnDetailController::class);
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

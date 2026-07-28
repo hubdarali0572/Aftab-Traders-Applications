@@ -215,7 +215,9 @@ const navItems = [
         icon: "M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z",
         active:
             route().current("sales.*") ||
-            route().current("sale-details.*"),
+            route().current("sale-details.*") ||
+            route().current("sale-returns.*") ||
+            route().current("sale-return-details.*"),
         children: [
             {
                 name: "Sales",
@@ -226,6 +228,16 @@ const navItems = [
                 name: "Sale Details",
                 route: "sale-details.index",
                 active: route().current("sale-details.*"),
+            },
+            {
+                name: "Sales Returns",
+                route: "sale-returns.index",
+                active: route().current("sale-returns.*"),
+            },
+            {
+                name: "Sales Return Details",
+                route: "sale-return-details.index",
+                active: route().current("sale-return-details.*"),
             },
         ],
     },
