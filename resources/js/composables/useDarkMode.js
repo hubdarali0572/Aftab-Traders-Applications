@@ -1,50 +1,53 @@
 import { ref } from 'vue';
 
-// Reactive variable to store the current theme state (true = dark mode, false = light mode)
-// It checks if the <html> element already has the 'dark' class.
-const isDark = ref(
-    typeof document !== 'undefined' &&
-        document.documentElement.classList.contains('dark')
-);
+const THEME_KEY = 'theme';
 
-/**
- * Apply the selected theme across the application.
- *
- * @param {boolean} dark - true to enable dark mode, false for light mode.
- */
-const applyTheme = (dark) => {
-    // Update the reactive state
-    isDark.value = dark;
-
-    // Add or remove the 'dark' class from the <html> element
-    // Tailwind CSS uses this class to activate dark mode styles.
-    if (typeof document !== 'undefined') {
-        document.documentElement.classList.toggle('dark', dark);
-    }
-
-    // Save the user's theme preference in localStorage
-    // so it remains after page refresh or browser restart.
+const readStoredTheme = () => {
     try {
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
+        return localStorage.getItem(THEME_KEY);
     } catch (e) {
-        // Ignore errors (e.g., localStorage unavailable in private browsing)
+        return null;
     }
 };
 
 /**
- * Custom Vue composable for managing dark mode.
- *
- * Returns:
- * - isDark: Reactive boolean indicating current theme.
- * - toggleDarkMode: Function to switch between dark and light mode.
+ * Resolve theme: only 'dark' when explicitly saved.
+ * Default is always Light Mode (ignores OS preference).
  */
-export function useDarkMode() {
-    /**
-     * Toggle the current theme.
-     * If dark mode is enabled, switch to light mode.
-     * If light mode is enabled, switch to dark mode.
-     */
-    const toggleDarkMode = () => applyTheme(!isDark.value);
+const resolveIsDark = () => {
+    if (typeof document === 'undefined') return false;
+    const stored = readStoredTheme();
+    if (stored === 'dark') return true;
+    if (stored === 'light') return false;
+    return false; // default Light Mode
+};
 
-    return { isDark, toggleDarkMode };
+const isDark = ref(resolveIsDark());
+
+const applyTheme = (dark) => {
+    isDark.value = dark;
+
+    if (typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('dark', dark);
+    }
+
+    try {
+        localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
+    } catch (e) {
+        // Ignore (e.g. private browsing)
+    }
+};
+
+// Keep Vue state in sync with the pre-paint script / DOM on load
+if (typeof document !== 'undefined') {
+    const dark = resolveIsDark();
+    document.documentElement.classList.toggle('dark', dark);
+    isDark.value = dark;
+}
+
+export function useDarkMode() {
+    const toggleDarkMode = () => applyTheme(!isDark.value);
+    const setDarkMode = (dark) => applyTheme(Boolean(dark));
+
+    return { isDark, toggleDarkMode, setDarkMode };
 }

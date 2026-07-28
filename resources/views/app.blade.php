@@ -17,17 +17,19 @@
     <link rel="shortcut icon" type="image/png" href="/storage/images/logo.png">
     <link rel="apple-touch-icon" href="/storage/images/logo.png">
 
-    {{-- Apply theme before paint to avoid flash of incorrect theme --}}
+    {{-- Apply theme before paint (default: Light Mode) --}}
     <script>
         (function () {
             try {
                 var theme = localStorage.getItem('theme');
-                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
                 } else {
                     document.documentElement.classList.remove('dark');
                 }
-            } catch (e) {}
+            } catch (e) {
+                document.documentElement.classList.remove('dark');
+            }
         })();
     </script>
 
