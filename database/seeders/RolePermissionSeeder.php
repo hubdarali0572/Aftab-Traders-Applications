@@ -48,6 +48,8 @@ class RolePermissionSeeder extends Seeder
             'purchase return',
             'purchase return details',
             'purchase expense',
+            'expense head',
+            'expense',
             'customer',
             'customer ledgers',
             'sale',

@@ -31,7 +31,6 @@ const recentTransfers = computed(() => props.tables?.recent_transfers || []);
 const lowStock = computed(() => props.tables?.low_stock || []);
 const outOfStock = computed(() => props.tables?.out_of_stock || []);
 const outstandingCustomers = computed(() => props.tables?.outstanding_customers || []);
-const recentActivities = computed(() => props.tables?.recent_activities || []);
 
 const monthlyMax = computed(() =>
     Math.max(maxOf(monthly.value, "purchases"), maxOf(monthly.value, "sales")),
@@ -55,6 +54,41 @@ const orderStatusCards = computed(() => {
         completed: {
             title: "Completed",
             iconPath: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
+            tone: "text-emerald-600 dark:text-emerald-400",
+        },
+        cancelled: {
+            title: "Cancelled",
+            iconPath: "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
+            tone: "text-rose-600 dark:text-rose-400",
+        },
+    };
+
+    return Object.keys(meta).map((status) => ({
+        status,
+        title: meta[status].title,
+        iconPath: meta[status].iconPath,
+        tone: meta[status].tone,
+        amount: byStatus[status]?.amount || 0,
+        count: byStatus[status]?.count || 0,
+    }));
+});
+
+const expenseStatusCards = computed(() => {
+    const byStatus = props.kpis?.expenses_by_status || {};
+    const meta = {
+        draft: {
+            title: "Draft",
+            iconPath: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+            tone: "text-slate-600 dark:text-slate-300",
+        },
+        approved: {
+            title: "Approved",
+            iconPath: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+            tone: "text-sky-600 dark:text-sky-400",
+        },
+        paid: {
+            title: "Paid",
+            iconPath: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
             tone: "text-emerald-600 dark:text-emerald-400",
         },
         cancelled: {
@@ -175,31 +209,6 @@ const quickActions = [
             "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
     },
 ];
-
-const activityRoute = (item) => {
-    const map = {
-        Purchase: "purchases.show",
-        Sale: "sales.show",
-        "Sale Return": "sale-returns.show",
-        Transfer: "stock-transfers.show",
-        Damage: "damaged-stocks.show",
-        Adjustment: "stock-adjustments.show",
-        Opening: "opening-stocks.show",
-    };
-    const name = map[item.type];
-    return name ? route(name, item.id) : "#";
-};
-
-const activityBadgeClass = (type) =>
-    ({
-        Purchase: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300",
-        Sale: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
-        "Sale Return": "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
-        Transfer: "bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400",
-        Damage: "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400",
-        Adjustment: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
-        Opening: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-400",
-    }[type] || "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400");
 
 const barHeight = (value, max) =>
     `${Math.max((Number(value || 0) / max) * 100, value > 0 ? 4 : 0)}%`;
@@ -326,6 +335,76 @@ const barHeight = (value, max) =>
                             </p>
                             <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
                                 {{ num(stat.count) }} {{ stat.count === 1 ? 'order' : 'orders' }}
+                            </p>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded-sm text-slate-400 shrink-0 transition-all duration-300 group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-700 dark:text-slate-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="stat.iconPath" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expenses by Status -->
+            <div class="space-y-3">
+                <div class="flex items-end justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider dark:text-slate-100">
+                            Expenses by Status
+                        </h3>
+                        <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                            Total first, then amount and count for each expense status
+                        </p>
+                    </div>
+                    <Link
+                        :href="route('expenses.index')"
+                        class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+                    >
+                        View expenses
+                    </Link>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 lg:gap-4">
+                    <div
+                        class="group bg-white p-4 lg:p-5 rounded-sm shadow-sm border border-indigo-100 flex justify-between items-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300 dark:bg-slate-800 dark:border-indigo-500/30 dark:hover:border-indigo-500/50"
+                    >
+                        <div class="min-w-0 pr-2">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
+                                Total Expenses
+                            </p>
+                            <p class="text-xl lg:text-2xl font-black mt-1.5 truncate text-slate-800 dark:text-slate-100">
+                                ${{ money(kpis.all_expenses_amount) }}
+                            </p>
+                            <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
+                                {{ num(kpis.all_expenses_count) }}
+                                {{ Number(kpis.all_expenses_count || 0) === 1 ? 'expense' : 'expenses' }}
+                            </p>
+                        </div>
+                        <div class="bg-indigo-50 p-2 rounded-sm text-indigo-600 shrink-0 dark:bg-indigo-500/15 dark:text-indigo-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                            </svg>
+                        </div>
+                    </div>
+                    <div
+                        v-for="stat in expenseStatusCards"
+                        :key="stat.status"
+                        class="group bg-white p-4 lg:p-5 rounded-sm shadow-sm border border-slate-100 flex justify-between items-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-indigo-500/40"
+                    >
+                        <div class="min-w-0 pr-2">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
+                                {{ stat.title }}
+                            </p>
+                            <p class="text-xl lg:text-2xl font-black mt-1.5 truncate" :class="stat.tone">
+                                ${{ money(stat.amount) }}
+                            </p>
+                            <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
+                                {{ num(stat.count) }} {{ stat.count === 1 ? 'expense' : 'expenses' }}
                             </p>
                         </div>
                         <div class="bg-slate-50 p-2 rounded-sm text-slate-400 shrink-0 transition-all duration-300 group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-700 dark:text-slate-300">
@@ -679,38 +758,6 @@ const barHeight = (value, max) =>
                     </div>
                 </div>
             </div>
-
-            <!-- Recent Activities -->
-            <section class="theme-form-card overflow-hidden">
-                <div class="theme-form-section-header">
-                    <h3 class="theme-form-section-title">Recent Inventory Activities</h3>
-                    <p class="mt-1 text-xs text-slate-400">Latest transactions across all modules</p>
-                </div>
-                <div class="divide-y divide-slate-100 dark:divide-slate-700">
-                    <Link
-                        v-for="item in recentActivities"
-                        :key="`${item.type}-${item.id}`"
-                        :href="activityRoute(item)"
-                        class="flex items-center gap-4 px-4 lg:px-6 py-3.5 hover:bg-indigo-50/60 transition-colors dark:hover:bg-indigo-500/10"
-                    >
-                        <span
-                            class="shrink-0 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest"
-                            :class="activityBadgeClass(item.type)"
-                        >
-                            {{ item.type }}
-                        </span>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold text-slate-700 truncate dark:text-slate-200">{{ item.ref }}</p>
-                            <p class="text-[10px] text-slate-400 dark:text-slate-500">{{ item.date }}</p>
-                        </div>
-                        <span class="text-sm font-bold text-slate-700 shrink-0 dark:text-slate-300">${{ money(item.amount) }}</span>
-                        <svg class="h-4 w-4 shrink-0 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </Link>
-                    <p v-if="!recentActivities.length" class="px-6 py-10 text-center text-sm text-slate-400">No recent activity.</p>
-                </div>
-            </section>
         </div>
     </AuthenticatedLayout>
 </template>

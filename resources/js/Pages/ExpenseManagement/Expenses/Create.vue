@@ -1,0 +1,145 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+
+const props = defineProps({
+    expenseHeads: Array,
+    warehouses: Array,
+    suggestedExpenseNo: String,
+});
+
+const form = useForm({
+    expense_no: props.suggestedExpenseNo || '',
+    expense_date: new Date().toISOString().slice(0, 10),
+    expense_head_id: '',
+    warehouse_id: '',
+    employee_name: '',
+    payee_name: '',
+    amount: '',
+    payment_method: 'cash',
+    reference_no: '',
+    invoice_no: '',
+    description: '',
+    remarks: '',
+    status: 'paid',
+});
+
+const submit = () => form.post(route('expenses.store'));
+</script>
+
+<template>
+    <Head title="Add Expense" />
+
+    <AuthenticatedLayout>
+        <div class="max-w-8xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">Add Expense</h2>
+            </div>
+            <Link :href="route('expenses.index')" class="theme-form-back-link">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="text-slate-900">Back to List</span>
+            </Link>
+        </div>
+
+        <div class="max-w-8xl mx-auto pb-24">
+            <form @submit.prevent="submit" class="space-y-6">
+                <div class="theme-form-card">
+                    <div class="p-8 md:p-10">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-8">
+                            <div class="flex flex-col">
+                                <InputLabel for="expense_no" value="Expense No" class="theme-form-label ml-1" />
+                                <TextInput id="expense_no" type="text" class="theme-form-input" v-model="form.expense_no" required />
+                                <InputError :message="form.errors.expense_no" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="expense_date" value="Expense Date" class="theme-form-label ml-1" />
+                                <TextInput id="expense_date" type="date" class="theme-form-input" v-model="form.expense_date" required />
+                                <InputError :message="form.errors.expense_date" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="expense_head_id" value="Expense Head" class="theme-form-label ml-1" />
+                                <select id="expense_head_id" v-model="form.expense_head_id" class="theme-form-input w-full" required>
+                                    <option value="" disabled>Select expense head</option>
+                                    <option v-for="h in expenseHeads" :key="h.id" :value="h.id">{{ h.head_code }} — {{ h.name }}</option>
+                                </select>
+                                <InputError :message="form.errors.expense_head_id" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="warehouse_id" value="Warehouse" class="theme-form-label ml-1" />
+                                <select id="warehouse_id" v-model="form.warehouse_id" class="theme-form-input w-full" required>
+                                    <option value="" disabled>Select warehouse</option>
+                                    <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
+                                </select>
+                                <InputError :message="form.errors.warehouse_id" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="employee_name" value="Employee Name" class="theme-form-label ml-1" />
+                                <TextInput id="employee_name" type="text" class="theme-form-input" v-model="form.employee_name" placeholder="Who requested / added" />
+                                <InputError :message="form.errors.employee_name" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="payee_name" value="Payee Name" class="theme-form-label ml-1" />
+                                <TextInput id="payee_name" type="text" class="theme-form-input" v-model="form.payee_name" placeholder="Who received payment" />
+                                <InputError :message="form.errors.payee_name" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="amount" value="Amount" class="theme-form-label ml-1" />
+                                <TextInput id="amount" type="number" step="0.01" min="0.01" class="theme-form-input" v-model="form.amount" required />
+                                <InputError :message="form.errors.amount" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="payment_method" value="Payment Method" class="theme-form-label ml-1" />
+                                <select id="payment_method" v-model="form.payment_method" class="theme-form-input w-full" required>
+                                    <option value="cash">Cash</option>
+                                    <option value="bank">Bank</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="online">Online</option>
+                                </select>
+                                <InputError :message="form.errors.payment_method" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="status" value="Status" class="theme-form-label ml-1" />
+                                <select id="status" v-model="form.status" class="theme-form-input w-full" required>
+                                    <option value="draft">Draft</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                                <InputError :message="form.errors.status" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="reference_no" value="Reference No" class="theme-form-label ml-1" />
+                                <TextInput id="reference_no" type="text" class="theme-form-input" v-model="form.reference_no" />
+                                <InputError :message="form.errors.reference_no" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="invoice_no" value="Invoice No" class="theme-form-label ml-1" />
+                                <TextInput id="invoice_no" type="text" class="theme-form-input" v-model="form.invoice_no" />
+                                <InputError :message="form.errors.invoice_no" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col md:col-span-3">
+                                <InputLabel for="description" value="Description" class="theme-form-label ml-1" />
+                                <textarea id="description" class="theme-form-input min-h-[100px] resize-y" v-model="form.description"></textarea>
+                                <InputError :message="form.errors.description" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col md:col-span-3">
+                                <InputLabel for="remarks" value="Remarks" class="theme-form-label ml-1" />
+                                <textarea id="remarks" class="theme-form-input min-h-[80px] resize-y" v-model="form.remarks"></textarea>
+                                <InputError :message="form.errors.remarks" class="mt-2 ml-1" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center pt-4">
+                    <PrimaryButton class="theme-btn-primary px-12 py-4 rounded-full text-white font-black text-xs uppercase tracking-widest active:scale-95" :class="{ 'opacity-50 cursor-not-allowed': form.processing }" :disabled="form.processing">
+                        Save Expense
+                    </PrimaryButton>
+                </div>
+            </form>
+        </div>
+    </AuthenticatedLayout>
+</template>

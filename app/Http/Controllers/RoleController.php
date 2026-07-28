@@ -55,6 +55,8 @@ class RoleController extends Controller
             'Sale Detail Management'    => 'sale detail',
             'Sale Return Management'    => 'sale return',
             'Sale Return Details'    => 'sale return detail',
+            'Expense Heads'             => 'expense head',
+            'Expenses'                  => 'expense',
         ];
 
         $groups = [];
@@ -159,6 +161,8 @@ class RoleController extends Controller
             'Sale Detail Management'    => 'sale detail',
             'Sale Return Management'    => 'sale return',
             'Sale Return Details'    => 'sale return detail',
+            'Expense Heads'             => 'expense head',
+            'Expenses'                  => 'expense',
         ];
 
         $groups = [];

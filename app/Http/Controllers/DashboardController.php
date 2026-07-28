@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\CustomerLedger;
 use App\Models\DamagedStock;
-use App\Models\OpeningStock;
+use App\Models\Expense;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -57,6 +57,34 @@ class DashboardController extends Controller
         $ordersAmount = (float) $orderStatusStats
             ->reject(fn ($row, $status) => $status === 'cancelled')
             ->sum('amount');
+
+        $expenseStatuses = ['draft', 'approved', 'paid', 'cancelled'];
+        $expenseStatusStats = Expense::query()
+            ->selectRaw('status, COUNT(*) as count, COALESCE(SUM(amount), 0) as amount')
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status');
+
+        $expensesByStatus = collect($expenseStatuses)->mapWithKeys(function ($status) use ($expenseStatusStats) {
+            $row = $expenseStatusStats->get($status);
+
+            return [
+                $status => [
+                    'count' => (int) ($row->count ?? 0),
+                    'amount' => (float) ($row->amount ?? 0),
+                ],
+            ];
+        })->all();
+
+        $allExpensesCount = (int) $expenseStatusStats->sum('count');
+        $allExpensesAmount = (float) $expenseStatusStats->sum('amount');
+        $activeExpensesCount = (int) $expenseStatusStats
+            ->reject(fn ($row, $status) => $status === 'cancelled')
+            ->sum('count');
+        $activeExpensesAmount = (float) $expenseStatusStats
+            ->reject(fn ($row, $status) => $status === 'cancelled')
+            ->sum('amount');
+
         $purchaseExpenseTotal = (float) PurchaseExpense::sum('amount');
         $purchaseReturnAmount = (float) PurchaseReturn::sum('total_amount');
         $saleReturnAmount = (float) SaleReturn::sum('total_amount');
@@ -214,6 +242,12 @@ class DashboardController extends Controller
                 'all_orders_count' => $allOrdersCount,
                 'all_orders_amount' => $allOrdersAmount,
                 'orders_by_status' => $ordersByStatus,
+                'all_expenses_count' => $allExpensesCount,
+                'all_expenses_amount' => $allExpensesAmount,
+                'total_expenses' => $activeExpensesCount,
+                'expenses_amount' => $activeExpensesAmount,
+                'expenses_by_status' => $expensesByStatus,
+                'expenses_today' => (float) Expense::where('status', '!=', 'cancelled')->whereDate('expense_date', today())->sum('amount'),
                 'total_purchase_returns' => PurchaseReturn::count(),
                 'total_sales_returns' => SaleReturn::count(),
                 'total_transfers' => StockTransfer::count(),
@@ -254,37 +288,7 @@ class DashboardController extends Controller
                 'low_stock' => $lowStock,
                 'out_of_stock' => $outOfStock,
                 'outstanding_customers' => $outstandingCustomers,
-                'recent_activities' => $this->recentActivities(),
             ],
         ]);
-    }
-
-    protected function recentActivities(): array
-    {
-        $items = collect();
-
-        foreach (Purchase::latest()->limit(5)->get() as $p) {
-            $items->push(['type' => 'Purchase', 'ref' => $p->purchase_no, 'date' => $p->purchase_date?->format('Y-m-d'), 'amount' => $p->grand_total, 'id' => $p->id]);
-        }
-        foreach (Sale::latest()->limit(5)->get() as $s) {
-            $items->push(['type' => 'Sale', 'ref' => $s->invoice_no, 'date' => $s->sale_date?->format('Y-m-d'), 'amount' => $s->grand_total, 'id' => $s->id]);
-        }
-        foreach (SaleReturn::latest()->limit(3)->get() as $sr) {
-            $items->push(['type' => 'Sale Return', 'ref' => $sr->reference_no, 'date' => $sr->return_date?->format('Y-m-d'), 'amount' => $sr->total_amount, 'id' => $sr->id]);
-        }
-        foreach (StockTransfer::latest()->limit(3)->get() as $t) {
-            $items->push(['type' => 'Transfer', 'ref' => $t->reference_no, 'date' => $t->transfer_date?->format('Y-m-d'), 'amount' => $t->total_amount, 'id' => $t->id]);
-        }
-        foreach (DamagedStock::latest()->limit(3)->get() as $d) {
-            $items->push(['type' => 'Damage', 'ref' => $d->reference_no, 'date' => $d->damage_date?->format('Y-m-d'), 'amount' => $d->total_amount, 'id' => $d->id]);
-        }
-        foreach (StockAdjustment::latest()->limit(3)->get() as $a) {
-            $items->push(['type' => 'Adjustment', 'ref' => $a->reference_no, 'date' => $a->adjustment_date?->format('Y-m-d'), 'amount' => $a->total_amount, 'id' => $a->id]);
-        }
-        foreach (OpeningStock::latest()->limit(3)->get() as $o) {
-            $items->push(['type' => 'Opening', 'ref' => $o->reference_no, 'date' => $o->opening_date?->format('Y-m-d'), 'amount' => $o->total_amount, 'id' => $o->id]);
-        }
-
-        return $items->sortByDesc('date')->take(15)->values()->all();
     }
 }

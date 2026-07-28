@@ -6,6 +6,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerLedgerController;
 use App\Http\Controllers\DamagedStockController;
 use App\Http\Controllers\DamagedStockDetailController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExpenseHeadController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OpeningStockController;
 use App\Http\Controllers\OpeningStockDetailController;
@@ -134,6 +136,9 @@ Route::middleware('auth')->group(function () {
         ->name('order-returns.convert-to-sale-return');
     Route::resource('order-returns', OrderReturnController::class);
     Route::resource('order-return-details', OrderReturnDetailController::class);
+
+    Route::resource('expense-heads', ExpenseHeadController::class);
+    Route::resource('expenses', ExpenseController::class);
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
