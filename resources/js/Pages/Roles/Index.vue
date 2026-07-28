@@ -54,14 +54,14 @@ const confirmDelete = () => {
 </script>
 
 <template>
-    <Head title="Role Management" />
+    <Head :title="$t('Role Management')" />
 
     <AuthenticatedLayout>
         <!-- Page Header -->
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Role Management</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage and monitor system access and roles.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Role Management') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage and monitor system access and roles.') }}</p>
             </div>
             
             <Link :href="route('roles.create')" class="theme-btn-primary">
@@ -91,8 +91,8 @@ const confirmDelete = () => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Role Name</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Role Name') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -106,8 +106,8 @@ const confirmDelete = () => {
                                     <Link 
                                         :href="route('roles.edit', role.id)" 
                                         class="theme-table-action-btn theme-table-action-edit"
-                                        title="Edit Role"
-                                        aria-label="Edit Role"
+                                        :title="$t('Edit Role')"
+                                        :aria-label="$t('Edit Role')"
                                     >
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                             <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" stroke-linecap="round" stroke-linejoin="round" />
@@ -128,7 +128,7 @@ const confirmDelete = () => {
                         </tr>
                         <!-- Empty State -->
                         <tr v-if="roles.data.length === 0">
-                            <td colspan="2" class="px-6 py-12 text-center text-slate-400 font-medium italic dark:text-slate-500">No roles available.</td>
+                            <td colspan="2" class="px-6 py-12 text-center text-slate-400 font-medium italic dark:text-slate-500">{{ $t('No roles available.') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -137,7 +137,7 @@ const confirmDelete = () => {
             <!-- Pagination Footer -->
           <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
                  <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-400">
-                    Showing <span class="text-slate-900 dark:text-slate-200">{{ roles.from || 0 }}</span>
+                    {{ $t('Showing') }} <span class="text-slate-900 dark:text-slate-200">{{ roles.from || 0 }}</span>
                     to <span class="text-slate-900 dark:text-slate-200">{{ roles.to || 0 }}</span>
                     of <span class="text-slate-900 dark:text-slate-200">{{ roles.total }}</span> roles
                 </div>

@@ -4,6 +4,9 @@ import ReportBarChart from "@/Components/Reports/ReportBarChart.vue";
 import ReportHBarChart from "@/Components/Reports/ReportHBarChart.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { computed } from "vue";
+import { useLocale } from "@/i18n";
+
+const { t } = useLocale();
 
 const props = defineProps({
     kpis: { type: Object, default: () => ({}) },
@@ -233,7 +236,7 @@ const barHeight = (value, max) =>
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head :title="$t('Dashboard')" />
 
     <AuthenticatedLayout>
         <div class="max-w-[1700px] mx-auto space-y-6 lg:space-y-8">
@@ -243,14 +246,13 @@ const barHeight = (value, max) =>
             >
                 <div class="relative z-10">
                     <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-300">
-                        Aftab Traders
+                        {{ t('Aftab Traders') }}
                     </p>
                     <h2 class="mt-2 text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
-                        Decoration Lights Wholesale &amp; Retail ERP
+                        {{ t('Decoration Lights Wholesale & Retail ERP') }}
                     </h2>
                     <p class="mt-3 text-white/80 text-sm lg:text-base max-w-2xl leading-relaxed">
-                        Live overview of inventory, sales, purchases, stock levels,
-                        and customer balances across your wholesale and retail operations.
+                        {{ t('Live overview of inventory, sales, purchases, stock levels, and customer balances across your wholesale and retail operations.') }}
                     </p>
                 </div>
                 <div class="absolute -right-10 -top-10 w-40 h-40 lg:w-64 lg:h-64 bg-white/10 rounded-full blur-2xl"></div>
@@ -271,7 +273,7 @@ const barHeight = (value, max) =>
                 >
                     <div class="min-w-0 pr-2">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
-                            {{ stat.title }}
+                            {{ t(stat.title) }}
                         </p>
                         <p
                             class="text-xl lg:text-2xl font-black mt-1.5 truncate"
@@ -302,17 +304,17 @@ const barHeight = (value, max) =>
                 <div class="flex items-end justify-between gap-3">
                     <div>
                         <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider dark:text-slate-100">
-                            Orders by Status
+                            {{ t('Orders by Status') }}
                         </h3>
                         <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                            Total first, then amount and count for each order status
+                            {{ t('Total first, then amount and count for each order status') }}
                         </p>
                     </div>
                     <Link
                         :href="route('orders.index')"
                         class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
                     >
-                        View orders
+                        {{ t('View orders') }}
                     </Link>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 lg:gap-4">
@@ -321,14 +323,14 @@ const barHeight = (value, max) =>
                     >
                         <div class="min-w-0 pr-2">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
-                                Total Orders
+                                {{ t('Total Orders') }}
                             </p>
                             <p class="text-xl lg:text-2xl font-black mt-1.5 truncate text-slate-800 dark:text-slate-100">
                                 ${{ money(kpis.all_orders_amount ?? kpis.orders_amount) }}
                             </p>
                             <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
                                 {{ num(kpis.all_orders_count ?? kpis.total_orders) }}
-                                {{ Number((kpis.all_orders_count ?? kpis.total_orders) || 0) === 1 ? 'order' : 'orders' }}
+                                {{ Number((kpis.all_orders_count ?? kpis.total_orders) || 0) === 1 ? t('order') : t('orders') }}
                             </p>
                         </div>
                         <div class="bg-indigo-50 p-2 rounded-sm text-indigo-600 shrink-0 dark:bg-indigo-500/15 dark:text-indigo-400">
@@ -349,13 +351,13 @@ const barHeight = (value, max) =>
                     >
                         <div class="min-w-0 pr-2">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
-                                {{ stat.title }}
+                                {{ t(stat.title) }}
                             </p>
                             <p class="text-xl lg:text-2xl font-black mt-1.5 truncate" :class="stat.tone">
                                 ${{ money(stat.amount) }}
                             </p>
                             <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
-                                {{ num(stat.count) }} {{ stat.count === 1 ? 'order' : 'orders' }}
+                                {{ num(stat.count) }} {{ stat.count === 1 ? t('order') : t('orders') }}
                             </p>
                         </div>
                         <div class="bg-slate-50 p-2 rounded-sm text-slate-400 shrink-0 transition-all duration-300 group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-700 dark:text-slate-300">
@@ -372,17 +374,17 @@ const barHeight = (value, max) =>
                 <div class="flex items-end justify-between gap-3">
                     <div>
                         <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider dark:text-slate-100">
-                            Expenses by Status
+                            {{ t('Expenses by Status') }}
                         </h3>
                         <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                            Total first, then amount and count for each expense status
+                            {{ t('Total first, then amount and count for each expense status') }}
                         </p>
                     </div>
                     <Link
                         :href="route('expenses.index')"
                         class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
                     >
-                        View expenses
+                        {{ t('View expenses') }}
                     </Link>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 lg:gap-4">
@@ -391,14 +393,14 @@ const barHeight = (value, max) =>
                     >
                         <div class="min-w-0 pr-2">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
-                                Total Expenses
+                                {{ t('Total Expenses') }}
                             </p>
                             <p class="text-xl lg:text-2xl font-black mt-1.5 truncate text-slate-800 dark:text-slate-100">
                                 ${{ money(kpis.all_expenses_amount) }}
                             </p>
                             <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
                                 {{ num(kpis.all_expenses_count) }}
-                                {{ Number(kpis.all_expenses_count || 0) === 1 ? 'expense' : 'expenses' }}
+                                {{ Number(kpis.all_expenses_count || 0) === 1 ? t('expense') : t('expenses') }}
                             </p>
                         </div>
                         <div class="bg-indigo-50 p-2 rounded-sm text-indigo-600 shrink-0 dark:bg-indigo-500/15 dark:text-indigo-400">
@@ -419,13 +421,13 @@ const barHeight = (value, max) =>
                     >
                         <div class="min-w-0 pr-2">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] dark:text-slate-500 truncate">
-                                {{ stat.title }}
+                                {{ t(stat.title) }}
                             </p>
                             <p class="text-xl lg:text-2xl font-black mt-1.5 truncate" :class="stat.tone">
                                 ${{ money(stat.amount) }}
                             </p>
                             <p class="text-[10px] text-slate-400 mt-0.5 dark:text-slate-500">
-                                {{ num(stat.count) }} {{ stat.count === 1 ? 'expense' : 'expenses' }}
+                                {{ num(stat.count) }} {{ stat.count === 1 ? t('expense') : t('expenses') }}
                             </p>
                         </div>
                         <div class="bg-slate-50 p-2 rounded-sm text-slate-400 shrink-0 transition-all duration-300 group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-700 dark:text-slate-300">
@@ -442,8 +444,8 @@ const barHeight = (value, max) =>
                 <div class="theme-form-card xl:col-span-2 overflow-hidden self-start">
                     <div class="theme-form-section-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
-                            <h3 class="theme-form-section-title">Monthly Purchases vs Sales</h3>
-                            <p class="mt-1 text-xs text-slate-400">Last 12 months comparison · fixed chart height</p>
+                            <h3 class="theme-form-section-title">{{ t('Monthly Purchases vs Sales') }}</h3>
+                            <p class="mt-1 text-xs text-slate-400">{{ $t('Last 12 months comparison · fixed chart height') }}</p>
                         </div>
                     </div>
                     <div class="p-4 lg:p-6">
@@ -461,8 +463,8 @@ const barHeight = (value, max) =>
 
                 <div class="theme-form-card overflow-hidden self-start">
                     <div class="theme-form-section-header">
-                        <h3 class="theme-form-section-title">Warehouse Stock</h3>
-                        <p class="mt-1 text-xs text-slate-400">Quantity by location</p>
+                        <h3 class="theme-form-section-title">{{ t('Warehouse Stock') }}</h3>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Quantity by location') }}</p>
                     </div>
                     <div class="p-4 lg:p-6">
                         <ReportHBarChart
@@ -479,8 +481,8 @@ const barHeight = (value, max) =>
             <!-- Category Inventory -->
             <div class="theme-form-card overflow-hidden">
                 <div class="theme-form-section-header">
-                    <h3 class="theme-form-section-title">Product Stocks</h3>
-                    <p class="mt-1 text-xs text-slate-400">Top products by quantity · fixed chart height</p>
+                    <h3 class="theme-form-section-title">{{ t('Product Stocks') }}</h3>
+                    <p class="mt-1 text-xs text-slate-400">{{ $t('Top products by quantity · fixed chart height') }}</p>
                 </div>
                 <div class="p-4 lg:p-6">
                     <div v-if="categoryInv.length" class="h-[220px] overflow-x-auto">
@@ -505,7 +507,7 @@ const barHeight = (value, max) =>
                             </div>
                         </div>
                     </div>
-                    <p v-else class="py-8 text-center text-sm text-slate-400">No category data.</p>
+                    <p v-else class="py-8 text-center text-sm text-slate-400">{{ $t('No category data.') }}</p>
                 </div>
             </div>
 
@@ -513,15 +515,15 @@ const barHeight = (value, max) =>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 <div class="theme-table-card">
                     <div class="theme-form-section-header">
-                        <h3 class="theme-form-section-title">Top Selling Products</h3>
+                        <h3 class="theme-form-section-title">{{ t('Top Selling Products') }}</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">Product</th>
-                                    <th class="theme-table-header-cell text-right">Qty</th>
-                                    <th class="theme-table-header-cell text-right">Amount</th>
+                                    <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Qty') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -534,7 +536,7 @@ const barHeight = (value, max) =>
                                     <td class="px-6 py-3 text-sm text-right font-bold text-slate-700 dark:text-slate-300">${{ money(item.amount) }}</td>
                                 </tr>
                                 <tr v-if="!topSelling.length">
-                                    <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-400">No sales data yet.</td>
+                                    <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-400">{{ $t('No sales data yet.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -543,15 +545,15 @@ const barHeight = (value, max) =>
 
                 <div class="theme-table-card">
                     <div class="theme-form-section-header">
-                        <h3 class="theme-form-section-title">Top Customers</h3>
+                        <h3 class="theme-form-section-title">{{ t('Top Customers') }}</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">Customer</th>
-                                    <th class="theme-table-header-cell text-right">Invoices</th>
-                                    <th class="theme-table-header-cell text-right">Amount</th>
+                                    <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Invoices') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -564,7 +566,7 @@ const barHeight = (value, max) =>
                                     <td class="px-6 py-3 text-sm text-right font-bold text-slate-700 dark:text-slate-300">${{ money(item.amount) }}</td>
                                 </tr>
                                 <tr v-if="!topCustomers.length">
-                                    <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-400">No customer data yet.</td>
+                                    <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-400">{{ $t('No customer data yet.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -576,16 +578,16 @@ const barHeight = (value, max) =>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                 <div class="theme-table-card">
                     <div class="theme-form-section-header flex items-center justify-between">
-                        <h3 class="theme-form-section-title">Recent Purchases</h3>
-                        <Link :href="route('purchases.index')" class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</Link>
+                        <h3 class="theme-form-section-title">{{ t('Recent Purchases') }}</h3>
+                        <Link :href="route('purchases.index')" class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">{{ $t('View all') }}</Link>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">PO #</th>
-                                    <th class="theme-table-header-cell">Date</th>
-                                    <th class="theme-table-header-cell text-right">Total</th>
+                                    <th class="theme-table-header-cell">{{ $t('PO #') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Total') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -597,7 +599,7 @@ const barHeight = (value, max) =>
                                     <td class="px-4 py-2.5 text-xs text-right font-bold text-slate-700 dark:text-slate-300">${{ money(p.grand_total) }}</td>
                                 </tr>
                                 <tr v-if="!recentPurchases.length">
-                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-400">No recent purchases.</td>
+                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-400">{{ $t('No recent purchases.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -606,16 +608,16 @@ const barHeight = (value, max) =>
 
                 <div class="theme-table-card">
                     <div class="theme-form-section-header flex items-center justify-between">
-                        <h3 class="theme-form-section-title">Recent Sales</h3>
-                        <Link :href="route('sales.index')" class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</Link>
+                        <h3 class="theme-form-section-title">{{ t('Recent Sales') }}</h3>
+                        <Link :href="route('sales.index')" class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">{{ $t('View all') }}</Link>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">Invoice</th>
-                                    <th class="theme-table-header-cell">Date</th>
-                                    <th class="theme-table-header-cell text-right">Total</th>
+                                    <th class="theme-table-header-cell">{{ $t('Invoice') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Total') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -627,7 +629,7 @@ const barHeight = (value, max) =>
                                     <td class="px-4 py-2.5 text-xs text-right font-bold text-slate-700 dark:text-slate-300">${{ money(s.grand_total) }}</td>
                                 </tr>
                                 <tr v-if="!recentSales.length">
-                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-400">No recent sales.</td>
+                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-400">{{ $t('No recent sales.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -636,16 +638,16 @@ const barHeight = (value, max) =>
 
                 <div class="theme-table-card">
                     <div class="theme-form-section-header flex items-center justify-between">
-                        <h3 class="theme-form-section-title">Recent Transfers</h3>
-                        <Link :href="route('stock-transfers.index')" class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View all</Link>
+                        <h3 class="theme-form-section-title">{{ t('Recent Transfers') }}</h3>
+                        <Link :href="route('stock-transfers.index')" class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">{{ $t('View all') }}</Link>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">Ref #</th>
-                                    <th class="theme-table-header-cell">Date</th>
-                                    <th class="theme-table-header-cell text-right">Amount</th>
+                                    <th class="theme-table-header-cell">{{ $t('Ref #') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -657,7 +659,7 @@ const barHeight = (value, max) =>
                                     <td class="px-4 py-2.5 text-xs text-right font-bold text-slate-700 dark:text-slate-300">${{ money(t.total_amount) }}</td>
                                 </tr>
                                 <tr v-if="!recentTransfers.length">
-                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-400">No recent transfers.</td>
+                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-400">{{ $t('No recent transfers.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -669,16 +671,16 @@ const barHeight = (value, max) =>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                 <div class="theme-table-card">
                     <div class="theme-form-section-header">
-                        <h3 class="theme-form-section-title text-amber-700 dark:text-amber-400">Low Stock Alerts</h3>
+                        <h3 class="theme-form-section-title text-amber-700 dark:text-amber-400">{{ t('Low Stock Alerts') }}</h3>
                         <p class="mt-1 text-xs text-slate-400">{{ kpis.low_stock_count || 0 }} items below minimum</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">Product</th>
-                                    <th class="theme-table-header-cell">Warehouse</th>
-                                    <th class="theme-table-header-cell text-right">Avail / Min</th>
+                                    <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Avail / Min') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -688,7 +690,7 @@ const barHeight = (value, max) =>
                                     <td class="px-4 py-2.5 text-xs text-right font-bold text-amber-600 dark:text-amber-400">{{ num(row.available_quantity) }} / {{ num(row.minimum_stock) }}</td>
                                 </tr>
                                 <tr v-if="!lowStock.length">
-                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">All stock levels healthy.</td>
+                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">{{ $t('All stock levels healthy.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -697,16 +699,16 @@ const barHeight = (value, max) =>
 
                 <div class="theme-table-card">
                     <div class="theme-form-section-header">
-                        <h3 class="theme-form-section-title text-rose-700 dark:text-rose-400">Out of Stock</h3>
+                        <h3 class="theme-form-section-title text-rose-700 dark:text-rose-400">{{ t('Out of Stock') }}</h3>
                         <p class="mt-1 text-xs text-slate-400">{{ kpis.out_of_stock_count || 0 }} items unavailable</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">Product</th>
-                                    <th class="theme-table-header-cell">Warehouse</th>
-                                    <th class="theme-table-header-cell text-right">Available</th>
+                                    <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Available') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -716,7 +718,7 @@ const barHeight = (value, max) =>
                                     <td class="px-4 py-2.5 text-xs text-right font-bold text-rose-600 dark:text-rose-400">{{ num(row.available_quantity) }}</td>
                                 </tr>
                                 <tr v-if="!outOfStock.length">
-                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">No out-of-stock items.</td>
+                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">{{ $t('No out-of-stock items.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -725,15 +727,15 @@ const barHeight = (value, max) =>
 
                 <div class="theme-table-card">
                     <div class="theme-form-section-header">
-                        <h3 class="theme-form-section-title">Outstanding Customers</h3>
-                        <p class="mt-1 text-xs text-slate-400">Total receivable: ${{ money(kpis.outstanding_balance) }}</p>
+                        <h3 class="theme-form-section-title">{{ t('Outstanding Customers') }}</h3>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Total receivable') }}: ${{ money(kpis.outstanding_balance) }}</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="theme-table-header">
-                                    <th class="theme-table-header-cell">Customer</th>
-                                    <th class="theme-table-header-cell text-right">Balance</th>
+                                    <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Balance') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -744,7 +746,7 @@ const barHeight = (value, max) =>
                                     <td class="px-4 py-2.5 text-xs text-right font-bold text-rose-600 dark:text-rose-400">${{ money(c.outstanding) }}</td>
                                 </tr>
                                 <tr v-if="!outstandingCustomers.length">
-                                    <td colspan="2" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">No outstanding balances.</td>
+                                    <td colspan="2" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">{{ $t('No outstanding balances.') }}</td>
                                 </tr>
                             </tbody>
                         </table>

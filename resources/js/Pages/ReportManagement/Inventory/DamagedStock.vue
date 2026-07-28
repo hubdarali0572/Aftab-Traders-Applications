@@ -25,13 +25,13 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Product</th>
-                        <th class="theme-table-header-cell">Warehouse</th>
-                        <th class="theme-table-header-cell">Damage Date</th>
-                        <th class="theme-table-header-cell text-right">Quantity</th>
-                        <th class="theme-table-header-cell text-right">Value</th>
-                        <th class="theme-table-header-cell">Reason</th>
-                        <th class="theme-table-header-cell">Recorded By</th>
+                        <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Damage Date') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Quantity') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Value') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Reason') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Recorded By') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -44,7 +44,7 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-sm">{{ r.reason || '—' }}</td>
                         <td class="px-6 py-3 text-sm">{{ r.recorded_by || '—' }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">No damaged stock.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">{{ $t('No damaged stock.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

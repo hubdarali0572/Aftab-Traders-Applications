@@ -118,7 +118,7 @@ const submit = () => {
                 class="theme-form-back-link"
             >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="text-slate-900">Back to User List</span>
+                <span class="text-slate-900">{{ $t('Back to User List') }}</span>
             </Link>
         </div>
 
@@ -132,7 +132,7 @@ const submit = () => {
                             
                             <!-- Full Name -->
                             <div class="flex flex-col">
-                                <InputLabel for="name" value="Name" class="theme-form-label ml-1" />
+                                <InputLabel for="name" :value="$t('Name')" class="theme-form-label ml-1" />
                                 <TextInput
                                     id="name"
                                     type="text"
@@ -147,7 +147,7 @@ const submit = () => {
 
                             <!-- Email Address -->
                             <div class="flex flex-col">
-                                <InputLabel for="email" value="Email Address" class="theme-form-label ml-1" />
+                                <InputLabel for="email" :value="$t('Email Address')" class="theme-form-label ml-1" />
                                 <TextInput
                                     id="email"
                                     type="email"
@@ -202,7 +202,7 @@ const submit = () => {
                                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                 </svg>
                                             </li>
-                                            <li v-if="filteredRoles.length === 0" class="px-5 py-8 text-center text-slate-400 text-xs dark:text-slate-500">No results found</li>
+                                            <li v-if="filteredRoles.length === 0" class="px-5 py-8 text-center text-slate-400 text-xs dark:text-slate-500">{{ $t('No results found') }}</li>
                                         </ul>
                                     </div>
                                 </transition>
@@ -211,7 +211,7 @@ const submit = () => {
 
                             <!-- Password -->
                             <div class="flex flex-col">
-                                <InputLabel for="password" value="Password" class="theme-form-label ml-1" />
+                                <InputLabel for="password" :value="$t('Password')" class="theme-form-label ml-1" />
                                 <div class="relative">
                                     <TextInput
                                         id="password"
@@ -226,13 +226,13 @@ const submit = () => {
                                         <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21"/></svg>
                                     </button>
                                 </div>
-                                <p v-if="isEditing" class="mt-2 text-[10px] text-slate-400 font-bold italic ml-1 dark:text-slate-500">Leave blank to keep current password.</p>
+                                <p v-if="isEditing" class="mt-2 text-[10px] text-slate-400 font-bold italic ml-1 dark:text-slate-500">{{ $t('Leave blank to keep current password.') }}</p>
                                 <InputError :message="form.errors.password" class="mt-2 ml-1" />
                             </div>
 
                             <!-- Confirm Password -->
                             <div class="flex flex-col">
-                                <InputLabel for="password_confirmation" value="Confirm Password" class="theme-form-label ml-1" />
+                                <InputLabel for="password_confirmation" :value="$t('Confirm Password')" class="theme-form-label ml-1" />
                                 <TextInput
                                     id="password_confirmation"
                                     type="password"
@@ -281,7 +281,7 @@ const submit = () => {
                                         >
                                             Select New Photo
                                         </button>
-                                        <p class="text-[10px] text-slate-400 font-medium ml-1 dark:text-slate-500">JPG, PNG or GIF. Max 2MB.</p>
+                                        <p class="text-[10px] text-slate-400 font-medium ml-1 dark:text-slate-500">{{ $t('JPG, PNG or GIF. Max 2MB.') }}</p>
                                     </div>
                                 </div>
                                 

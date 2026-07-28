@@ -27,8 +27,8 @@ const submit = () => form.post(route('stock-transfers.store'));
     <AuthenticatedLayout>
         <Head title="Create Stock Transfer" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-800">New Stock Transfer</h2>
-            <Link :href="route('stock-transfers.index')" class="theme-form-back-link">Back to List</Link>
+            <h2 class="text-2xl font-black text-slate-800">{{ $t('New Stock Transfer') }}</h2>
+            <Link :href="route('stock-transfers.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
@@ -39,50 +39,50 @@ const submit = () => form.post(route('stock-transfers.store'));
                     <InputError :message="form.errors.reference_no" />
                 </div>
                 <div>
-                    <InputLabel value="Transfer Date" />
+                    <InputLabel :value="$t('Transfer Date')" />
                     <TextInput type="date" v-model="form.transfer_date" class="w-full" required />
                     <InputError :message="form.errors.transfer_date" />
                 </div>
                 <div>
-                    <InputLabel value="Stock Status" />
+                    <InputLabel :value="$t('Stock Status')" />
                     <select v-model="form.stock_status" class="theme-form-input w-full" required>
-                        <option value="draft">Draft</option>
-                        <option value="in_transit">In Transit</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="draft">{{ $t('Draft') }}</option>
+                        <option value="in_transit">{{ $t('In Transit') }}</option>
+                        <option value="completed">{{ $t('Completed') }}</option>
+                        <option value="cancelled">{{ $t('Cancelled') }}</option>
                     </select>
                     <InputError :message="form.errors.stock_status" />
                 </div>
                 <div>
-                    <InputLabel value="From Warehouse" />
+                    <InputLabel :value="$t('From Warehouse')" />
                     <select v-model="form.from_warehouse_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Source Warehouse</option>
+                        <option value="" disabled>{{ $t('Select Source Warehouse') }}</option>
                         <option v-for="w in warehouses" :key="w.id" :value="w.id" :disabled="w.id == form.to_warehouse_id">{{ w.name }}</option>
                     </select>
                     <InputError :message="form.errors.from_warehouse_id" />
                 </div>
                 <div>
-                    <InputLabel value="To Warehouse" />
+                    <InputLabel :value="$t('To Warehouse')" />
                     <select v-model="form.to_warehouse_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Destination Warehouse</option>
+                        <option value="" disabled>{{ $t('Select Destination Warehouse') }}</option>
                         <option v-for="w in warehouses" :key="w.id" :value="w.id" :disabled="w.id == form.from_warehouse_id">{{ w.name }}</option>
                     </select>
                     <InputError :message="form.errors.to_warehouse_id" />
                 </div>
                 <div>
-                    <InputLabel value="Total Quantity" />
+                    <InputLabel :value="$t('Total Quantity')" />
                     <TextInput type="number" step="0.01" v-model="form.total_quantity" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Total Amount" />
+                    <InputLabel :value="$t('Total Amount')" />
                     <TextInput type="number" step="0.01" v-model="form.total_amount" class="w-full" />
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
-            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">Save Transfer</PrimaryButton></div>
+            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">{{ $t('Save Transfer') }}</PrimaryButton></div>
         </form>
     </AuthenticatedLayout>
 </template>

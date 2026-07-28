@@ -63,18 +63,18 @@ const clearSearch = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Product Category Management" />
+        <Head :title="$t('Product Category Management')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Product Category Management</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage and monitor system access and roles.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Product Category Management') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage and monitor system access and roles.') }}</p>
             </div>
             <Link :href="route('product-categories.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Create New Category
+                {{ $t('Create New Category') }}
             </Link>
         </div>
 
@@ -95,8 +95,8 @@ const clearSearch = () => {
                 <form @submit.prevent="applySearch" class="flex flex-col sm:flex-row gap-3">
                     <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search categories..." />
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -105,11 +105,11 @@ const clearSearch = () => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Code</th>
-                            <th class="theme-table-header-cell">Name</th>
-                            <th class="theme-table-header-cell">Type</th>
-                            <th class="theme-table-header-cell">Status</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Code') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Name') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Type') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Status') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -134,7 +134,7 @@ const clearSearch = () => {
                             </td>
                         </tr>
                         <tr v-if="categories.data.length === 0">
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No categories found.</td>
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No categories found.') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -142,7 +142,7 @@ const clearSearch = () => {
 
             <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
                 <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">
-                    Showing <span class="text-slate-900 dark:text-slate-200">{{ categories.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ categories.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ categories.total }}</span> entries
+                    {{ $t('Showing') }} <span class="text-slate-900 dark:text-slate-200">{{ categories.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ categories.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ categories.total }}</span> {{ $t('entries') }}
                 </div>
                 <div class="flex flex-wrap justify-center items-center gap-1.5">
                     <template v-for="(link, k) in categories.links" :key="k">

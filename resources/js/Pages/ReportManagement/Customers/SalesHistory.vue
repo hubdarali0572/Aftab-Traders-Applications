@@ -40,14 +40,14 @@ const statusClass = (s) => ({ paid: 'bg-emerald-100 text-emerald-700', partial: 
             <table class="w-full text-left min-w-[1100px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Invoice No</th>
-                        <th class="theme-table-header-cell">Date</th>
-                        <th class="theme-table-header-cell">Products</th>
-                        <th class="theme-table-header-cell text-right">Qty</th>
-                        <th class="theme-table-header-cell text-right">Amount</th>
-                        <th class="theme-table-header-cell text-right">Discount</th>
-                        <th class="theme-table-header-cell text-right">Net Total</th>
-                        <th class="theme-table-header-cell">Payment Status</th>
+                        <th class="theme-table-header-cell">{{ $t('Invoice No') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Products') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Qty') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Discount') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Net Total') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Payment Status') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -61,7 +61,7 @@ const statusClass = (s) => ({ paid: 'bg-emerald-100 text-emerald-700', partial: 
                         <td class="px-6 py-3 text-right font-bold">${{ money(r.net_total) }}</td>
                         <td class="px-6 py-3"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-bold capitalize" :class="statusClass(r.payment_status)">{{ r.payment_status }}</span></td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="8" class="px-6 py-12 text-center text-slate-400">Select a customer to view sales history.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="8" class="px-6 py-12 text-center text-slate-400">{{ $t('Select a customer to view sales history.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

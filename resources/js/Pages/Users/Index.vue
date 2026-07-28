@@ -63,20 +63,20 @@ const confirmDelete = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="User Management" />
+        <Head :title="$t('User Management')" />
 
         <!-- Page Header -->
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">User Management</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage and monitor system access and roles.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('User Management') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage and monitor system access and roles.') }}</p>
             </div>
             
             <Link :href="route('users.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Create New User
+                {{ $t('Create New User') }}
             </Link>
         </div>
 
@@ -103,9 +103,9 @@ const confirmDelete = () => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">User Info</th>
-                            <th class="theme-table-header-cell">User Role</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('User Info') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('User Role') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -165,7 +165,7 @@ const confirmDelete = () => {
                             </td>
                         </tr>
                         <tr v-if="users.data.length === 0">
-                            <td colspan="3" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No users found.</td>
+                            <td colspan="3" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No users found.') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -174,7 +174,7 @@ const confirmDelete = () => {
             <!-- Pagination Footer -->
             <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
                 <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">
-                    Showing <span class="text-slate-900 dark:text-slate-200">{{ users.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ users.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ users.total }}</span> entries
+                    {{ $t('Showing') }} <span class="text-slate-900 dark:text-slate-200">{{ users.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ users.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ users.total }}</span> {{ $t('entries') }}
                 </div>
 
                 <div class="flex flex-wrap justify-center items-center gap-1.5">

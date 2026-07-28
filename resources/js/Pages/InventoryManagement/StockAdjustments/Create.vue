@@ -25,8 +25,8 @@ const submit = () => form.post(route('stock-adjustments.store'));
     <AuthenticatedLayout>
         <Head title="Create Adjustment" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-800">New Stock Adjustment</h2>
-            <Link :href="route('stock-adjustments.index')" class="theme-form-back-link">Back to List</Link>
+            <h2 class="text-2xl font-black text-slate-800">{{ $t('New Stock Adjustment') }}</h2>
+            <Link :href="route('stock-adjustments.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
@@ -37,37 +37,37 @@ const submit = () => form.post(route('stock-adjustments.store'));
                     <InputError :message="form.errors.reference_no" />
                 </div>
                 <div>
-                    <InputLabel value="Adjustment Date" />
+                    <InputLabel :value="$t('Adjustment Date')" />
                     <TextInput type="date" v-model="form.adjustment_date" class="w-full" required />
                 </div>
                 <div>
-                    <InputLabel value="Warehouse" />
+                    <InputLabel :value="$t('Warehouse')" />
                     <select v-model="form.warehouse_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Warehouse</option>
+                        <option value="" disabled>{{ $t('Select Warehouse') }}</option>
                         <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
                     </select>
                 </div>
                 <div>
                     <InputLabel value="Adjustment Type" />
                     <select v-model="form.adjustment_type" class="theme-form-input w-full">
-                        <option value="increase">Increase (+)</option>
-                        <option value="decrease">Decrease (-)</option>
+                        <option value="increase">{{ $t('Increase (+)') }}</option>
+                        <option value="decrease">{{ $t('Decrease (-)') }}</option>
                     </select>
                 </div>
                 <div>
-                    <InputLabel value="Total Quantity" />
+                    <InputLabel :value="$t('Total Quantity')" />
                     <TextInput type="number" step="0.01" v-model="form.total_quantity" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Total Amount" />
+                    <InputLabel :value="$t('Total Amount')" />
                     <TextInput type="number" step="0.01" v-model="form.total_amount" class="w-full" />
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
-            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">Save Adjustment</PrimaryButton></div>
+            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">{{ $t('Save Adjustment') }}</PrimaryButton></div>
         </form>
     </AuthenticatedLayout>
 </template>

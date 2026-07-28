@@ -30,7 +30,7 @@ const goBack = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Confirm Password" />
+        <Head :title="$t('Confirm Password')" />
 
         <div class="mb-6 text-center sm:mb-8">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 mb-4 dark:bg-indigo-500/15">
@@ -40,16 +40,16 @@ const goBack = () => {
             </div>
 
             <h2 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white">
-                Security Check
+                {{ $t('Security Check') }}
             </h2>
             <p class="mt-2 text-sm text-slate-500 px-2 dark:text-slate-400">
-                You're entering a protected area. Please confirm your password to verify your identity.
+                {{ $t('You\'re entering a protected area. Please confirm your password to verify your identity.') }}
             </p>
         </div>
 
         <form @submit.prevent="submit" class="space-y-6">
             <div>
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" :value="$t('Password')" />
 
                 <div class="mt-1.5 relative">
                     <TextInput
@@ -87,9 +87,9 @@ const goBack = () => {
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Verifying Identity...
+                    {{ $t('Verifying Identity...') }}
                 </span>
-                <span v-else>Confirm & Continue</span>
+                <span v-else>{{ $t('Confirm & Continue') }}</span>
             </PrimaryButton>
         </form>
 
@@ -102,7 +102,7 @@ const goBack = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
-                Cancel and go back
+                {{ $t('Cancel and go back') }}
             </button>
         </div>
     </GuestLayout>

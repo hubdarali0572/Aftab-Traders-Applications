@@ -64,8 +64,8 @@ const submit = () => {
     <AuthenticatedLayout>
         <Head title="Edit Order Return Item" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-900">Edit Order Return Line Item</h2>
-            <Link :href="route('order-return-details.index')" class="theme-form-back-link">Back</Link>
+            <h2 class="text-2xl font-black text-slate-900">{{ $t('Edit Order Return Line Item') }}</h2>
+            <Link :href="route('order-return-details.index')" class="theme-form-back-link">{{ $t('Back') }}</Link>
         </div>
 
         <div
@@ -88,14 +88,14 @@ const submit = () => {
                     <InputError :message="form.errors.order_return_id" />
                 </div>
                 <div>
-                    <InputLabel value="Product" />
+                    <InputLabel :value="$t('Product')" />
                     <select v-model="form.product_id" class="theme-form-input w-full" required @change="syncUnit">
                         <option v-for="product in availableProducts" :key="product.id" :value="product.id">{{ product.name }}</option>
                     </select>
                     <InputError :message="form.errors.product_id" />
                 </div>
                 <div>
-                    <InputLabel value="Unit" />
+                    <InputLabel :value="$t('Unit')" />
                     <select v-model="form.unit_id" class="theme-form-input w-full" required>
                         <option v-for="unit in units" :key="unit.id" :value="unit.id">{{ unit.name }}</option>
                     </select>
@@ -116,18 +116,18 @@ const submit = () => {
                     <div class="theme-form-input bg-slate-50 font-bold text-indigo-600 dark:bg-slate-700/50">${{ lineTotal }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Reason" />
+                    <InputLabel :value="$t('Reason')" />
                     <TextInput v-model="form.reason" class="w-full" placeholder="e.g. Damaged, wrong size" />
                     <InputError :message="form.errors.reason" />
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
                 <InputError :message="form.errors.remarks" />
             </div>
             <div class="flex justify-center">
-                <PrimaryButton type="submit" :disabled="form.processing">Update Item</PrimaryButton>
+                <PrimaryButton type="submit" :disabled="form.processing">{{ $t('Update Item') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

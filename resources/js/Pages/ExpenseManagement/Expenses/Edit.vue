@@ -32,17 +32,17 @@ const submit = () => form.put(route('expenses.update', props.expense.id));
 </script>
 
 <template>
-    <Head title="Edit Expense" />
+    <Head :title="$t('Edit Expense')" />
 
     <AuthenticatedLayout>
         <div class="max-w-8xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">Edit Expense</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">{{ $t('Edit Expense') }}</h2>
                 <p class="text-sm text-slate-800 mt-1 font-medium dark:text-slate-400">Update expense {{ expense.expense_no }}</p>
             </div>
             <Link :href="route('expenses.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="text-slate-900">Back to List</span>
+                <span class="text-slate-900">{{ $t('Back to List') }}</span>
             </Link>
         </div>
 
@@ -52,7 +52,7 @@ const submit = () => form.put(route('expenses.update', props.expense.id));
                     <div class="p-8 md:p-10">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-8">
                             <div class="flex flex-col">
-                                <InputLabel for="expense_no" value="Expense No" class="theme-form-label ml-1" />
+                                <InputLabel for="expense_no" :value="$t('Expense No')" class="theme-form-label ml-1" />
                                 <TextInput id="expense_no" type="text" class="theme-form-input" v-model="form.expense_no" required />
                                 <InputError :message="form.errors.expense_no" class="mt-2 ml-1" />
                             </div>
@@ -62,16 +62,16 @@ const submit = () => form.put(route('expenses.update', props.expense.id));
                                 <InputError :message="form.errors.expense_date" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="expense_head_id" value="Expense Head" class="theme-form-label ml-1" />
+                                <InputLabel for="expense_head_id" :value="$t('Expense Head')" class="theme-form-label ml-1" />
                                 <select id="expense_head_id" v-model="form.expense_head_id" class="theme-form-input w-full" required>
                                     <option v-for="h in expenseHeads" :key="h.id" :value="h.id">{{ h.head_code }} — {{ h.name }}</option>
                                 </select>
                                 <InputError :message="form.errors.expense_head_id" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="warehouse_id" value="Warehouse" class="theme-form-label ml-1" />
+                                <InputLabel for="warehouse_id" :value="$t('Warehouse')" class="theme-form-label ml-1" />
                                 <select id="warehouse_id" v-model="form.warehouse_id" class="theme-form-input w-full" required>
-                                    <option value="" disabled>Select warehouse</option>
+                                    <option value="" disabled>{{ $t('Select warehouse') }}</option>
                                     <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
                                 </select>
                                 <InputError :message="form.errors.warehouse_id" class="mt-2 ml-1" />
@@ -87,47 +87,47 @@ const submit = () => form.put(route('expenses.update', props.expense.id));
                                 <InputError :message="form.errors.payee_name" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="amount" value="Amount" class="theme-form-label ml-1" />
+                                <InputLabel for="amount" :value="$t('Amount')" class="theme-form-label ml-1" />
                                 <TextInput id="amount" type="number" step="0.01" min="0.01" class="theme-form-input" v-model="form.amount" required />
                                 <InputError :message="form.errors.amount" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="payment_method" value="Payment Method" class="theme-form-label ml-1" />
+                                <InputLabel for="payment_method" :value="$t('Payment Method')" class="theme-form-label ml-1" />
                                 <select id="payment_method" v-model="form.payment_method" class="theme-form-input w-full" required>
-                                    <option value="cash">Cash</option>
-                                    <option value="bank">Bank</option>
-                                    <option value="cheque">Cheque</option>
-                                    <option value="online">Online</option>
+                                    <option value="cash">{{ $t('Cash') }}</option>
+                                    <option value="bank">{{ $t('Bank') }}</option>
+                                    <option value="cheque">{{ $t('Cheque') }}</option>
+                                    <option value="online">{{ $t('Online') }}</option>
                                 </select>
                                 <InputError :message="form.errors.payment_method" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="status" value="Status" class="theme-form-label ml-1" />
+                                <InputLabel for="status" :value="$t('Status')" class="theme-form-label ml-1" />
                                 <select id="status" v-model="form.status" class="theme-form-input w-full" required>
-                                    <option value="draft">Draft</option>
-                                    <option value="approved">Approved</option>
-                                    <option value="paid">Paid</option>
-                                    <option value="cancelled">Cancelled</option>
+                                    <option value="draft">{{ $t('Draft') }}</option>
+                                    <option value="approved">{{ $t('Approved') }}</option>
+                                    <option value="paid">{{ $t('Paid') }}</option>
+                                    <option value="cancelled">{{ $t('Cancelled') }}</option>
                                 </select>
                                 <InputError :message="form.errors.status" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="reference_no" value="Reference No" class="theme-form-label ml-1" />
+                                <InputLabel for="reference_no" :value="$t('Reference No')" class="theme-form-label ml-1" />
                                 <TextInput id="reference_no" type="text" class="theme-form-input" v-model="form.reference_no" />
                                 <InputError :message="form.errors.reference_no" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="invoice_no" value="Invoice No" class="theme-form-label ml-1" />
+                                <InputLabel for="invoice_no" :value="$t('Invoice No')" class="theme-form-label ml-1" />
                                 <TextInput id="invoice_no" type="text" class="theme-form-input" v-model="form.invoice_no" />
                                 <InputError :message="form.errors.invoice_no" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col md:col-span-3">
-                                <InputLabel for="description" value="Description" class="theme-form-label ml-1" />
+                                <InputLabel for="description" :value="$t('Description')" class="theme-form-label ml-1" />
                                 <textarea id="description" class="theme-form-input min-h-[100px] resize-y" v-model="form.description"></textarea>
                                 <InputError :message="form.errors.description" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col md:col-span-3">
-                                <InputLabel for="remarks" value="Remarks" class="theme-form-label ml-1" />
+                                <InputLabel for="remarks" :value="$t('Remarks')" class="theme-form-label ml-1" />
                                 <textarea id="remarks" class="theme-form-input min-h-[80px] resize-y" v-model="form.remarks"></textarea>
                                 <InputError :message="form.errors.remarks" class="mt-2 ml-1" />
                             </div>
@@ -136,7 +136,7 @@ const submit = () => form.put(route('expenses.update', props.expense.id));
                 </div>
                 <div class="flex items-center justify-center pt-4">
                     <PrimaryButton class="theme-btn-primary px-12 py-4 rounded-full text-white font-black text-xs uppercase tracking-widest active:scale-95" :class="{ 'opacity-50 cursor-not-allowed': form.processing }" :disabled="form.processing">
-                        Update Expense
+                        {{ $t('Update Expense') }}
                     </PrimaryButton>
                 </div>
             </form>

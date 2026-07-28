@@ -39,30 +39,30 @@ const submit = () => form.put(route('purchase-details.update', props.detail.id))
         <Head title="Edit Purchase Item" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
             <div>
-                <h2 class="text-2xl font-black text-slate-900">Edit Purchase Line Item</h2>
+                <h2 class="text-2xl font-black text-slate-900">{{ $t('Edit Purchase Line Item') }}</h2>
                 <p class="text-sm text-slate-500 font-medium">Record ID: #{{ detail.id }}</p>
             </div>
-            <Link :href="route('purchase-details.index')" class="theme-form-back-link">Back to List</Link>
+            <Link :href="route('purchase-details.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <InputLabel value="Purchase Order" />
+                    <InputLabel :value="$t('Purchase Order')" />
                     <select v-model="form.purchase_id" class="theme-form-input w-full" required>
                         <option v-for="p in purchases" :key="p.id" :value="p.id">{{ p.purchase_no }}</option>
                     </select>
                     <InputError :message="form.errors.purchase_id" />
                 </div>
                 <div>
-                    <InputLabel value="Product" />
+                    <InputLabel :value="$t('Product')" />
                     <select v-model="form.product_id" class="theme-form-input w-full" required>
                         <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                     </select>
                     <InputError :message="form.errors.product_id" />
                 </div>
                 <div>
-                    <InputLabel value="Quantity" />
+                    <InputLabel :value="$t('Quantity')" />
                     <TextInput type="number" step="0.01" v-model="form.quantity" class="w-full" required />
                 </div>
                 <div>
@@ -70,15 +70,15 @@ const submit = () => form.put(route('purchase-details.update', props.detail.id))
                     <TextInput type="number" step="0.01" v-model="form.free_quantity" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Unit Price" />
+                    <InputLabel :value="$t('Unit Price')" />
                     <TextInput type="number" step="0.01" v-model="form.unit_price" class="w-full" required />
                 </div>
                 <div>
-                    <InputLabel value="Discount" />
+                    <InputLabel :value="$t('Discount')" />
                     <TextInput type="number" step="0.01" v-model="form.discount" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Tax" />
+                    <InputLabel :value="$t('Tax')" />
                     <TextInput type="number" step="0.01" v-model="form.tax" class="w-full" />
                 </div>
                 <div>
@@ -86,11 +86,11 @@ const submit = () => form.put(route('purchase-details.update', props.detail.id))
                     <div class="theme-form-input bg-slate-50 font-bold text-indigo-600">${{ lineTotal }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Batch No" />
+                    <InputLabel :value="$t('Batch No')" />
                     <TextInput v-model="form.batch_no" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Serial No" />
+                    <InputLabel :value="$t('Serial No')" />
                     <TextInput v-model="form.serial_no" class="w-full" />
                 </div>
                 <div>
@@ -98,16 +98,16 @@ const submit = () => form.put(route('purchase-details.update', props.detail.id))
                     <TextInput type="date" v-model="form.manufacturing_date" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Expiry Date" />
+                    <InputLabel :value="$t('Expiry Date')" />
                     <TextInput type="date" v-model="form.expiry_date" class="w-full" />
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
             <div class="flex justify-center pt-4">
-                <PrimaryButton :disabled="form.processing">Update Item</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">{{ $t('Update Item') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

@@ -30,11 +30,11 @@ const fmtDate = (value) => {
             </div>
             <div class="flex items-center gap-3">
                 <Link :href="route('warehouses.edit', warehouse.id)" class="theme-btn-primary px-6 py-3 rounded-full text-white font-black text-xs uppercase tracking-widest active:scale-95">
-                    Edit Warehouse
+                    {{ $t('Edit Warehouse') }}
                 </Link>
                 <Link :href="route('warehouses.index')" class="theme-form-back-link">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <span class="text-slate-900">Back to Warehouse List</span>
+                    <span class="text-slate-900">{{ $t('Back to Warehouse List') }}</span>
                 </Link>
             </div>
         </div>
@@ -47,17 +47,17 @@ const fmtDate = (value) => {
                             <span class="h-1.5 w-1.5 rounded-full" :class="warehouse.status ? 'bg-emerald-500' : 'bg-slate-400'" />
                             {{ warehouse.status ? 'Active' : 'Inactive' }}
                         </span>
-                        <span v-if="warehouse.is_default" class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">Default Warehouse</span>
+                        <span v-if="warehouse.is_default" class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">{{ $t('Default Warehouse') }}</span>
                     </div>
 
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Basic Information</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Basic Information') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Code</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Code') }}</dt>
                             <dd class="mt-1 text-sm font-bold text-slate-800 dark:text-slate-100">{{ fmt(warehouse.code) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Name</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Name') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(warehouse.name) }}</dd>
                         </div>
                     </dl>
@@ -66,18 +66,18 @@ const fmtDate = (value) => {
 
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Contact Information</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Contact Information') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Contact Person</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Contact Person') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(warehouse.contact_person) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Phone</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Phone') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(warehouse.phone) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Email</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Email') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(warehouse.email) }}</dd>
                         </div>
                     </dl>
@@ -86,14 +86,14 @@ const fmtDate = (value) => {
 
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Location</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Location') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">City</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('City') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(warehouse.city) }}</dd>
                         </div>
                         <div class="md:col-span-2">
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Address</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Address') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(warehouse.address) }}</dd>
                         </div>
                     </dl>
@@ -102,16 +102,16 @@ const fmtDate = (value) => {
 
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Settings</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Settings') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Default Warehouse</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Default Warehouse') }}</dt>
                             <dd class="mt-1">
                                 <span class="text-sm font-bold" :class="warehouse.is_default ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'">{{ warehouse.is_default ? 'Yes' : 'No' }}</span>
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Status</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Status') }}</dt>
                             <dd class="mt-1">
                                 <span class="text-sm font-bold" :class="warehouse.status ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'">{{ warehouse.status ? 'Active' : 'Inactive' }}</span>
                             </dd>
@@ -122,18 +122,18 @@ const fmtDate = (value) => {
 
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Record Info</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Record Info') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Created At</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Created At') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtDate(warehouse.created_at) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Last Updated</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Last Updated') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtDate(warehouse.updated_at) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Warehouse ID</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Warehouse ID') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">#{{ warehouse.id }}</dd>
                         </div>
                     </dl>

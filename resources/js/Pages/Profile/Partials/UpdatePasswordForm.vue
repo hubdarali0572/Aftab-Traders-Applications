@@ -35,9 +35,9 @@ const updatePassword = () => {
 <template>
     <section class="theme-form-card flex h-full flex-col overflow-hidden">
         <div class="theme-form-section-header">
-            <h2 class="theme-form-section-title">Update Password</h2>
+            <h2 class="theme-form-section-title">{{ $t('Update Password') }}</h2>
             <p class="mt-1 text-xs text-slate-400">
-                Use a strong, unique password to keep your account secure.
+                {{ $t('Use a strong, unique password to keep your account secure.') }}
             </p>
         </div>
 
@@ -80,7 +80,7 @@ const updatePassword = () => {
                 <div>
                     <InputLabel
                         for="password_confirmation"
-                        value="Confirm Password"
+                        :value="$t('Confirm Password')"
                     />
                     <TextInput
                         id="password_confirmation"
@@ -122,7 +122,7 @@ const updatePassword = () => {
                                     d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                 />
                             </svg>
-                            Password updated
+                            {{ $t('Password updated') }}
                         </p>
                     </Transition>
 
@@ -131,7 +131,7 @@ const updatePassword = () => {
                         :disabled="form.processing"
                         class="theme-btn-primary w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Update Password
+                        {{ $t('Update Password') }}
                     </button>
                 </div>
             </form>

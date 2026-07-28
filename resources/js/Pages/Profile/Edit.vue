@@ -16,7 +16,7 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Profile" />
+    <Head :title="$t('Profile')" />
 
     <AuthenticatedLayout>
         <div class="mx-auto w-full max-w-[1600px] space-y-6 pb-8">
@@ -27,14 +27,13 @@ defineProps({
                     <p
                         class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-300"
                     >
-                        Account Settings
+                        {{ $t('Account Settings') }}
                     </p>
                     <h2 class="mt-2 text-2xl lg:text-3xl font-extrabold tracking-tight">
-                        Profile
+                        {{ $t('Profile') }}
                     </h2>
                     <p class="mt-2 text-sm text-white/75 max-w-2xl leading-relaxed">
-                        Manage your personal information, password, and account
-                        security from one place.
+                        {{ $t('Manage your personal information, password, and account security from one place.') }}
                     </p>
                 </div>
                 <div

@@ -23,11 +23,11 @@ const priceTiers = [
     <AuthenticatedLayout>
         <div class="max-w-8xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">Selling Price Details</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">{{ $t('Selling Price Details') }}</h2>
             </div>
             <Link :href="route('product-selling-prices.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="text-slate-900">Back to Price List</span>
+                <span class="text-slate-900">{{ $t('Back to Price List') }}</span>
             </Link>
         </div>
 
@@ -52,13 +52,13 @@ const priceTiers = [
                                 {{ productSellingPrice.status ? 'Active' : 'Inactive' }}
                             </span>
                             <span v-if="productSellingPrice.is_default" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
-                                Default Price
+                                {{ $t('Default Price') }}
                             </span>
                             <Link :href="route('product-selling-prices.edit', productSellingPrice.id)" class="theme-btn-primary ml-2">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
-                                Edit
+                                {{ $t('Edit') }}
                             </Link>
                         </div>
                     </div>
@@ -68,7 +68,7 @@ const priceTiers = [
             <!-- Price Tiers -->
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Selling Prices</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Selling Prices') }}</h3>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                         <div v-for="tier in priceTiers" :key="tier.key"
                              class="rounded-2xl p-5 border transition-colors"
@@ -92,18 +92,18 @@ const priceTiers = [
                 <!-- Costing -->
                 <div class="theme-form-card">
                     <div class="p-8">
-                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Costing</h3>
+                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Costing') }}</h3>
                         <dl class="divide-y divide-slate-100 dark:divide-slate-700">
                             <div class="flex items-center justify-between py-3">
-                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Purchase Price</dt>
+                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ $t('Purchase Price') }}</dt>
                                 <dd class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ formatPrice(productSellingPrice.purchase_price) }}</dd>
                             </div>
                             <div class="flex items-center justify-between py-3">
-                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Landing Cost</dt>
+                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ $t('Landing Cost') }}</dt>
                                 <dd class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ formatPrice(productSellingPrice.landing_cost) }}</dd>
                             </div>
                             <div class="flex items-center justify-between py-3">
-                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Cost Price</dt>
+                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ $t('Cost Price') }}</dt>
                                 <dd class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ formatPrice(productSellingPrice.cost_price) }}</dd>
                             </div>
                         </dl>
@@ -113,18 +113,18 @@ const priceTiers = [
                 <!-- Discount / Margin -->
                 <div class="theme-form-card">
                     <div class="p-8">
-                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Discount / Margin</h3>
+                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Discount / Margin') }}</h3>
                         <dl class="divide-y divide-slate-100 dark:divide-slate-700">
                             <div class="flex items-center justify-between py-3">
-                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Minimum Selling Price</dt>
+                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ $t('Minimum Selling Price') }}</dt>
                                 <dd class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ formatPrice(productSellingPrice.minimum_selling_price) }}</dd>
                             </div>
                             <div class="flex items-center justify-between py-3">
-                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Maximum Discount</dt>
+                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ $t('Maximum Discount') }}</dt>
                                 <dd class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ productSellingPrice.maximum_discount !== null ? `${productSellingPrice.maximum_discount}%` : '—' }}</dd>
                             </div>
                             <div class="flex items-center justify-between py-3">
-                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Profit Margin</dt>
+                                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ $t('Profit Margin') }}</dt>
                                 <dd class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ productSellingPrice.profit_margin !== null ? `${productSellingPrice.profit_margin}%` : '—' }}</dd>
                             </div>
                         </dl>
@@ -135,17 +135,17 @@ const priceTiers = [
             <!-- Validity -->
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Validity</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Validity') }}</h3>
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                         <div class="flex-1 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 p-5">
-                            <div class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Effective From</div>
+                            <div class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{{ $t('Effective From') }}</div>
                             <div class="text-lg font-black text-slate-800 dark:text-slate-100 mt-1">{{ formatDate(productSellingPrice.effective_from) }}</div>
                         </div>
                         <div class="text-slate-300 dark:text-slate-600 hidden sm:block">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
                         <div class="flex-1 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 p-5">
-                            <div class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Effective To</div>
+                            <div class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{{ $t('Effective To') }}</div>
                             <div class="text-lg font-black text-slate-800 dark:text-slate-100 mt-1">{{ formatDate(productSellingPrice.effective_to) }}</div>
                         </div>
                     </div>

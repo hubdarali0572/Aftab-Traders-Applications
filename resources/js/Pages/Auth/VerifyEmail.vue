@@ -33,10 +33,10 @@ const verificationLinkSent = computed(
             </div>
 
             <h2 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white">
-                Verify your email
+                {{ $t('Verify your email') }}
             </h2>
             <p class="mt-3 text-sm text-slate-500 leading-relaxed dark:text-slate-400">
-                Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you?
+                {{ $t('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you?') }}
             </p>
         </div>
 
@@ -47,7 +47,7 @@ const verificationLinkSent = computed(
             <svg class="h-5 w-5 text-indigo-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
-            <span>A new verification link has been sent to the email address you provided during registration.</span>
+            <span>{{ $t('A new verification link has been sent to the email address you provided during registration.') }}</span>
         </div>
 
         <form @submit.prevent="submit">
@@ -58,20 +58,20 @@ const verificationLinkSent = computed(
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Resending...
+                        {{ $t('Resending...') }}
                     </span>
-                    <span v-else>Resend Verification Email</span>
+                    <span v-else>{{ $t('Resend Verification Email') }}</span>
                 </PrimaryButton>
 
                 <div class="flex flex-wrap items-center justify-center gap-1 text-sm text-slate-500 dark:text-slate-400">
-                    <span>Didn't receive it? Check your spam folder or</span>
+                    <span>{{ $t('Didn\'t receive it? Check your spam folder or') }}</span>
                     <Link
                         :href="route('logout')"
                         method="post"
                         as="button"
                         class="font-semibold text-indigo-600 hover:text-indigo-500 underline underline-offset-4 dark:text-indigo-400"
                     >
-                        Log Out
+                        {{ $t('Log Out') }}
                     </Link>
                 </div>
             </div>

@@ -26,15 +26,15 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Product</th>
-                        <th class="theme-table-header-cell">SKU</th>
-                        <th class="theme-table-header-cell">Category</th>
-                        <th class="theme-table-header-cell">Brand</th>
-                        <th class="theme-table-header-cell text-right">Qty Sold</th>
-                        <th class="theme-table-header-cell text-right">Sales Amount</th>
-                        <th class="theme-table-header-cell text-right">Avg Price</th>
-                        <th class="theme-table-header-cell text-right">Returns</th>
-                        <th class="theme-table-header-cell text-right">Net Qty</th>
+                        <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('SKU') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Category') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Brand') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Qty Sold') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Sales Amount') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Avg Price') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Returns') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Net Qty') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -49,7 +49,7 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-right text-rose-600">{{ num(r.sales_returns) }}</td>
                         <td class="px-6 py-3 text-right font-bold text-emerald-600">{{ num(r.net_quantity_sold) }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="9" class="px-6 py-12 text-center text-slate-400">No data.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="9" class="px-6 py-12 text-center text-slate-400">{{ $t('No data.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

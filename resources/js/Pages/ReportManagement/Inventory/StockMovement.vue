@@ -30,15 +30,15 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[1100px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Date</th>
-                        <th class="theme-table-header-cell">Product</th>
-                        <th class="theme-table-header-cell">Warehouse</th>
-                        <th class="theme-table-header-cell">Type</th>
-                        <th class="theme-table-header-cell">Reference</th>
-                        <th class="theme-table-header-cell text-right">Stock In</th>
-                        <th class="theme-table-header-cell text-right">Stock Out</th>
-                        <th class="theme-table-header-cell text-right">Running Balance</th>
-                        <th class="theme-table-header-cell">User</th>
+                        <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Type') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Reference') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Stock In') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Stock Out') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Running Balance') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('User') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -53,7 +53,7 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-right font-black">{{ num(r.running_balance) }}</td>
                         <td class="px-6 py-3 text-sm">{{ r.user || '—' }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="9" class="px-6 py-12 text-center text-slate-400">No movements.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="9" class="px-6 py-12 text-center text-slate-400">{{ $t('No movements.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

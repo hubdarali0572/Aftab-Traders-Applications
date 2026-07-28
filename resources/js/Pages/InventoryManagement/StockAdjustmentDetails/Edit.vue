@@ -31,12 +31,12 @@ const submit = () => form.put(route('stock-adjustment-details.update', props.det
         <Head title="Edit Line Item" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
             <div>
-                <h2 class="text-2xl font-black text-slate-900">Edit Adjustment Item</h2>
+                <h2 class="text-2xl font-black text-slate-900">{{ $t('Edit Adjustment Item') }}</h2>
                 <p class="text-sm text-slate-500 font-medium">Record ID: #{{ detail.id }}</p>
             </div>
             <Link :href="route('stock-adjustment-details.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Back to List
+                {{ $t('Back to List') }}
             </Link>
         </div>
 
@@ -53,7 +53,7 @@ const submit = () => form.put(route('stock-adjustment-details.update', props.det
                     </div>
 
                     <div>
-                        <InputLabel value="Product" />
+                        <InputLabel :value="$t('Product')" />
                         <select v-model="form.product_id" class="theme-form-input w-full" required>
                             <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                         </select>
@@ -79,7 +79,7 @@ const submit = () => form.put(route('stock-adjustment-details.update', props.det
                     </div>
 
                     <div>
-                        <InputLabel value="Unit Cost" />
+                        <InputLabel :value="$t('Unit Cost')" />
                         <TextInput type="number" step="0.01" v-model="form.unit_cost" class="w-full" />
                         <InputError :message="form.errors.unit_cost" class="mt-2" />
                     </div>
@@ -111,14 +111,14 @@ const submit = () => form.put(route('stock-adjustment-details.update', props.det
 
                 <!-- Remarks Section -->
                 <div class="mt-8">
-                    <InputLabel for="remarks" value="Remarks" class="theme-form-label ml-1" />
+                    <InputLabel for="remarks" :value="$t('Remarks')" class="theme-form-label ml-1" />
                     <textarea id="remarks" v-model="form.remarks" class="theme-form-input w-full h-24 pt-3 resize-none" placeholder="Enter additional details regarding this adjustment..."></textarea>
                     <InputError :message="form.errors.remarks" class="mt-2 ml-1" />
                 </div>
             </div>
 
             <div class="flex justify-center pt-4">
-                <PrimaryButton :disabled="form.processing" class="theme-btn-primary px-12 py-4">Update Adjustment Item</PrimaryButton>
+                <PrimaryButton :disabled="form.processing" class="theme-btn-primary px-12 py-4">{{ $t('Update Adjustment Item') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

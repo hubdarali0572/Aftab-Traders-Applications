@@ -79,7 +79,7 @@ const barMaxWidth = computed(() => (seriesCount.value > 1 ? '14px' : '22px'));
                     class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
                 >
                     <span class="w-2.5 h-2.5 rounded-sm shrink-0" :style="{ background: s.color }"></span>
-                    {{ s.label }}
+                    {{ $t(s.label) }}
                 </span>
             </div>
         </div>
@@ -147,7 +147,7 @@ const barMaxWidth = computed(() => (seriesCount.value > 1 ? '14px' : '22px'));
                                 class="flex items-center gap-2 whitespace-nowrap text-[10px] font-bold"
                             >
                                 <span class="h-1.5 w-1.5 rounded-full" :style="{ background: bar.color }"></span>
-                                <span class="opacity-70">{{ bar.label }}</span>
+                                <span class="opacity-70">{{ $t(bar.label) }}</span>
                                 <span>{{ formatValue(bar.value) }}</span>
                             </div>
                         </div>
@@ -158,7 +158,7 @@ const barMaxWidth = computed(() => (seriesCount.value > 1 ? '14px' : '22px'));
                     </div>
                 </div>
                 <div v-else class="flex h-full items-center justify-center text-sm font-medium text-slate-400">
-                    No chart data available
+                    {{ $t('No chart data available') }}
                 </div>
             </div>
         </div>

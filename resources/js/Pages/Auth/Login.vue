@@ -7,6 +7,9 @@ import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
+import { useLocale } from "@/i18n";
+
+const { t } = useLocale();
 
 defineProps({
     canResetPassword: {
@@ -96,19 +99,19 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Sign In" />
+        <Head :title="t('Sign In')" />
 
         <div class="mb-6 text-center sm:mb-8">
             <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-400">
-                Decoration Lights ERP
+                {{ t('Decoration Lights ERP') }}
             </p>
             <h2
                 class="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white"
             >
-                Sign in to your account
+                {{ t('Sign in to your account') }}
             </h2>
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                Access wholesale &amp; retail operations for Aftab Traders.
+                {{ t('Access wholesale & retail operations for Aftab Traders.') }}
             </p>
         </div>
 
@@ -121,7 +124,7 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="space-y-5">
             <div>
-                <InputLabel for="email" value="Email Address" />
+                <InputLabel for="email" :value="t('Email Address')" />
                 <TextInput
                     id="email"
                     type="email"
@@ -137,13 +140,13 @@ const submit = () => {
 
             <div>
                 <div class="flex items-center justify-between">
-                    <InputLabel for="password" value="Password" />
+                    <InputLabel for="password" :value="t('Password')" />
                     <Link
                         v-if="canResetPassword"
                         :href="route('password.request')"
                         class="text-xs font-semibold text-indigo-600 hover:text-indigo-500 transition-colors dark:text-indigo-400"
                     >
-                        Forgot password?
+                        {{ t('Forgot password?') }}
                     </Link>
                 </div>
 
@@ -197,12 +200,12 @@ const submit = () => {
                     class="ms-2 text-sm text-slate-600 cursor-pointer select-none dark:text-slate-400"
                     @click="form.remember = !form.remember"
                 >
-                    Remember me
+                    {{ t('Remember me') }}
                 </span>
             </div>
 
             <div class="min-w-0">
-                <InputLabel for="recaptcha" value="Verification" />
+                <InputLabel for="recaptcha" :value="t('Verification')" />
                 <div class="mt-1.5 w-full min-w-0 overflow-x-auto">
                     <div
                         ref="captchaContainer"
@@ -222,21 +225,21 @@ const submit = () => {
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Logging in...
+                        {{ t('Logging in...') }}
                     </span>
-                    <span v-else>Log in</span>
+                    <span v-else>{{ t('Log in') }}</span>
                 </PrimaryButton>
             </div>
         </form>
 
         <div class="mt-8 pt-6 border-t border-slate-100 text-center dark:border-slate-800">
             <p class="text-sm text-slate-500 dark:text-slate-400">
-                Don't have an account?
+                {{ t("Don't have an account?") }}
                 <Link
                     :href="route('register')"
                     class="font-semibold text-indigo-600 hover:text-indigo-500 underline-offset-4 hover:underline dark:text-indigo-400"
                 >
-                    Create an account
+                    {{ t('Create an account') }}
                 </Link>
             </p>
         </div>

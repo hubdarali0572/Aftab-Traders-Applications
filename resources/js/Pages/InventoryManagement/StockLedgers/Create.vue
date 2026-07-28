@@ -37,11 +37,11 @@ const submit = () => {
     <AuthenticatedLayout>
         <div class="max-w-8xl mx-auto mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">Create Stock Ledger Entry</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">{{ $t('Create Stock Ledger Entry') }}</h2>
             </div>
             <Link :href="route('stock-ledgers.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Back to Ledger
+                {{ $t('Back to Ledger') }}
             </Link>
         </div>
 
@@ -53,18 +53,18 @@ const submit = () => {
                             
                             <!-- Relationships -->
                             <div class="flex flex-col">
-                                <InputLabel for="warehouse_id" value="Warehouse" class="theme-form-label ml-1" />
+                                <InputLabel for="warehouse_id" :value="$t('Warehouse')" class="theme-form-label ml-1" />
                                 <select id="warehouse_id" class="theme-form-input" v-model="form.warehouse_id" required>
-                                    <option value="" disabled>Select warehouse</option>
+                                    <option value="" disabled>{{ $t('Select warehouse') }}</option>
                                     <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
                                 </select>
                                 <InputError :message="form.errors.warehouse_id" class="mt-2" />
                             </div>
 
                             <div class="flex flex-col">
-                                <InputLabel for="product_id" value="Product" class="theme-form-label ml-1" />
+                                <InputLabel for="product_id" :value="$t('Product')" class="theme-form-label ml-1" />
                                 <select id="product_id" class="theme-form-input" v-model="form.product_id" required>
-                                    <option value="" disabled>Select product</option>
+                                    <option value="" disabled>{{ $t('Select product') }}</option>
                                     <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                                 </select>
                                 <InputError :message="form.errors.product_id" class="mt-2" />
@@ -88,13 +88,13 @@ const submit = () => {
                             </div>
 
                             <div class="flex flex-col">
-                                <InputLabel for="transaction_date" value="Transaction Date" class="theme-form-label ml-1" />
+                                <InputLabel for="transaction_date" :value="$t('Transaction Date')" class="theme-form-label ml-1" />
                                 <TextInput id="transaction_date" type="date" class="theme-form-input" v-model="form.transaction_date" required />
                                 <InputError :message="form.errors.transaction_date" class="mt-2" />
                             </div>
 
                             <div class="flex flex-col">
-                                <InputLabel for="unit_cost" value="Unit Cost" class="theme-form-label ml-1" />
+                                <InputLabel for="unit_cost" :value="$t('Unit Cost')" class="theme-form-label ml-1" />
                                 <TextInput id="unit_cost" type="number" step="0.01" class="theme-form-input" v-model="form.unit_cost" required />
                                 <InputError :message="form.errors.unit_cost" class="mt-2" />
                             </div>
@@ -113,7 +113,7 @@ const submit = () => {
                             </div>
 
                             <div class="flex flex-col">
-                                <InputLabel value="Status" class="theme-form-label ml-1" />
+                                <InputLabel :value="$t('Status')" class="theme-form-label ml-1" />
                                 <label class="inline-flex items-center gap-3 mt-2 cursor-pointer">
                                     <button type="button" @click="form.status = !form.status" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
                                         <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
@@ -132,7 +132,7 @@ const submit = () => {
 
                 <div class="flex items-center justify-center pt-4">
                     <PrimaryButton class="theme-btn-primary px-12 py-4 rounded-full text-white font-black text-xs uppercase tracking-widest active:scale-95" :disabled="form.processing">
-                        Save Ledger Entry
+                        {{ $t('Save Ledger Entry') }}
                     </PrimaryButton>
                 </div>
             </form>

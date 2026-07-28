@@ -37,15 +37,15 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Main Products" />
+        <Head :title="$t('Main Products')" />
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Main Products</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage and monitor system access and roles.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Main Products') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage and monitor system access and roles.') }}</p>
             </div>
             <Link :href="route('products.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Create New Product
+                {{ $t('Create New Product') }}
             </Link>
         </div>
 
@@ -61,8 +61,8 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                 <form @submit.prevent="applySearch" class="flex flex-col sm:flex-row gap-3">
                     <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search products..." />
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -70,17 +70,17 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Product Name</th>
-                            <th class="theme-table-header-cell">Manufacturer</th>
-                            <th class="theme-table-header-cell">Model Number</th>
-                            <th class="theme-table-header-cell">color</th>
-                            <th class="theme-table-header-cell">Size</th>
-                            <th class="theme-table-header-cell">Weight</th>
-                            <th class="theme-table-header-cell">Brand</th>
-                            <th class="theme-table-header-cell">Category</th>
-                            <th class="theme-table-header-cell">Unit</th>
-                            <th class="theme-table-header-cell">Status</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Product Name') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Manufacturer') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Model Number') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('color') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Size') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Weight') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Brand') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Category') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Unit') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Status') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -108,7 +108,7 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                                 </Link>
 
                                 <!-- Edit Product -->
-                                <Link :href="route('products.edit', product.id)" class="theme-table-action-btn theme-table-action-edit" title="Edit Product">
+                                <Link :href="route('products.edit', product.id)" class="theme-table-action-btn theme-table-action-edit" :title="$t('Edit Product')">
                                     <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                         <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
@@ -123,12 +123,12 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                             </div>
                         </td>
                         </tr>
-                        <tr v-if="products.data.length === 0"><td colspan="9" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No products found.</td></tr>
+                        <tr v-if="products.data.length === 0"><td colspan="9" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No products found.') }}</td></tr>
                     </tbody>
                 </table>
             </div>
             <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-                <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">Showing <span class="text-slate-900 dark:text-slate-200">{{ products.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ products.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ products.total }}</span> entries</div>
+                <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">{{ $t('Showing') }} <span class="text-slate-900 dark:text-slate-200">{{ products.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ products.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ products.total }}</span> {{ $t('entries') }}</div>
                 <div class="flex flex-wrap justify-center items-center gap-1.5">
                     <template v-for="(link, k) in products.links" :key="k">
                         <Link v-if="link.url" :href="link.url" v-html="link.label" class="min-w-[30px] h-6 px-2 flex items-center justify-center text-xs font-bold rounded-lg border transition-all duration-200" :class="[link.active ? 'theme-pagination-active' : 'theme-pagination-inactive']" />

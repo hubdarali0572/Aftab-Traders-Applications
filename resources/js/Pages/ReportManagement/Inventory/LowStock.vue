@@ -23,13 +23,13 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[900px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Product</th>
-                        <th class="theme-table-header-cell">SKU</th>
-                        <th class="theme-table-header-cell">Warehouse</th>
-                        <th class="theme-table-header-cell text-right">Current Qty</th>
-                        <th class="theme-table-header-cell text-right">Minimum Qty</th>
-                        <th class="theme-table-header-cell text-right">Difference</th>
-                        <th class="theme-table-header-cell">Reorder Status</th>
+                        <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('SKU') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Current Qty') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Minimum Qty') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Difference') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Reorder Status') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -42,7 +42,7 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-right font-bold">{{ num(r.difference) }}</td>
                         <td class="px-6 py-3"><span class="text-xs font-bold uppercase text-rose-600">{{ r.reorder_status }}</span></td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">No low stock items.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">{{ $t('No low stock items.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

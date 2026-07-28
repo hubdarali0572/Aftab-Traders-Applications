@@ -452,7 +452,7 @@ const accentClasses = {
                             <div
                                 class="rounded-xl bg-white/10 backdrop-blur p-5 ring-1 ring-white/10"
                             >
-                                <p class="text-3xl font-black">Vue 3</p>
+                                <p class="text-3xl font-black">{{ $t('Vue 3') }}</p>
                                 <p class="mt-1 text-sm text-white/70">
                                     Composition API
                                 </p>
@@ -460,7 +460,7 @@ const accentClasses = {
                             <div
                                 class="rounded-xl bg-white/10 backdrop-blur p-5 ring-1 ring-white/10"
                             >
-                                <p class="text-3xl font-black">Inertia</p>
+                                <p class="text-3xl font-black">{{ $t('Inertia') }}</p>
                                 <p class="mt-1 text-sm text-white/70">
                                     SPA Bridge
                                 </p>

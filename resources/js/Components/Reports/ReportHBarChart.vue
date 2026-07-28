@@ -61,7 +61,7 @@ const total = computed(() => props.items.reduce((s, i) => s + Number(i.amount ||
                 </div>
             </div>
             <div v-else class="flex h-full items-center justify-center text-sm font-medium text-slate-400">
-                {{ emptyText }}
+                {{ $t(emptyText) }}
             </div>
         </div>
     </div>

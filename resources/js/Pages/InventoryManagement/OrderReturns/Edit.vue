@@ -29,28 +29,28 @@ const submit = () => form.put(route('order-returns.update', props.orderReturn.id
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Edit Order Return" />
+        <Head :title="$t('Edit Order Return')" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-800">Edit Order Return</h2>
-            <Link :href="route('order-returns.index')" class="theme-form-back-link">Back to List</Link>
+            <h2 class="text-2xl font-black text-slate-800">{{ $t('Edit Order Return') }}</h2>
+            <Link :href="route('order-returns.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <InputLabel value="Reference No" />
+                    <InputLabel :value="$t('Reference No')" />
                     <TextInput v-model="form.reference_no" class="w-full" required />
                     <InputError :message="form.errors.reference_no" />
                 </div>
                 <div>
-                    <InputLabel value="Return Date" />
+                    <InputLabel :value="$t('Return Date')" />
                     <TextInput type="date" v-model="form.return_date" class="w-full" required />
                     <InputError :message="form.errors.return_date" />
                 </div>
                 <div>
                     <InputLabel value="Order" />
                     <select v-model="form.order_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Order</option>
+                        <option value="" disabled>{{ $t('Select Order') }}</option>
                         <option v-for="order in orders" :key="order.id" :value="order.id">
                             {{ order.order_no }} - {{ order.customer?.customer_name }}
                         </option>
@@ -59,11 +59,11 @@ const submit = () => form.put(route('order-returns.update', props.orderReturn.id
                 </div>
 
                 <div>
-                    <InputLabel value="Customer" />
+                    <InputLabel :value="$t('Customer')" />
                     <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedOrder?.customer?.customer_name || '—' }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Warehouse" />
+                    <InputLabel :value="$t('Warehouse')" />
                     <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedOrder?.warehouse?.name || '—' }}</div>
                 </div>
                 <div>
@@ -71,14 +71,14 @@ const submit = () => form.put(route('order-returns.update', props.orderReturn.id
                     <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedOrder?.order_no || '—' }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Return Status" />
+                    <InputLabel :value="$t('Return Status')" />
                     <select v-model="form.return_status" class="theme-form-input w-full">
                         <option v-for="s in returnStatuses" :key="s" :value="s">{{ s.charAt(0).toUpperCase() + s.slice(1) }}</option>
                     </select>
                     <InputError :message="form.errors.return_status" />
                 </div>
                 <div>
-                    <InputLabel value="Status" />
+                    <InputLabel :value="$t('Status')" />
                     <button type="button" @click="form.status = !form.status" class="mt-2 relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
                         <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
                     </button>
@@ -86,13 +86,13 @@ const submit = () => form.put(route('order-returns.update', props.orderReturn.id
             </div>
 
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
                 <InputError :message="form.errors.remarks" />
             </div>
 
             <div class="flex justify-center">
-                <PrimaryButton :disabled="form.processing">Update Return</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">{{ $t('Update Return') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

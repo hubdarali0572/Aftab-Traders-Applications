@@ -28,27 +28,27 @@ const submit = () => form.post(route('customer-ledgers.store'));
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Debit / Credit Entry" />
+        <Head :title="$t('Debit / Credit Entry')" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
             <div>
-                <h2 class="text-2xl font-black text-slate-900">Debit / Credit Entry</h2>
-                <p class="text-sm text-slate-500 font-medium">Post a manual ledger debit or credit for a customer.</p>
+                <h2 class="text-2xl font-black text-slate-900">{{ $t('Debit / Credit Entry') }}</h2>
+                <p class="text-sm text-slate-500 font-medium">{{ $t('Post a manual ledger debit or credit for a customer.') }}</p>
             </div>
-            <Link :href="route('customer-ledgers.index')" class="theme-form-back-link">Back</Link>
+            <Link :href="route('customer-ledgers.index')" class="theme-form-back-link">{{ $t('Back') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <InputLabel value="Customer" />
+                    <InputLabel :value="$t('Customer')" />
                     <select v-model="form.customer_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Customer</option>
+                        <option value="" disabled>{{ $t('Select Customer') }}</option>
                         <option v-for="c in customers" :key="c.id" :value="c.id">{{ c.customer_name }} ({{ c.customer_code }})</option>
                     </select>
                     <InputError :message="form.errors.customer_id" />
                 </div>
                 <div>
-                    <InputLabel value="Transaction Date" />
+                    <InputLabel :value="$t('Transaction Date')" />
                     <TextInput type="date" v-model="form.transaction_date" class="w-full" required />
                     <InputError :message="form.errors.transaction_date" />
                 </div>
@@ -60,7 +60,7 @@ const submit = () => form.post(route('customer-ledgers.store'));
                     <InputError :message="form.errors.transaction_type" />
                 </div>
                 <div>
-                    <InputLabel value="Reference No" />
+                    <InputLabel :value="$t('Reference No')" />
                     <TextInput v-model="form.reference_no" class="w-full" placeholder="Optional reference" />
                 </div>
                 <div>
@@ -74,17 +74,17 @@ const submit = () => form.post(route('customer-ledgers.store'));
                     <InputError :message="form.errors.credit" />
                 </div>
                 <div>
-                    <InputLabel value="Status" />
+                    <InputLabel :value="$t('Status')" />
                     <button type="button" @click="form.status = !form.status" class="mt-2 relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
                         <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
                     </button>
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
-            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">Save Entry</PrimaryButton></div>
+            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">{{ $t('Save Entry') }}</PrimaryButton></div>
         </form>
     </AuthenticatedLayout>
 </template>

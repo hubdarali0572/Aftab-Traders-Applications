@@ -35,10 +35,10 @@ const clearSearch = () => {
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Opening Balance</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Customer opening balances posted to the ledger.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Opening Balance') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Customer opening balances posted to the ledger.') }}</p>
             </div>
-            <Link :href="route('customers.create')" class="theme-btn-primary">New Customer</Link>
+            <Link :href="route('customers.create')" class="theme-btn-primary">{{ $t('New Customer') }}</Link>
         </div>
 
         <div class="theme-table-card">
@@ -46,12 +46,12 @@ const clearSearch = () => {
                 <form @submit.prevent="applySearch" class="flex flex-col md:flex-row gap-3">
                     <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search customers..." />
                     <select v-model="customerType" class="theme-form-input md:w-48">
-                        <option value="">All Types</option>
+                        <option value="">{{ $t('All Types') }}</option>
                         <option v-for="t in customerTypes" :key="t" :value="t">{{ formatType(t) }}</option>
                     </select>
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search || filters?.customer_type" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search || filters?.customer_type" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -60,12 +60,12 @@ const clearSearch = () => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Code</th>
-                            <th class="theme-table-header-cell">Customer</th>
-                            <th class="theme-table-header-cell">Type</th>
-                            <th class="theme-table-header-cell">Side</th>
-                            <th class="theme-table-header-cell text-right">Opening Balance</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Code') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Type') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Side') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Opening Balance') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -82,13 +82,13 @@ const clearSearch = () => {
                             </td>
                             <td class="px-6 py-3 text-right">
                                 <div class="theme-table-actions justify-end">
-                                    <Link :href="route('customers.show', c.id)" class="theme-table-action-btn" title="Profile">View</Link>
-                                    <Link :href="route('customers.edit', c.id)" class="theme-table-action-btn theme-table-action-edit" title="Edit">Edit</Link>
+                                    <Link :href="route('customers.show', c.id)" class="theme-table-action-btn" :title="$t('Profile')">{{ $t('View') }}</Link>
+                                    <Link :href="route('customers.edit', c.id)" class="theme-table-action-btn theme-table-action-edit" :title="$t('Edit')">{{ $t('Edit') }}</Link>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="customers.data.length === 0">
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">No customers found.</td>
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">{{ $t('No customers found.') }}</td>
                         </tr>
                     </tbody>
                 </table>

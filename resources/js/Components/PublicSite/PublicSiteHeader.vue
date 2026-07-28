@@ -169,14 +169,14 @@ onUnmounted(() => {
                         :href="route('dashboard')"
                         class="inline-flex h-10 items-center rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-500"
                     >
-                        Dashboard
+                        {{ $t('Dashboard') }}
                     </Link>
                     <template v-else>
                         <Link
                             :href="route('login')"
                             class="inline-flex h-10 items-center rounded-lg px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
                         >
-                            Sign In
+                            {{ $t('Sign In') }}
                         </Link>
                         <Link
                             v-if="canRegister"
@@ -264,7 +264,7 @@ onUnmounted(() => {
                             class="inline-flex min-h-11 items-center justify-center rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white"
                             @click="closeMobileMenu"
                         >
-                            Dashboard
+                            {{ $t('Dashboard') }}
                         </Link>
                     </template>
                     <template v-else>
@@ -273,7 +273,7 @@ onUnmounted(() => {
                             class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 px-4 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200"
                             @click="closeMobileMenu"
                         >
-                            Sign In
+                            {{ $t('Sign In') }}
                         </Link>
                         <Link
                             v-if="canRegister"

@@ -24,28 +24,28 @@ const submit = () => form.put(route('sale-returns.update', props.saleReturn.id))
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Edit Sales Return" />
+        <Head :title="$t('Edit Sales Return')" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-800">Edit Sales Return</h2>
-            <Link :href="route('sale-returns.index')" class="theme-form-back-link">Back to List</Link>
+            <h2 class="text-2xl font-black text-slate-800">{{ $t('Edit Sales Return') }}</h2>
+            <Link :href="route('sale-returns.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <InputLabel value="Reference No" />
+                    <InputLabel :value="$t('Reference No')" />
                     <TextInput v-model="form.reference_no" class="w-full" required />
                     <InputError :message="form.errors.reference_no" />
                 </div>
                 <div>
-                    <InputLabel value="Return Date" />
+                    <InputLabel :value="$t('Return Date')" />
                     <TextInput type="date" v-model="form.return_date" class="w-full" required />
                     <InputError :message="form.errors.return_date" />
                 </div>
                 <div>
                     <InputLabel value="Sales Invoice" />
                     <select v-model="form.sale_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Invoice</option>
+                        <option value="" disabled>{{ $t('Select Invoice') }}</option>
                         <option v-for="sale in sales" :key="sale.id" :value="sale.id">
                             {{ sale.invoice_no }} - {{ sale.customer?.customer_name || 'Walk-in' }}
                         </option>
@@ -54,11 +54,11 @@ const submit = () => form.put(route('sale-returns.update', props.saleReturn.id))
                 </div>
 
                 <div>
-                    <InputLabel value="Customer" />
+                    <InputLabel :value="$t('Customer')" />
                     <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedSale?.customer?.customer_name || 'Walk-in' }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Warehouse" />
+                    <InputLabel :value="$t('Warehouse')" />
                     <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedSale?.warehouse?.name || '—' }}</div>
                 </div>
                 <div>
@@ -68,13 +68,13 @@ const submit = () => form.put(route('sale-returns.update', props.saleReturn.id))
             </div>
 
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
                 <InputError :message="form.errors.remarks" />
             </div>
 
             <div class="flex justify-center">
-                <PrimaryButton :disabled="form.processing">Update Return</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">{{ $t('Update Return') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

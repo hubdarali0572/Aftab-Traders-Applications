@@ -31,18 +31,18 @@ const clearSearch = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Opening Stocks" />
+        <Head :title="$t('Opening Stocks')" />
         
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Opening Stocks</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage initial warehouse stock levels.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Opening Stocks') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage initial warehouse stock levels.') }}</p>
             </div>
             <Link :href="route('opening-stocks.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Add Opening Stock
+                {{ $t('Add Opening Stock') }}
             </Link>
         </div>
 
@@ -51,8 +51,8 @@ const clearSearch = () => {
                 <form @submit.prevent="applySearch" class="flex flex-col sm:flex-row gap-3">
                     <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search by reference or warehouse..." />
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -61,13 +61,13 @@ const clearSearch = () => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Ref #</th>
-                            <th class="theme-table-header-cell">Date</th>
-                            <th class="theme-table-header-cell">Warehouse</th>
-                            <th class="theme-table-header-cell text-right">Total Qty</th>
-                            <th class="theme-table-header-cell text-right">Total Amount</th>
-                            <th class="theme-table-header-cell">Status</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Ref #') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Total Qty') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Total Amount') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Status') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -100,7 +100,7 @@ const clearSearch = () => {
                         <!-- Empty State Logic -->
                         <tr v-if="stocks.data.length === 0">
                             <td colspan="7" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">
-                                No Opening stock records found.
+                                {{ $t('No Opening stock records found.') }}
                             </td>
                         </tr>
                     </tbody>

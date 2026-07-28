@@ -45,8 +45,8 @@ const paidValues = computed(() => (props.chart || []).map((m) => Number(m.paymen
         <div class="theme-form-card mb-6 overflow-hidden">
             <div class="theme-form-section-header">
                 <div>
-                    <h3 class="theme-form-section-title">Monthly Sales Performance</h3>
-                    <p class="mt-1 text-xs text-slate-400">Net sales vs payments received</p>
+                    <h3 class="theme-form-section-title">{{ $t('Monthly Sales Performance') }}</h3>
+                    <p class="mt-1 text-xs text-slate-400">{{ $t('Net sales vs payments received') }}</p>
                 </div>
             </div>
             <div class="p-5 lg:p-6">
@@ -66,16 +66,16 @@ const paidValues = computed(() => (props.chart || []).map((m) => Number(m.paymen
             <table class="w-full text-left border-collapse min-w-[1000px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Month</th>
-                        <th class="theme-table-header-cell text-right">Invoices</th>
-                        <th class="theme-table-header-cell text-right">Customers</th>
-                        <th class="theme-table-header-cell text-right">Qty</th>
-                        <th class="theme-table-header-cell text-right">Gross</th>
-                        <th class="theme-table-header-cell text-right">Discount</th>
-                        <th class="theme-table-header-cell text-right">Tax</th>
-                        <th class="theme-table-header-cell text-right">Net Sales</th>
-                        <th class="theme-table-header-cell text-right">Payments</th>
-                        <th class="theme-table-header-cell text-right">Outstanding</th>
+                        <th class="theme-table-header-cell">{{ $t('Month') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Invoices') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Customers') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Qty') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Gross') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Discount') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Tax') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Net Sales') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Payments') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Outstanding') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -91,7 +91,7 @@ const paidValues = computed(() => (props.chart || []).map((m) => Number(m.paymen
                         <td class="px-6 py-3 text-right">${{ money(r.payments_received) }}</td>
                         <td class="px-6 py-3 text-right">${{ money(r.outstanding) }}</td>
                     </tr>
-                    <tr v-if="!rows.length"><td colspan="10" class="px-6 py-12 text-center text-slate-400">No data.</td></tr>
+                    <tr v-if="!rows.length"><td colspan="10" class="px-6 py-12 text-center text-slate-400">{{ $t('No data.') }}</td></tr>
                 </tbody>
             </table>
         </div>

@@ -61,7 +61,7 @@ const profitValues = computed(() => props.monthlyTrend.map((m) => Math.max(Numbe
 
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-6 items-start">
             <div class="theme-form-card xl:col-span-1 overflow-hidden self-start">
-                <div class="theme-form-section-header"><h3 class="theme-form-section-title">P&L Statement</h3></div>
+                <div class="theme-form-section-header"><h3 class="theme-form-section-title">{{ $t('P&L Statement') }}</h3></div>
                 <div class="divide-y divide-slate-100 dark:divide-slate-700 max-h-[360px] overflow-y-auto">
                     <div v-for="row in plRows" :key="row.label" class="flex justify-between px-6 py-3 text-sm" :class="row.highlight ? 'bg-indigo-50 dark:bg-indigo-500/10' : ''">
                         <span :class="row.bold ? 'font-black text-slate-800 dark:text-slate-100' : 'text-slate-600 dark:text-slate-300'">{{ row.label }}</span>
@@ -73,8 +73,8 @@ const profitValues = computed(() => props.monthlyTrend.map((m) => Math.max(Numbe
             <div class="theme-form-card xl:col-span-2 overflow-hidden self-start">
                 <div class="theme-form-section-header">
                     <div>
-                        <h3 class="theme-form-section-title">Revenue vs Expenses</h3>
-                        <p class="mt-1 text-xs text-slate-400">Last 12 months comparison · fixed chart height</p>
+                        <h3 class="theme-form-section-title">{{ $t('Revenue vs Expenses') }}</h3>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Last 12 months comparison · fixed chart height') }}</p>
                     </div>
                 </div>
                 <div class="p-5 lg:p-6">
@@ -95,8 +95,8 @@ const profitValues = computed(() => props.monthlyTrend.map((m) => Math.max(Numbe
             <div class="theme-form-card overflow-hidden self-start">
                 <div class="theme-form-section-header">
                     <div>
-                        <h3 class="theme-form-section-title">Monthly Profit Trend</h3>
-                        <p class="mt-1 text-xs text-slate-400">Positive profit by month</p>
+                        <h3 class="theme-form-section-title">{{ $t('Monthly Profit Trend') }}</h3>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Positive profit by month') }}</p>
                     </div>
                 </div>
                 <div class="p-5">
@@ -113,8 +113,8 @@ const profitValues = computed(() => props.monthlyTrend.map((m) => Math.max(Numbe
             <div class="theme-form-card overflow-hidden self-start">
                 <div class="theme-form-section-header">
                     <div>
-                        <h3 class="theme-form-section-title">Expense Distribution</h3>
-                        <p class="mt-1 text-xs text-slate-400">Operating expenses by head</p>
+                        <h3 class="theme-form-section-title">{{ $t('Expense Distribution') }}</h3>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Operating expenses by head') }}</p>
                     </div>
                 </div>
                 <div class="p-5">

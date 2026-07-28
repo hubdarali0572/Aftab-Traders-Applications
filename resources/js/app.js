@@ -1,14 +1,15 @@
 import "../css/app.css";
 import "./bootstrap";
 
-import { createInertiaApp, Link, Head } from "@inertiajs/vue3"; // 1. Import Link and Head
+import { createInertiaApp, Link, Head } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
-import { createApp, h } from "vue";
+import { createApp, h, nextTick } from "vue";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy";
 
 import { router } from "@inertiajs/vue3";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { i18nPlugin } from "./i18n";
 
 // Initialize AOS once
 AOS.init();
@@ -33,8 +34,9 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
-            .component("Link", Link) // 2. Register Link globally
-            .component("Head", Head) // 3. Register Head globally
+            .use(i18nPlugin)
+            .component("Link", Link)
+            .component("Head", Head)
             .mount(el);
     },
     progress: {

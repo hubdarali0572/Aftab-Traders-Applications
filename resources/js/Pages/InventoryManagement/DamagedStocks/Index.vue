@@ -33,18 +33,18 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Damaged Stocks" />
+        <Head :title="$t('Damaged Stocks')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Damaged Stocks</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Record and track damaged inventory write-offs.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Damaged Stocks') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Record and track damaged inventory write-offs.') }}</p>
             </div>
             <Link :href="route('damaged-stocks.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                New Damage Record
+                {{ $t('New Damage Record') }}
             </Link>
         </div>
 
@@ -53,8 +53,8 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                 <form @submit.prevent="applySearch" class="flex flex-col sm:flex-row gap-3">
                     <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search by reference or warehouse..." />
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -63,13 +63,13 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Ref #</th>
-                            <th class="theme-table-header-cell">Date</th>
-                            <th class="theme-table-header-cell">Warehouse</th>
-                            <th class="theme-table-header-cell text-right">Total Qty</th>
-                            <th class="theme-table-header-cell text-right">Total Amount</th>
-                            <th class="theme-table-header-cell">Status</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Ref #') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Total Qty') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Total Amount') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Status') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -86,20 +86,20 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                             </td>
                             <td class="px-6 py-3 text-right whitespace-nowrap">
                                 <div class="theme-table-actions">
-                                    <Link :href="route('damaged-stocks.show', stock.id)" class="theme-table-action-btn" title="View">
+                                    <Link :href="route('damaged-stocks.show', stock.id)" class="theme-table-action-btn" :title="$t('View')">
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                     </Link>
-                                    <Link :href="route('damaged-stocks.edit', stock.id)" class="theme-table-action-btn theme-table-action-edit" title="Edit">
+                                    <Link :href="route('damaged-stocks.edit', stock.id)" class="theme-table-action-btn theme-table-action-edit" :title="$t('Edit')">
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </Link>
-                                    <button @click="openDeleteModal(stock.id)" class="theme-table-action-btn theme-table-action-delete" title="Delete">
+                                    <button @click="openDeleteModal(stock.id)" class="theme-table-action-btn theme-table-action-delete" :title="$t('Delete')">
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </button>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="stocks.data.length === 0">
-                            <td colspan="7" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No damaged stock records found.</td>
+                            <td colspan="7" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No damaged stock records found.') }}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -24,21 +24,21 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[1300px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Warehouse</th>
-                        <th class="theme-table-header-cell">Product</th>
-                        <th class="theme-table-header-cell">SKU</th>
-                        <th class="theme-table-header-cell">Category</th>
-                        <th class="theme-table-header-cell">Unit</th>
-                        <th class="theme-table-header-cell text-right">Opening</th>
-                        <th class="theme-table-header-cell text-right">Purchased</th>
-                        <th class="theme-table-header-cell text-right">Sold</th>
-                        <th class="theme-table-header-cell text-right">PR</th>
-                        <th class="theme-table-header-cell text-right">SR</th>
-                        <th class="theme-table-header-cell text-right">In</th>
-                        <th class="theme-table-header-cell text-right">Out</th>
-                        <th class="theme-table-header-cell text-right">Adj</th>
-                        <th class="theme-table-header-cell text-right">Available</th>
-                        <th class="theme-table-header-cell text-right">Stock Value</th>
+                        <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('SKU') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Category') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Unit') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Opening') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Purchased') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Sold') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('PR') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('SR') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('In') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Out') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Adj') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Available') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Stock Value') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -59,7 +59,7 @@ const cards = computed(() => [
                         <td class="px-4 py-3 text-right font-black text-sm">{{ num(r.current_available) }}</td>
                         <td class="px-4 py-3 text-right font-bold text-sm">${{ money(r.stock_value) }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="15" class="px-6 py-12 text-center text-slate-400">No stock records.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="15" class="px-6 py-12 text-center text-slate-400">{{ $t('No stock records.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

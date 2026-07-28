@@ -27,15 +27,15 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Customer</th>
-                        <th class="theme-table-header-cell text-right">Invoices</th>
-                        <th class="theme-table-header-cell text-right">Products</th>
-                        <th class="theme-table-header-cell text-right">Quantity</th>
-                        <th class="theme-table-header-cell text-right">Total Sales</th>
-                        <th class="theme-table-header-cell text-right">Paid</th>
-                        <th class="theme-table-header-cell text-right">Remaining</th>
-                        <th class="theme-table-header-cell">Last Purchase</th>
-                        <th class="theme-table-header-cell text-right print:hidden">History</th>
+                        <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Invoices') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Products') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Quantity') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Total Sales') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Paid') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Remaining') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Last Purchase') }}</th>
+                        <th class="theme-table-header-cell text-right print:hidden">{{ $t('History') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -49,10 +49,10 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-right text-amber-600 font-bold">${{ money(r.remaining_balance) }}</td>
                         <td class="px-6 py-3">{{ formatDate(r.last_purchase_date) }}</td>
                         <td class="px-6 py-3 text-right print:hidden">
-                            <Link :href="route('reports.customers.sales-history', { customer_id: r.customer_id })" class="text-xs font-bold text-indigo-600">View</Link>
+                            <Link :href="route('reports.customers.sales-history', { customer_id: r.customer_id })" class="text-xs font-bold text-indigo-600">{{ $t('View') }}</Link>
                         </td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="9" class="px-6 py-12 text-center text-slate-400">No data.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="9" class="px-6 py-12 text-center text-slate-400">{{ $t('No data.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

@@ -32,16 +32,16 @@ const fmtNumber = (value, prefix = '') => {
                 </div>
                 <div>
                     <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">{{ detail.product?.name }}</h2>
-                    <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Parent Ref: <span class="text-indigo-600 font-bold">{{ detail.opening_stock?.reference_no }}</span></p>
+                    <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">{{ $t('Parent Ref:') }} <span class="text-indigo-600 font-bold">{{ detail.opening_stock?.reference_no }}</span></p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
                 <Link :href="route('opening-stock-details.edit', detail.id)" class="theme-btn-primary px-6 py-3 rounded-full text-white font-black text-xs uppercase tracking-widest active:scale-95">
-                    Edit Item
+                    {{ $t('Edit Item') }}
                 </Link>
                 <Link :href="route('opening-stock-details.index')" class="theme-form-back-link">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <span class="text-slate-900 dark:text-slate-100">Back to Items</span>
+                    <span class="text-slate-900 dark:text-slate-100">{{ $t('Back to Items') }}</span>
                 </Link>
             </div>
         </div>
@@ -57,22 +57,22 @@ const fmtNumber = (value, prefix = '') => {
                         </span>
                     </div>
 
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Product & Reference</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Product & Reference') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Parent Reference</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Parent Reference') }}</dt>
                             <dd class="mt-1 text-sm font-bold text-slate-800 dark:text-slate-100">{{ fmt(detail.opening_stock?.reference_no) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Product Name</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Product Name') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(detail.product?.name) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Batch Number</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Batch Number') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(detail.batch_no) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Serial Number</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Serial Number') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(detail.serial_no) }}</dd>
                         </div>
                     </dl>
@@ -82,18 +82,18 @@ const fmtNumber = (value, prefix = '') => {
             <!-- Quantities & Costing -->
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Quantities & Financials</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Quantities & Financials') }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
-                            <dt class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Quantity</dt>
+                            <dt class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{{ $t('Quantity') }}</dt>
                             <dd class="text-3xl font-black text-slate-800 dark:text-slate-100">{{ fmtNumber(detail.quantity) }}</dd>
                         </div>
                         <div class="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-2xl border border-emerald-100 dark:border-emerald-800 text-center">
-                            <dt class="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">Unit Cost</dt>
+                            <dt class="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">{{ $t('Unit Cost') }}</dt>
                             <dd class="text-3xl font-black text-emerald-700">{{ fmtNumber(detail.unit_cost, '$') }}</dd>
                         </div>
                         <div class="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-2xl border border-indigo-100 dark:border-indigo-800 text-center">
-                            <dt class="text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-1">Total Cost Value</dt>
+                            <dt class="text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-1">{{ $t('Total Cost Value') }}</dt>
                             <dd class="text-3xl font-black text-indigo-700">{{ fmtNumber(detail.total_cost, '$') }}</dd>
                         </div>
                     </div>
@@ -103,24 +103,24 @@ const fmtNumber = (value, prefix = '') => {
             <!-- Tracking & Record Info -->
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Tracking & Records</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Tracking & Records') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Expiry Date</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Expiry Date') }}</dt>
                             <dd class="mt-1 text-sm font-semibold" :class="detail.expiry_date ? 'text-rose-600 font-bold' : 'text-slate-600'">
                                 {{ fmtDate(detail.expiry_date) }}
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Date Added</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Date Added') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtDate(detail.created_at) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Last Updated</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Last Updated') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtDate(detail.updated_at) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">Line ID</dt>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Line ID') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">#{{ detail.id }}</dd>
                         </div>
                     </dl>
@@ -130,7 +130,7 @@ const fmtNumber = (value, prefix = '') => {
             <!-- Remarks -->
             <div class="theme-form-card" v-if="detail.remarks">
                 <div class="p-8 md:p-10">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-4">Item Remarks</h3>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-4">{{ $t('Item Remarks') }}</h3>
                     <div class="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-100 dark:border-slate-700 italic">
                         "{{ detail.remarks }}"
                     </div>

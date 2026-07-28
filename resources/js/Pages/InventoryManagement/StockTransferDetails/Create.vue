@@ -28,10 +28,10 @@ const submit = () => form.post(route('stock-transfer-details.store'));
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Add Transfer Item" />
+        <Head :title="$t('Add Transfer Item')" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-900">Add Transfer Line Item</h2>
-            <Link :href="route('stock-transfer-details.index')" class="theme-form-back-link">Back</Link>
+            <h2 class="text-2xl font-black text-slate-900">{{ $t('Add Transfer Line Item') }}</h2>
+            <Link :href="route('stock-transfer-details.index')" class="theme-form-back-link">{{ $t('Back') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
@@ -39,26 +39,26 @@ const submit = () => form.post(route('stock-transfer-details.store'));
                 <div>
                     <InputLabel value="Stock Transfer Ref" />
                     <select v-model="form.stock_transfer_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Transfer</option>
+                        <option value="" disabled>{{ $t('Select Transfer') }}</option>
                         <option v-for="t in transfers" :key="t.id" :value="t.id">{{ t.reference_no }}</option>
                     </select>
                     <InputError :message="form.errors.stock_transfer_id" />
                 </div>
                 <div>
-                    <InputLabel value="Product" />
+                    <InputLabel :value="$t('Product')" />
                     <select v-model="form.product_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Product</option>
+                        <option value="" disabled>{{ $t('Select Product') }}</option>
                         <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                     </select>
                     <InputError :message="form.errors.product_id" />
                 </div>
                 <div>
-                    <InputLabel value="Quantity" />
+                    <InputLabel :value="$t('Quantity')" />
                     <TextInput type="number" step="0.01" v-model="form.quantity" class="w-full" required />
                     <InputError :message="form.errors.quantity" />
                 </div>
                 <div>
-                    <InputLabel value="Unit Cost" />
+                    <InputLabel :value="$t('Unit Cost')" />
                     <TextInput type="number" step="0.01" v-model="form.unit_cost" class="w-full" required />
                     <InputError :message="form.errors.unit_cost" />
                 </div>
@@ -67,29 +67,29 @@ const submit = () => form.post(route('stock-transfer-details.store'));
                     <div class="theme-form-input bg-slate-50 font-bold text-indigo-600">${{ totalCost }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Batch No" />
+                    <InputLabel :value="$t('Batch No')" />
                     <TextInput v-model="form.batch_no" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Serial No" />
+                    <InputLabel :value="$t('Serial No')" />
                     <TextInput v-model="form.serial_no" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Expiry Date" />
+                    <InputLabel :value="$t('Expiry Date')" />
                     <TextInput type="date" v-model="form.expiry_date" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Status" />
+                    <InputLabel :value="$t('Status')" />
                     <button type="button" @click="form.status = !form.status" class="mt-2 relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
                         <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
                     </button>
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
-            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">Add Item</PrimaryButton></div>
+            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">{{ $t('Add Item') }}</PrimaryButton></div>
         </form>
     </AuthenticatedLayout>
 </template>

@@ -59,7 +59,7 @@
 
     /* Sidebar */
     .theme-sidebar {
-        @apply bg-slate-100 text-slate-800 border-r border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700;
+        @apply bg-slate-100 text-slate-800 border-e border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700;
     }
 
     .theme-sidebar-nav-active {
@@ -242,4 +242,46 @@
     .theme-modal-btn-danger {
         @apply px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm shadow-indigo-600/20 transition-colors active:scale-[0.98];
     }
+}
+
+/* RTL / LTR layout helpers — direction driven by html[dir] */
+@layer utilities {
+    [dir="rtl"] body {
+        font-family: 'Noto Nastaliq Urdu', 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    [dir="rtl"] .theme-table-header-cell,
+    [dir="rtl"] .theme-form-label,
+    [dir="rtl"] .theme-form-section-title {
+        text-align: right;
+    }
+
+    [dir="rtl"] .theme-form-input,
+    [dir="rtl"] .theme-form-select,
+    [dir="rtl"] input:not([type="checkbox"]):not([type="radio"]),
+    [dir="rtl"] select,
+    [dir="rtl"] textarea {
+        text-align: right;
+    }
+
+    [dir="ltr"] .theme-table-header-cell,
+    [dir="ltr"] .theme-form-label {
+        text-align: left;
+    }
+
+    /* Mirror common physical spacing used across legacy pages */
+    [dir="rtl"] .mr-1 { margin-right: 0; margin-left: 0.25rem; }
+    [dir="rtl"] .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+    [dir="rtl"] .mr-3 { margin-right: 0; margin-left: 0.75rem; }
+    [dir="rtl"] .ml-1 { margin-left: 0; margin-right: 0.25rem; }
+    [dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+    [dir="rtl"] .ml-3 { margin-left: 0; margin-right: 0.75rem; }
+    [dir="rtl"] .ml-auto { margin-left: 0; margin-right: auto; }
+    [dir="rtl"] .pl-4 { padding-left: 0; padding-right: 1rem; }
+    [dir="rtl"] .pr-2 { padding-right: 0; padding-left: 0.5rem; }
+    [dir="rtl"] .border-l-4 { border-left-width: 0; border-right-width: 4px; }
+    [dir="rtl"] .rounded-r-xl { border-radius: 0.75rem 0 0 0.75rem; }
+    [dir="rtl"] .text-left { text-align: right; }
+    [dir="rtl"] .text-right { text-align: left; }
+    [dir="rtl"] .origin-top-left { transform-origin: top right; }
 }

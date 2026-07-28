@@ -39,15 +39,15 @@ const formatPrice = (value) => value === null || value === undefined ? '—' : N
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Product Selling Prices" />
+        <Head :title="$t('Product Selling Prices')" />
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Product Selling Prices</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage and monitor product pricing tiers.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Product Selling Prices') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage and monitor product pricing tiers.') }}</p>
             </div>
             <Link :href="route('product-selling-prices.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Create New Price
+                {{ $t('Create New Price') }}
             </Link>
         </div>
 
@@ -63,8 +63,8 @@ const formatPrice = (value) => value === null || value === undefined ? '—' : N
                 <form @submit.prevent="applySearch" class="flex flex-col sm:flex-row gap-3">
                     <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search by product name or SKU..." />
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -72,17 +72,17 @@ const formatPrice = (value) => value === null || value === undefined ? '—' : N
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Product</th>
-                            <th class="theme-table-header-cell">Retail Price</th>
-                            <th class="theme-table-header-cell">Wholesale Price</th>
-                            <th class="theme-table-header-cell">Dealer Price</th>
-                            <th class="theme-table-header-cell">Distributor Price</th>
-                            <th class="theme-table-header-cell">Online Price</th>
-                            <th class="theme-table-header-cell">Effective From</th>
-                            <th class="theme-table-header-cell">Effective To</th>
-                            <th class="theme-table-header-cell">Default</th>
-                            <th class="theme-table-header-cell">Status</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Retail Price') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Wholesale Price') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Dealer Price') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Distributor Price') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Online Price') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Effective From') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Effective To') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Default') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Status') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -135,12 +135,12 @@ const formatPrice = (value) => value === null || value === undefined ? '—' : N
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="productSellingPrices.data.length === 0"><td colspan="11" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No selling prices found.</td></tr>
+                        <tr v-if="productSellingPrices.data.length === 0"><td colspan="11" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No selling prices found.') }}</td></tr>
                     </tbody>
                 </table>
             </div>
             <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-                <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">Showing <span class="text-slate-900 dark:text-slate-200">{{ productSellingPrices.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ productSellingPrices.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ productSellingPrices.total }}</span> entries</div>
+                <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">{{ $t('Showing') }} <span class="text-slate-900 dark:text-slate-200">{{ productSellingPrices.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ productSellingPrices.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ productSellingPrices.total }}</span> {{ $t('entries') }}</div>
                 <div class="flex flex-wrap justify-center items-center gap-1.5">
                     <template v-for="(link, k) in productSellingPrices.links" :key="k">
                         <Link v-if="link.url" :href="link.url" v-html="link.label" class="min-w-[30px] h-6 px-2 flex items-center justify-center text-xs font-bold rounded-lg border transition-all duration-200" :class="[link.active ? 'theme-pagination-active' : 'theme-pagination-inactive']" />

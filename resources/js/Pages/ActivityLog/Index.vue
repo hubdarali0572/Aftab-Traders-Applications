@@ -194,12 +194,12 @@ const actionBadgeClass = (event) => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Activity Logs" />
+        <Head :title="$t('Activity Logs')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">System Activity Logs</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Detailed tracking of all system changes.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('System Activity Logs') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Detailed tracking of all system changes.') }}</p>
             </div>
 
             <button
@@ -219,7 +219,7 @@ const actionBadgeClass = (event) => {
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                     />
                 </svg>
-                Clear All System Logs
+                {{ $t('Clear All System Logs') }}
             </button>
         </div>
 
@@ -236,12 +236,12 @@ const actionBadgeClass = (event) => {
                 <table class="w-full text-left border-collapse min-w-[1000px]">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell w-[12%]">User</th>
-                            <th class="theme-table-header-cell w-[8%] text-center">Action</th>
-                            <th class="theme-table-header-cell w-[12%]">Resource</th>
-                            <th class="theme-table-header-cell w-[42%]">Change Details</th>
-                            <th class="theme-table-header-cell w-[14%] text-right">Timestamp</th>
-                            <th class="theme-table-header-cell w-[7%] text-center">Delete</th>
+                            <th class="theme-table-header-cell w-[12%]">{{ $t('User') }}</th>
+                            <th class="theme-table-header-cell w-[8%] text-center">{{ $t('Action') }}</th>
+                            <th class="theme-table-header-cell w-[12%]">{{ $t('Resource') }}</th>
+                            <th class="theme-table-header-cell w-[42%]">{{ $t('Change Details') }}</th>
+                            <th class="theme-table-header-cell w-[14%] text-right">{{ $t('Timestamp') }}</th>
+                            <th class="theme-table-header-cell w-[7%] text-center">{{ $t('Delete') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -313,7 +313,7 @@ const actionBadgeClass = (event) => {
                                     </div>
                                 </div>
 
-                                <span v-else class="text-[11px] text-slate-400 dark:text-slate-500">No detail recorded</span>
+                                <span v-else class="text-[11px] text-slate-400 dark:text-slate-500">{{ $t('No detail recorded') }}</span>
                             </td>
 
                             <td class="px-4 py-3 text-right text-[11px] font-bold text-slate-700 dark:text-slate-300">
@@ -338,7 +338,7 @@ const actionBadgeClass = (event) => {
 
                         <tr v-if="activities.data.length === 0">
                             <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">
-                                No activity logs found.
+                                {{ $t('No activity logs found.') }}
                             </td>
                         </tr>
                     </tbody>
@@ -347,7 +347,7 @@ const actionBadgeClass = (event) => {
 
             <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
                 <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-400">
-                    Showing <span class="text-slate-900 dark:text-slate-200">{{ activities.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ activities.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ activities.total }}</span> logs
+                    {{ $t('Showing') }} <span class="text-slate-900 dark:text-slate-200">{{ activities.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ activities.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ activities.total }}</span> {{ $t('logs') }}
                 </div>
 
                 <div class="flex flex-wrap justify-center items-center gap-1.5">

@@ -1,4 +1,6 @@
 <script setup>
+import { useLocale } from '@/i18n';
+
 defineProps({
     show: {
         type: Boolean,
@@ -36,6 +38,7 @@ defineProps({
 });
 
 const emit = defineEmits(['close', 'confirm']);
+const { t } = useLocale();
 </script>
 
 <template>
@@ -60,13 +63,12 @@ const emit = defineEmits(['close', 'confirm']);
                     leave-to-class="opacity-0 scale-95 translate-y-4"
                 >
                     <div v-if="show" class="theme-modal-panel" role="dialog" aria-modal="true">
-                        <!-- Header -->
                         <div class="theme-modal-header">
-                            <h3 class="theme-modal-title">{{ title }}</h3>
+                            <h3 class="theme-modal-title">{{ t(title) }}</h3>
                             <button
                                 type="button"
                                 class="theme-modal-close"
-                                aria-label="Close"
+                                :aria-label="t('Close')"
                                 @click="emit('close')"
                             >
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -75,7 +77,6 @@ const emit = defineEmits(['close', 'confirm']);
                             </button>
                         </div>
 
-                        <!-- Body -->
                         <div class="theme-modal-body">
                             <div
                                 class="theme-modal-icon"
@@ -89,7 +90,7 @@ const emit = defineEmits(['close', 'confirm']);
                                 </svg>
                             </div>
 
-                            <p class="theme-modal-message">{{ message }}</p>
+                            <p class="theme-modal-message">{{ t(message) }}</p>
 
                             <div v-if="badge" class="theme-modal-badge">
                                 <div
@@ -101,16 +102,15 @@ const emit = defineEmits(['close', 'confirm']);
                                 <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ badge }}</span>
                             </div>
 
-                            <p class="theme-modal-warning">This action is irreversible</p>
+                            <p class="theme-modal-warning">{{ t('This action is irreversible') }}</p>
                         </div>
 
-                        <!-- Footer -->
                         <div class="theme-modal-footer">
                             <button type="button" class="theme-modal-btn-cancel" @click="emit('close')">
-                                {{ cancelLabel }}
+                                {{ t(cancelLabel) }}
                             </button>
                             <button type="button" class="theme-modal-btn-danger" @click="emit('confirm')">
-                                {{ confirmLabel }}
+                                {{ t(confirmLabel) }}
                             </button>
                         </div>
                     </div>

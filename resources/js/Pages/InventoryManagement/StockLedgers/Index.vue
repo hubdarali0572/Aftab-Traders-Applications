@@ -67,18 +67,18 @@ const formatType = (type) => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Stock Ledger" />
+        <Head :title="$t('Stock Ledger')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Stock Ledger</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Complete history of stock movements.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Stock Ledger') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Complete history of stock movements.') }}</p>
             </div>
             <Link :href="route('stock-ledgers.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                New Ledger Entry
+                {{ $t('New Ledger Entry') }}
             </Link>
         </div>
 
@@ -87,8 +87,8 @@ const formatType = (type) => {
                 <form @submit.prevent="applySearch" class="flex flex-col sm:flex-row gap-3">
                     <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search by Reference # or Product..." />
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -97,16 +97,16 @@ const formatType = (type) => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Date</th>
-                            <th class="theme-table-header-cell">Type</th>
-                            <th class="theme-table-header-cell">Ref #</th>
-                            <th class="theme-table-header-cell">Warehouse</th>
-                            <th class="theme-table-header-cell">Product</th>
-                            <th class="theme-table-header-cell">In</th>
-                            <th class="theme-table-header-cell">Out</th>
-                            <th class="theme-table-header-cell">Balance</th>
-                            <th class="theme-table-header-cell">Total Cost</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Type') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Ref #') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('In') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Out') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Balance') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Total Cost') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -143,7 +143,7 @@ const formatType = (type) => {
                             </td>
                         </tr>
                         <tr v-if="ledgers.data.length === 0">
-                            <td colspan="10" class="px-6 py-12 text-center text-slate-400 font-medium">No ledger entries found.</td>
+                            <td colspan="10" class="px-6 py-12 text-center text-slate-400 font-medium">{{ $t('No ledger entries found.') }}</td>
                         </tr>
                     </tbody>
                 </table>

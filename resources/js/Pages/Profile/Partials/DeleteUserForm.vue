@@ -46,10 +46,10 @@ const closeModal = () => {
             <h2
                 class="text-xs font-semibold uppercase tracking-wider text-indigo-700 dark:text-indigo-200"
             >
-                Danger Zone
+                {{ $t('Danger Zone') }}
             </h2>
             <p class="text-xs text-slate-600 dark:text-slate-300">
-                Permanently remove your account and all associated data.
+                {{ $t('Permanently remove your account and all associated data.') }}
             </p>
         </div>
 
@@ -79,13 +79,12 @@ const closeModal = () => {
                     <h3
                         class="text-sm font-bold text-slate-900 dark:text-slate-100"
                     >
-                        Delete Account
+                        {{ $t('Delete Account') }}
                     </h3>
                     <p
                         class="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-400"
                     >
-                        Once deleted, all resources and data will be permanently
-                        removed. This action cannot be undone.
+                        {{ $t('Once deleted, all resources and data will be permanently removed. This action cannot be undone.') }}
                     </p>
                 </div>
 
@@ -94,18 +93,18 @@ const closeModal = () => {
                     @click="confirmUserDeletion"
                     class="inline-flex shrink-0 items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition-colors hover:bg-indigo-700 active:scale-[0.98] dark:focus:ring-offset-slate-900"
                 >
-                    Delete Account
+                    {{ $t('Delete Account') }}
                 </button>
             </div>
         </div>
 
         <Modal :show="confirmingUserDeletion" max-width="md" @close="closeModal">
             <div class="theme-modal-header">
-                <h3 class="theme-modal-title">Delete Account</h3>
+                <h3 class="theme-modal-title">{{ $t('Delete Account') }}</h3>
                 <button
                     type="button"
                     class="theme-modal-close"
-                    aria-label="Close"
+                    :aria-label="$t('Close')"
                     @click="closeModal"
                 >
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -122,13 +121,13 @@ const closeModal = () => {
                 </div>
 
                 <p class="text-center text-sm font-medium leading-relaxed text-slate-600 dark:text-slate-300">
-                    Please enter your password to permanently delete your account and all associated data.
+                    {{ $t('Please enter your password to permanently delete your account and all associated data.') }}
                 </p>
 
-                <p class="theme-modal-warning text-center">This action is irreversible</p>
+                <p class="theme-modal-warning text-center">{{ $t('This action is irreversible') }}</p>
 
                 <div class="mt-6">
-                    <InputLabel for="password" value="Password" class="theme-form-label" />
+                    <InputLabel for="password" :value="$t('Password')" class="theme-form-label" />
 
                     <TextInput
                         id="password"
@@ -146,7 +145,7 @@ const closeModal = () => {
 
             <div class="theme-modal-footer">
                 <button type="button" class="theme-modal-btn-cancel" @click="closeModal">
-                    Cancel
+                    {{ $t('Cancel') }}
                 </button>
 
                 <button

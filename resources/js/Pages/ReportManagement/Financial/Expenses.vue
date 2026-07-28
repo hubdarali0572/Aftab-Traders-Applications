@@ -28,16 +28,16 @@ const categoryItems = computed(() => props.summary?.by_category || []);
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Expense Report" />
-        <ReportToolbar title="Expense Report" route-name="reports.financial.expenses" :filters="filters" :options="options" show-expense-head show-payment-method />
+        <Head :title="$t('Expense Report')" />
+        <ReportToolbar :title="$t('Expense Report')" route-name="reports.financial.expenses" :filters="filters" :options="options" show-expense-head show-payment-method />
         <ReportSummaryCards :cards="cards" />
 
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6 items-start">
             <div class="theme-form-card overflow-hidden self-start">
                 <div class="theme-form-section-header">
                     <div>
-                        <h3 class="theme-form-section-title">Monthly Expense Trend</h3>
-                        <p class="mt-1 text-xs text-slate-400">Fixed-height performance chart</p>
+                        <h3 class="theme-form-section-title">{{ $t('Monthly Expense Trend') }}</h3>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Fixed-height performance chart') }}</p>
                     </div>
                 </div>
                 <div class="p-5">
@@ -54,8 +54,8 @@ const categoryItems = computed(() => props.summary?.by_category || []);
             <div class="theme-form-card overflow-hidden self-start">
                 <div class="theme-form-section-header">
                     <div>
-                        <h3 class="theme-form-section-title">Expense by Category</h3>
-                        <p class="mt-1 text-xs text-slate-400">Share of spend by expense head</p>
+                        <h3 class="theme-form-section-title">{{ $t('Expense by Category') }}</h3>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Share of spend by expense head') }}</p>
                     </div>
                 </div>
                 <div class="p-5">
@@ -72,14 +72,14 @@ const categoryItems = computed(() => props.summary?.by_category || []);
             <table class="w-full text-left min-w-[1100px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Date</th>
-                        <th class="theme-table-header-cell">Expense Head</th>
-                        <th class="theme-table-header-cell">Category</th>
-                        <th class="theme-table-header-cell text-right">Amount</th>
-                        <th class="theme-table-header-cell">Paid To</th>
-                        <th class="theme-table-header-cell">Payment Method</th>
-                        <th class="theme-table-header-cell">Remarks</th>
-                        <th class="theme-table-header-cell">Recorded By</th>
+                        <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Expense Head') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Category') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Paid To') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Payment Method') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Remarks') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Recorded By') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -93,7 +93,7 @@ const categoryItems = computed(() => props.summary?.by_category || []);
                         <td class="px-6 py-3 text-sm max-w-xs truncate">{{ r.remarks || '—' }}</td>
                         <td class="px-6 py-3 text-sm">{{ r.recorded_by || '—' }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="8" class="px-6 py-12 text-center text-slate-400">No expenses.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="8" class="px-6 py-12 text-center text-slate-400">{{ $t('No expenses.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

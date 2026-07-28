@@ -25,14 +25,14 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Customer</th>
-                        <th class="theme-table-header-cell text-right">Total Sales</th>
-                        <th class="theme-table-header-cell text-right">Total Paid</th>
-                        <th class="theme-table-header-cell text-right">Outstanding</th>
-                        <th class="theme-table-header-cell text-right">Pending Invoices</th>
-                        <th class="theme-table-header-cell">Oldest Due</th>
-                        <th class="theme-table-header-cell text-right">Days</th>
-                        <th class="theme-table-header-cell text-right print:hidden">Actions</th>
+                        <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Total Sales') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Total Paid') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Outstanding') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Pending Invoices') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Oldest Due') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Days') }}</th>
+                        <th class="theme-table-header-cell text-right print:hidden">{{ $t('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -45,10 +45,10 @@ const cards = computed(() => [
                         <td class="px-6 py-3">{{ formatDate(r.oldest_due_date) }}</td>
                         <td class="px-6 py-3 text-right font-bold" :class="r.oldest_due_days > 90 ? 'text-rose-600' : ''">{{ num(r.oldest_due_days) }}</td>
                         <td class="px-6 py-3 text-right print:hidden">
-                            <Link :href="route('reports.customers.ledger', { customer_id: r.customer_id })" class="text-xs font-bold text-indigo-600">Ledger</Link>
+                            <Link :href="route('reports.customers.ledger', { customer_id: r.customer_id })" class="text-xs font-bold text-indigo-600">{{ $t('Ledger') }}</Link>
                         </td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="8" class="px-6 py-12 text-center text-slate-400">No outstanding balances.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="8" class="px-6 py-12 text-center text-slate-400">{{ $t('No outstanding balances.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

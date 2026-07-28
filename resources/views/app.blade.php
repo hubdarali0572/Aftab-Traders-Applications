@@ -17,7 +17,7 @@
     <link rel="shortcut icon" type="image/png" href="/storage/images/logo.png">
     <link rel="apple-touch-icon" href="/storage/images/logo.png">
 
-    {{-- Apply theme before paint (default: Light Mode) --}}
+    {{-- Theme + locale before paint (default: Light Mode, English LTR) --}}
     <script>
         (function () {
             try {
@@ -30,12 +30,28 @@
             } catch (e) {
                 document.documentElement.classList.remove('dark');
             }
+            try {
+                var locale = localStorage.getItem('locale');
+                if (locale === 'ur') {
+                    document.documentElement.lang = 'ur';
+                    document.documentElement.dir = 'rtl';
+                    document.documentElement.classList.add('locale-ur');
+                } else {
+                    document.documentElement.lang = 'en';
+                    document.documentElement.dir = 'ltr';
+                    document.documentElement.classList.add('locale-en');
+                }
+            } catch (e) {
+                document.documentElement.lang = 'en';
+                document.documentElement.dir = 'ltr';
+            }
         })();
     </script>
 
     <!-- Fonts (HTTPS only; no third-party cookies) -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=noto-nastaliq-urdu:400,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
     @routes

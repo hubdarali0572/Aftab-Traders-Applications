@@ -26,25 +26,25 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Register" />
+        <Head :title="$t('Register')" />
 
         <div class="mb-6 text-center sm:mb-8">
             <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-400">
-                Decoration Lights ERP
+                {{ $t('Decoration Lights ERP') }}
             </p>
             <h2
                 class="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white"
             >
-                Create an account
+                {{ $t('Create an account') }}
             </h2>
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                Get access to Aftab Traders wholesale &amp; retail operations.
+                {{ $t('Get access to Aftab Traders wholesale & retail operations.') }}
             </p>
         </div>
 
         <form @submit.prevent="submit" class="space-y-5">
             <div>
-                <InputLabel for="name" value="Full Name" />
+                <InputLabel for="name" :value="$t('Full Name')" />
                 <TextInput
                     id="name"
                     type="text"
@@ -59,7 +59,7 @@ const submit = () => {
             </div>
 
             <div>
-                <InputLabel for="email" value="Email Address" />
+                <InputLabel for="email" :value="$t('Email Address')" />
                 <TextInput
                     id="email"
                     type="email"
@@ -73,7 +73,7 @@ const submit = () => {
             </div>
 
             <div>
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" :value="$t('Password')" />
                 <div class="mt-1.5 relative">
                     <TextInput
                         id="password"
@@ -102,7 +102,7 @@ const submit = () => {
             </div>
 
             <div>
-                <InputLabel for="password_confirmation" value="Confirm Password" />
+                <InputLabel for="password_confirmation" :value="$t('Confirm Password')" />
                 <div class="mt-1.5 relative">
                     <TextInput
                         id="password_confirmation"
@@ -137,21 +137,21 @@ const submit = () => {
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Creating account...
+                        {{ $t('Creating account...') }}
                     </span>
-                    <span v-else>Register</span>
+                    <span v-else>{{ $t('Register') }}</span>
                 </PrimaryButton>
             </div>
         </form>
 
         <div class="mt-8 pt-6 border-t border-slate-100 text-center dark:border-slate-800">
             <p class="text-sm text-slate-500 dark:text-slate-400">
-                Already have an account?
+                {{ $t('Already have an account?') }}
                 <Link
                     :href="route('login')"
                     class="font-semibold text-indigo-600 hover:text-indigo-500 underline-offset-4 hover:underline dark:text-indigo-400"
                 >
-                    Log in
+                    {{ $t('Log in') }}
                 </Link>
             </p>
         </div>

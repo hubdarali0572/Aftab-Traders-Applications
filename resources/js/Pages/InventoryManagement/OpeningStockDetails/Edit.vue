@@ -42,12 +42,12 @@ const submit = () => {
     <AuthenticatedLayout>
         <div class="max-w-8xl mx-auto mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">Edit Detail Item</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">{{ $t('Edit Detail Item') }}</h2>
                 <p class="text-sm font-medium text-slate-500">Record ID: #{{ detail.id }}</p>
             </div>
             <Link :href="route('opening-stock-details.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Back to List
+                {{ $t('Back to List') }}
             </Link>
         </div>
 
@@ -68,7 +68,7 @@ const submit = () => {
 
                             <!-- Product Selection -->
                             <div class="flex flex-col">
-                                <InputLabel for="product_id" value="Product" class="theme-form-label ml-1" />
+                                <InputLabel for="product_id" :value="$t('Product')" class="theme-form-label ml-1" />
                                 <select id="product_id" class="theme-form-input" v-model="form.product_id" required>
                                     <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                                 </select>
@@ -77,20 +77,20 @@ const submit = () => {
 
                             <!-- Batch Info -->
                             <div class="flex flex-col">
-                                <InputLabel for="batch_no" value="Batch Number" class="theme-form-label ml-1" />
+                                <InputLabel for="batch_no" :value="$t('Batch Number')" class="theme-form-label ml-1" />
                                 <TextInput id="batch_no" type="text" class="theme-form-input" v-model="form.batch_no" />
                                 <InputError :message="form.errors.batch_no" class="mt-2" />
                             </div>
 
                             <!-- Quantity & Cost -->
                             <div class="flex flex-col">
-                                <InputLabel for="quantity" value="Quantity" class="theme-form-label ml-1" />
+                                <InputLabel for="quantity" :value="$t('Quantity')" class="theme-form-label ml-1" />
                                 <TextInput id="quantity" type="number" step="0.01" class="theme-form-input" v-model="form.quantity" required />
                                 <InputError :message="form.errors.quantity" class="mt-2" />
                             </div>
 
                             <div class="flex flex-col">
-                                <InputLabel for="unit_cost" value="Unit Cost" class="theme-form-label ml-1" />
+                                <InputLabel for="unit_cost" :value="$t('Unit Cost')" class="theme-form-label ml-1" />
                                 <TextInput id="unit_cost" type="number" step="0.01" class="theme-form-input" v-model="form.unit_cost" required />
                                 <InputError :message="form.errors.unit_cost" class="mt-2" />
                             </div>
@@ -104,13 +104,13 @@ const submit = () => {
 
                             <!-- Tracking -->
                             <div class="flex flex-col">
-                                <InputLabel for="expiry_date" value="Expiry Date" class="theme-form-label ml-1" />
+                                <InputLabel for="expiry_date" :value="$t('Expiry Date')" class="theme-form-label ml-1" />
                                 <TextInput id="expiry_date" type="date" class="theme-form-input" v-model="form.expiry_date" />
                                 <InputError :message="form.errors.expiry_date" class="mt-2" />
                             </div>
 
                             <div class="flex flex-col">
-                                <InputLabel for="serial_no" value="Serial Number" class="theme-form-label ml-1" />
+                                <InputLabel for="serial_no" :value="$t('Serial Number')" class="theme-form-label ml-1" />
                                 <TextInput id="serial_no" type="text" class="theme-form-input" v-model="form.serial_no" />
                                 <InputError :message="form.errors.serial_no" class="mt-2" />
                             </div>
@@ -137,7 +137,7 @@ const submit = () => {
 
                 <div class="flex items-center justify-center pt-4">
                     <PrimaryButton class="theme-btn-primary px-12 py-4 rounded-full text-white font-black text-xs uppercase tracking-widest active:scale-95" :disabled="form.processing">
-                        Update Detail Item
+                        {{ $t('Update Detail Item') }}
                     </PrimaryButton>
                 </div>
             </form>

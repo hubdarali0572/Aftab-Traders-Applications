@@ -62,12 +62,12 @@ const canonicalUrl = computed(() => route("publicSite.about"));
                     <p
                         class="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400"
                     >
-                        About Us
+                        {{ $t('About Us') }}
                     </p>
                     <h1
                         class="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl"
                     >
-                        Building unified digital governance
+                        {{ $t('Building unified digital governance') }}
                     </h1>
                     <p
                         class="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-300"

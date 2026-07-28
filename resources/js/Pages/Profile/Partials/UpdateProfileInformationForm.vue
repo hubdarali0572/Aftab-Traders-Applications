@@ -39,9 +39,9 @@ const isVerified = computed(() => !!user.email_verified_at);
             class="theme-form-section-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
             <div>
-                <h2 class="theme-form-section-title">Profile Information</h2>
+                <h2 class="theme-form-section-title">{{ $t('Profile Information') }}</h2>
                 <p class="mt-1 text-xs text-slate-400">
-                    Update your account details and email address.
+                    {{ $t('Update your account details and email address.') }}
                 </p>
             </div>
         </div>
@@ -86,7 +86,7 @@ const isVerified = computed(() => !!user.email_verified_at);
                             d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    Email Verified
+                    {{ $t('Email Verified') }}
                 </div>
             </div>
 
@@ -96,7 +96,7 @@ const isVerified = computed(() => !!user.email_verified_at);
             >
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
                     <div>
-                        <InputLabel for="name" value="Full Name" />
+                        <InputLabel for="name" :value="$t('Full Name')" />
                         <TextInput
                             id="name"
                             type="text"
@@ -111,7 +111,7 @@ const isVerified = computed(() => !!user.email_verified_at);
                     </div>
 
                     <div>
-                        <InputLabel for="email" value="Email Address" />
+                        <InputLabel for="email" :value="$t('Email Address')" />
                         <TextInput
                             id="email"
                             type="email"
@@ -152,12 +152,12 @@ const isVerified = computed(() => !!user.email_verified_at);
                             <p
                                 class="text-sm font-semibold text-indigo-900 dark:text-indigo-200"
                             >
-                                Your email address is not verified.
+                                {{ $t('Your email address is not verified.') }}
                             </p>
                             <p
                                 class="mt-1 text-sm text-indigo-800/80 dark:text-indigo-200/80"
                             >
-                                Click below to receive a new verification link.
+                                {{ $t('Click below to receive a new verification link.') }}
                             </p>
                             <Link
                                 :href="route('verification.send')"
@@ -165,7 +165,7 @@ const isVerified = computed(() => !!user.email_verified_at);
                                 as="button"
                                 class="mt-3 inline-flex items-center text-sm font-bold text-indigo-600 hover:text-indigo-500 transition-colors dark:text-indigo-400 dark:hover:text-indigo-300"
                             >
-                                Resend verification email
+                                {{ $t('Resend verification email') }}
                             </Link>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ const isVerified = computed(() => !!user.email_verified_at);
                     class="flex flex-col gap-4 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700"
                 >
                     <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Changes are saved to your account immediately.
+                        {{ $t('Changes are saved to your account immediately.') }}
                     </p>
 
                     <div class="flex items-center gap-4">
@@ -210,7 +210,7 @@ const isVerified = computed(() => !!user.email_verified_at);
                                         d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                     />
                                 </svg>
-                                Profile saved
+                                {{ $t('Profile saved') }}
                             </p>
                         </Transition>
 
@@ -219,7 +219,7 @@ const isVerified = computed(() => !!user.email_verified_at);
                             :disabled="form.processing"
                             class="theme-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Save Changes
+                            {{ $t('Save Changes') }}
                         </button>
                     </div>
                 </div>

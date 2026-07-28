@@ -35,8 +35,8 @@ const submit = () => form.post(route('customers.store'));
     <AuthenticatedLayout>
         <Head title="Create Customer" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-800 dark:text-slate-100">New Customer</h2>
-            <Link :href="route('customers.index')" class="theme-form-back-link">Back to List</Link>
+            <h2 class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ $t('New Customer') }}</h2>
+            <Link :href="route('customers.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
@@ -64,41 +64,41 @@ const submit = () => form.post(route('customers.store'));
                     <InputError :message="form.errors.company_name" />
                 </div>
                 <div>
-                    <InputLabel value="Phone" />
+                    <InputLabel :value="$t('Phone')" />
                     <TextInput v-model="form.phone" class="w-full" required />
                     <InputError :message="form.errors.phone" />
                 </div>
                 <div>
-                    <InputLabel value="Alternate Phone" />
+                    <InputLabel :value="$t('Alternate Phone')" />
                     <TextInput v-model="form.alternate_phone" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Email" />
+                    <InputLabel :value="$t('Email')" />
                     <TextInput type="email" v-model="form.email" class="w-full" />
                     <InputError :message="form.errors.email" />
                 </div>
                 <div>
-                    <InputLabel value="Tax Number" />
+                    <InputLabel :value="$t('Tax Number')" />
                     <TextInput v-model="form.tax_number" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Credit Limit" />
+                    <InputLabel :value="$t('Credit Limit')" />
                     <TextInput type="number" step="0.01" v-model="form.credit_limit" class="w-full" />
                 </div>
                 <div>
-                    <InputLabel value="Opening Balance" />
+                    <InputLabel :value="$t('Opening Balance')" />
                     <TextInput type="number" step="0.01" v-model="form.opening_balance" class="w-full" />
                     <InputError :message="form.errors.opening_balance" />
                 </div>
                 <div>
                     <InputLabel value="Opening Balance Type" />
                     <select v-model="form.opening_balance_type" class="theme-form-input w-full">
-                        <option value="debit">Debit (Receivable)</option>
-                        <option value="credit">Credit (Payable)</option>
+                        <option value="debit">{{ $t('Debit (Receivable)') }}</option>
+                        <option value="credit">{{ $t('Credit (Payable)') }}</option>
                     </select>
                 </div>
                 <div>
-                    <InputLabel value="Status" />
+                    <InputLabel :value="$t('Status')" />
                     <button type="button" @click="form.status = !form.status" class="mt-2 relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
                         <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
                     </button>
@@ -107,12 +107,12 @@ const submit = () => form.post(route('customers.store'));
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <InputLabel value="Address" />
+                    <InputLabel :value="$t('Address')" />
                     <textarea v-model="form.address" class="theme-form-input w-full h-24"></textarea>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <InputLabel value="City" />
+                        <InputLabel :value="$t('City')" />
                         <TextInput v-model="form.city" class="w-full" />
                     </div>
                     <div>
@@ -127,11 +127,11 @@ const submit = () => form.post(route('customers.store'));
             </div>
 
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
 
-            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">Save Customer</PrimaryButton></div>
+            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">{{ $t('Save Customer') }}</PrimaryButton></div>
         </form>
     </AuthenticatedLayout>
 </template>

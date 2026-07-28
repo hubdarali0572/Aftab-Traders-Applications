@@ -1,0 +1,80 @@
+﻿Clear All System Logs
+No activity logs found.
+logs
+Security Check
+You're entering a protected area. Please confirm your password to verify your identity.
+Verifying Identity...
+Cancel and go back
+No worries, we'll send you reset instructions.
+Sending Link...
+Back to log in
+Reset your password
+Enter a new password for your account.
+Resetting...
+Verify your email
+Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you?
+Resending...
+Update Expense Head
+entries
+New Entry
+Customers with a non-zero ledger balance ┬╖ Total receivable
+No outstanding balances found.
+Add Damaged Item
+New Damage Record
+Edit Record
++ Add Item
+Update Detail Item
+Add Line Item
+No detail records found matching your search.
+Edit Item
+Add Opening Stock
+No Opening stock records found.
+Add Order Item
+No active order returns found. Create an Order Return first, then add line items.
+This order has no line items. Add products on the Order first.
+Add Return Item
+New Return
+Convert to Sales Return
+is calculated automatically from Order Details (products). It stays
+until you add line items.
+stays empty until you use
+on the order ΓÇö it is a system link, not a form field.
+Recalculated from Order Details.
+This invoice is
+. Saving a line will deduct stock from the sale warehouse immediately.
+Add Sale Item
+Add Adjustment Item
+New Adjustment
+No stock adjustment records found.
+Back to Ledger
+Save Ledger Entry
+New Ledger Entry
+Reference:
+Edit Ledger
+Add Transfer Item
+New Transfer
+Edit Stock
+Create Brand
+Update Brand
+Create New Category
+Create New Price
+Default Price
+Account Settings
+Manage your personal information, password, and account security from one place.
+Danger Zone
+Permanently remove your account and all associated data.
+Once deleted, all resources and data will be permanently removed. This action cannot be undone.
+Please enter your password to permanently delete your account and all associated data.
+Use a strong, unique password to keep your account secure.
+Password updated
+Update your account details and email address.
+Email Verified
+Your email address is not verified.
+Click below to receive a new verification link.
+Resend verification email
+A new verification link has been sent to your email address.
+Changes are saved to your account immediately.
+Profile saved
+About Us
+Building unified digital governance
+Unified Media is a production-ready platform for teams that need secure user management, rich media handling, and complete operational transparency in one cohesive system.

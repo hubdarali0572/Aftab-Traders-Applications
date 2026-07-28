@@ -81,8 +81,8 @@ const submit = () => {
     <AuthenticatedLayout>
         <Head title="Add Order Return Item" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-900">Add Order Return Line Item</h2>
-            <Link :href="route('order-return-details.index')" class="theme-form-back-link">Back</Link>
+            <h2 class="text-2xl font-black text-slate-900">{{ $t('Add Order Return Line Item') }}</h2>
+            <Link :href="route('order-return-details.index')" class="theme-form-back-link">{{ $t('Back') }}</Link>
         </div>
 
         <div
@@ -99,7 +99,7 @@ const submit = () => {
             v-if="!orderReturns?.length"
             class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
         >
-            No active order returns found. Create an Order Return first, then add line items.
+            {{ $t('No active order returns found. Create an Order Return first, then add line items.') }}
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
@@ -107,7 +107,7 @@ const submit = () => {
                 <div>
                     <InputLabel value="Order Return" />
                     <select v-model="form.order_return_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Return</option>
+                        <option value="" disabled>{{ $t('Select Return') }}</option>
                         <option v-for="item in orderReturns" :key="item.id" :value="item.id">
                             {{ item.reference_no }} — {{ item.order?.order_no }} ({{ item.return_status }})
                         </option>
@@ -115,20 +115,20 @@ const submit = () => {
                     <InputError :message="form.errors.order_return_id" />
                 </div>
                 <div>
-                    <InputLabel value="Product" />
+                    <InputLabel :value="$t('Product')" />
                     <select v-model="form.product_id" class="theme-form-input w-full" required :disabled="!form.order_return_id">
-                        <option value="" disabled>Select Product</option>
+                        <option value="" disabled>{{ $t('Select Product') }}</option>
                         <option v-for="product in availableProducts" :key="product.id" :value="product.id">{{ product.name }}</option>
                     </select>
                     <p v-if="form.order_return_id && availableProducts.length === 0" class="mt-1 text-xs text-rose-600 font-semibold">
-                        This order has no line items. Add products on the Order first.
+                        {{ $t('This order has no line items. Add products on the Order first.') }}
                     </p>
                     <InputError :message="form.errors.product_id" />
                 </div>
                 <div>
-                    <InputLabel value="Unit" />
+                    <InputLabel :value="$t('Unit')" />
                     <select v-model="form.unit_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Unit</option>
+                        <option value="" disabled>{{ $t('Select Unit') }}</option>
                         <option v-for="unit in units" :key="unit.id" :value="unit.id">{{ unit.name }}</option>
                     </select>
                     <InputError :message="form.errors.unit_id" />
@@ -148,18 +148,18 @@ const submit = () => {
                     <div class="theme-form-input bg-slate-50 font-bold text-indigo-600 dark:bg-slate-700/50">${{ lineTotal }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Reason" />
+                    <InputLabel :value="$t('Reason')" />
                     <TextInput v-model="form.reason" class="w-full" placeholder="e.g. Damaged, wrong size" />
                     <InputError :message="form.errors.reason" />
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
                 <InputError :message="form.errors.remarks" />
             </div>
             <div class="flex justify-center">
-                <PrimaryButton type="submit" :disabled="form.processing || !availableProducts.length">Add Item</PrimaryButton>
+                <PrimaryButton type="submit" :disabled="form.processing || !availableProducts.length">{{ $t('Add Item') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

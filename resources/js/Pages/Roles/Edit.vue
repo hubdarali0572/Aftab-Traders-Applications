@@ -56,23 +56,23 @@ const submit = () => {
 </script>
 
 <template>
-    <Head :title="isEditing ? 'Edit Role' : 'Create Role'" />
+    <Head :title="isEditing ? $t('Edit Role') : $t('Create Role')" />
 
     <AuthenticatedLayout>
         <!-- Header -->
         <div class="max-w-8xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">
-                    {{ isEditing ? 'Edit Role Authority' : 'Create System Role' }}
+                    {{ isEditing ? $t('Edit Role Authority') : $t('Create System Role') }}
                 </h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Configure access levels for Users and Roles.</p>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Configure access levels for Users and Roles.') }}</p>
             </div>
             <Link 
                 :href="route('roles.index')" 
                 class="theme-form-back-link"
             >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Back to Role List
+                {{ $t('Back to Role List') }}
             </Link>
         </div>
 
@@ -81,11 +81,11 @@ const submit = () => {
             <!-- Role Identity Card -->
             <div class="theme-form-card p-8">
                 <div class="max-w-md">
-                    <InputLabel for="name" value="Role Name" class="theme-form-label" />
+                    <InputLabel for="name" :value="$t('Role Name')" class="theme-form-label" />
                     <TextInput 
                         id="name" v-model="form.name" type="text" required 
                         class="theme-form-input"
-                        :placeholder="isEditing ? 'Update Role Name...' : 'Create New Role ...'"
+                        :placeholder="isEditing ? $t('Update Role Name...') : $t('Create New Role ...')"
                     />
                     <InputError :message="form.errors.name" class="mt-2" />
                 </div>
@@ -99,12 +99,12 @@ const submit = () => {
                     <!-- Card Header -->
                     <div class="theme-form-section-header flex items-center justify-between">
                         <h3 class="theme-form-section-title">
-                            {{ groupName }}
+                            {{ $t(groupName) }}
                         </h3>
                         
                         <label class="inline-flex items-center cursor-pointer group">
                             <input type="checkbox" @change="toggleGroup(permissions, $event)" :checked="isGroupFull(permissions)" class="theme-form-checkbox h-4 w-4">
-                            <span class="ml-2 text-[12px] font-bold text-indigo-700 dark:text-white uppercase">Toggle All</span>
+                            <span class="ml-2 text-[12px] font-bold text-indigo-700 dark:text-white uppercase">{{ $t('Toggle All') }}</span>
                         </label>
                     </div>
 
@@ -136,7 +136,7 @@ const submit = () => {
                     class="theme-btn-primary px-14 py-4 rounded-full font-black text-xs text-white uppercase tracking-widest active:scale-95"
                     :disabled="form.processing"
                 >
-                    {{ isEditing ? 'Save Changes' : 'Create Role' }}
+                    {{ isEditing ? $t('Save Changes') : $t('Create Role') }}
                 </PrimaryButton>
             </div>
         </form>

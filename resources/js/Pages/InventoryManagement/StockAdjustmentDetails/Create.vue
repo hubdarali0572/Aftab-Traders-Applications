@@ -27,10 +27,10 @@ const submit = () => form.post(route('stock-adjustment-details.store'));
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Add Adjustment Item" />
+        <Head :title="$t('Add Adjustment Item')" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-900">Add Stock Adjustment Detail</h2>
-            <Link :href="route('stock-adjustment-details.index')" class="theme-form-back-link">Back to Stock List</Link>
+            <h2 class="text-2xl font-black text-slate-900">{{ $t('Add Stock Adjustment Detail') }}</h2>
+            <Link :href="route('stock-adjustment-details.index')" class="theme-form-back-link">{{ $t('Back to Stock List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
@@ -38,19 +38,19 @@ const submit = () => form.post(route('stock-adjustment-details.store'));
                 <div>
                     <InputLabel value="Stock Adjustment Ref" />
                     <select v-model="form.stock_adjustment_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Adjustment</option>
+                        <option value="" disabled>{{ $t('Select Adjustment') }}</option>
                         <option v-for="a in adjustments" :key="a.id" :value="a.id">{{ a.reference_no }}</option>
                     </select>
                 </div>
                 <div>
-                    <InputLabel value="Product" />
+                    <InputLabel :value="$t('Product')" />
                     <select v-model="form.product_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>Select Product</option>
+                        <option value="" disabled>{{ $t('Select Product') }}</option>
                         <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                     </select>
                 </div>
                 <div>
-                    <InputLabel value="Reason" />
+                    <InputLabel :value="$t('Reason')" />
                     <TextInput v-model="form.reason" class="w-full" placeholder="e.g. Damage, Miscount" />
                 </div>
                 <div>
@@ -66,7 +66,7 @@ const submit = () => form.post(route('stock-adjustment-details.store'));
                     <div class="theme-form-input bg-slate-50 font-bold" :class="diffQty >= 0 ? 'text-emerald-600' : 'text-rose-600'">{{ diffQty }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Unit Cost" />
+                    <InputLabel :value="$t('Unit Cost')" />
                     <TextInput type="number" step="0.01" v-model="form.unit_cost" class="w-full" />
                 </div>
                 <div>
@@ -74,17 +74,17 @@ const submit = () => form.post(route('stock-adjustment-details.store'));
                     <div class="theme-form-input bg-slate-50 font-bold text-indigo-600">${{ totalCost }}</div>
                 </div>
                 <div>
-                    <InputLabel value="Status" />
+                    <InputLabel :value="$t('Status')" />
                     <button type="button" @click="form.status = !form.status" class="mt-2 relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
                         <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
                     </button>
                 </div>
             </div>
             <div>
-                <InputLabel value="Remarks" />
+                <InputLabel :value="$t('Remarks')" />
                 <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
             </div>
-            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">Add Item</PrimaryButton></div>
+            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">{{ $t('Add Item') }}</PrimaryButton></div>
         </form>
     </AuthenticatedLayout>
 </template>

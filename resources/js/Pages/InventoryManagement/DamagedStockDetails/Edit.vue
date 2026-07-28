@@ -29,13 +29,13 @@ const submit = () => form.put(route('damaged-stock-details.update', props.detail
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Edit Damaged Item" />
+        <Head :title="$t('Edit Damaged Item')" />
         <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
             <div>
-                <h2 class="text-2xl font-black text-slate-900">Edit Damaged Item</h2>
+                <h2 class="text-2xl font-black text-slate-900">{{ $t('Edit Damaged Item') }}</h2>
                 <p class="text-sm text-slate-500 font-medium">Record ID: #{{ detail.id }}</p>
             </div>
-            <Link :href="route('damaged-stock-details.index')" class="theme-form-back-link">Back to List</Link>
+            <Link :href="route('damaged-stock-details.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
         </div>
 
         <form @submit.prevent="submit" class="space-y-4">
@@ -49,24 +49,24 @@ const submit = () => form.put(route('damaged-stock-details.update', props.detail
                         <InputError :message="form.errors.damaged_stock_id" class="mt-2" />
                     </div>
                     <div>
-                        <InputLabel value="Product" />
+                        <InputLabel :value="$t('Product')" />
                         <select v-model="form.product_id" class="theme-form-input w-full" required>
                             <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                         </select>
                         <InputError :message="form.errors.product_id" class="mt-2" />
                     </div>
                     <div>
-                        <InputLabel value="Damage Reason" />
+                        <InputLabel :value="$t('Damage Reason')" />
                         <TextInput v-model="form.damage_reason" class="w-full" required />
                         <InputError :message="form.errors.damage_reason" class="mt-2" />
                     </div>
                     <div>
-                        <InputLabel value="Quantity" />
+                        <InputLabel :value="$t('Quantity')" />
                         <TextInput type="number" step="0.01" v-model="form.quantity" class="w-full" />
                         <InputError :message="form.errors.quantity" class="mt-2" />
                     </div>
                     <div>
-                        <InputLabel value="Unit Cost" />
+                        <InputLabel :value="$t('Unit Cost')" />
                         <TextInput type="number" step="0.01" v-model="form.unit_cost" class="w-full" />
                         <InputError :message="form.errors.unit_cost" class="mt-2" />
                     </div>
@@ -75,15 +75,15 @@ const submit = () => form.put(route('damaged-stock-details.update', props.detail
                         <div class="theme-form-input bg-slate-50 dark:bg-slate-800/50 font-black text-indigo-600">${{ totalCost }}</div>
                     </div>
                     <div>
-                        <InputLabel value="Batch No" />
+                        <InputLabel :value="$t('Batch No')" />
                         <TextInput v-model="form.batch_no" class="w-full" />
                     </div>
                     <div>
-                        <InputLabel value="Serial No" />
+                        <InputLabel :value="$t('Serial No')" />
                         <TextInput v-model="form.serial_no" class="w-full" />
                     </div>
                     <div>
-                        <InputLabel value="Expiry Date" />
+                        <InputLabel :value="$t('Expiry Date')" />
                         <TextInput type="date" v-model="form.expiry_date" class="w-full" />
                     </div>
                     <div>
@@ -97,13 +97,13 @@ const submit = () => form.put(route('damaged-stock-details.update', props.detail
                     </div>
                 </div>
                 <div class="mt-8">
-                    <InputLabel for="remarks" value="Remarks" class="theme-form-label ml-1" />
+                    <InputLabel for="remarks" :value="$t('Remarks')" class="theme-form-label ml-1" />
                     <textarea id="remarks" v-model="form.remarks" class="theme-form-input w-full h-24 pt-3 resize-none" placeholder="Enter additional details..."></textarea>
                     <InputError :message="form.errors.remarks" class="mt-2 ml-1" />
                 </div>
             </div>
             <div class="flex justify-center pt-4">
-                <PrimaryButton :disabled="form.processing" class="theme-btn-primary px-12 py-4">Update Damaged Item</PrimaryButton>
+                <PrimaryButton :disabled="form.processing" class="theme-btn-primary px-12 py-4">{{ $t('Update Damaged Item') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

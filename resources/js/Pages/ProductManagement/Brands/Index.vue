@@ -69,19 +69,19 @@ const clearSearch = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Brand Management" />
+        <Head :title="$t('Brand Management')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Brand Management</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">Manage and monitor system access and roles.</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Brand Management') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage and monitor system access and roles.') }}</p>
             </div>
 
             <Link :href="route('brands.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Create New Brand
+                {{ $t('Create New Brand') }}
             </Link>
         </div>
 
@@ -111,8 +111,8 @@ const clearSearch = () => {
                         placeholder="Search brands..."
                     />
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
-                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">Clear</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
+                        <button v-if="filters?.search" type="button" @click="clearSearch" class="theme-form-back-link px-4 py-2.5">{{ $t('Clear') }}</button>
                     </div>
                 </form>
             </div>
@@ -121,10 +121,10 @@ const clearSearch = () => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Name</th>
-                            <th class="theme-table-header-cell">Description</th>
-                            <th class="theme-table-header-cell">Status</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Name') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Description') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Status') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -150,8 +150,8 @@ const clearSearch = () => {
                                     <Link
                                         :href="route('brands.edit', brand.id)"
                                         class="theme-table-action-btn theme-table-action-edit"
-                                        title="Edit Brand"
-                                        aria-label="Edit Brand"
+                                        :title="$t('Edit Brand')"
+                                        :aria-label="$t('Edit Brand')"
                                     >
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                             <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" stroke-linecap="round" stroke-linejoin="round" />
@@ -171,7 +171,7 @@ const clearSearch = () => {
                             </td>
                         </tr>
                         <tr v-if="brands.data.length === 0">
-                            <td colspan="4" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">No Brands found.</td>
+                            <td colspan="4" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No Brands found.') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -179,7 +179,7 @@ const clearSearch = () => {
 
             <div class="theme-table-footer flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
                 <div class="text-[11px] font-bold text-indigo-700 uppercase tracking-widest text-center sm:text-left dark:text-slate-200">
-                    Showing <span class="text-slate-900 dark:text-slate-200">{{ brands.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ brands.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ brands.total }}</span> entries
+                    {{ $t('Showing') }} <span class="text-slate-900 dark:text-slate-200">{{ brands.from || 0 }}</span> to <span class="text-slate-900 dark:text-slate-200">{{ brands.to || 0 }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ brands.total }}</span> {{ $t('entries') }}
                 </div>
                 <div class="flex flex-wrap justify-center items-center gap-1.5">
                     <template v-for="(link, k) in brands.links" :key="k">

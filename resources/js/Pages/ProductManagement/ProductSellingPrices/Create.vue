@@ -40,15 +40,15 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Create Selling Price" />
+    <Head :title="$t('Create Selling Price')" />
     <AuthenticatedLayout>
         <div class="max-w-8xl mx-auto mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">Create Selling Price</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">{{ $t('Create Selling Price') }}</h2>
             </div>
             <Link :href="route('product-selling-prices.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="text-slate-900">Back to Price List</span>
+                <span class="text-slate-900">{{ $t('Back to Price List') }}</span>
             </Link>
         </div>
 
@@ -56,12 +56,12 @@ const submit = () => {
             <form @submit.prevent="submit" class="space-y-4">
                 <div class="theme-form-card">
                     <div class="p-8 md:p-10">
-                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">Basic Information</h3>
+                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Basic Information') }}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                             <div class="flex flex-col md:col-span-2">
-                                <InputLabel for="product_id" value="Product" class="theme-form-label ml-1" />
+                                <InputLabel for="product_id" :value="$t('Product')" class="theme-form-label ml-1" />
                                 <select id="product_id" class="theme-form-input" v-model="form.product_id" required>
-                                    <option value="" disabled>Select product</option>
+                                    <option value="" disabled>{{ $t('Select product') }}</option>
                                     <option v-for="product in props.products" :key="product.id" :value="product.id">{{ product.name }}<template v-if="product.sku"> ({{ product.sku }})</template></option>
                                 </select>
                                 <InputError :message="form.errors.product_id" class="mt-2 ml-1" />

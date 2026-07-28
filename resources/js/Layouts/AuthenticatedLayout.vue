@@ -2,8 +2,11 @@
 import { ref, reactive, watch } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { useDarkMode } from "@/composables/useDarkMode";
+import { useLocale } from "@/i18n";
+import LanguageSwitcher from "@/Components/LanguageSwitcher.vue";
 
 const { isDark, toggleDarkMode } = useDarkMode();
+const { t } = useLocale();
 
 const isSidebarOpen = ref(false);
 const isProfileMenuOpen = ref(false);
@@ -452,8 +455,12 @@ const toggleDropdown = (name) => {
 
         <!-- SIDEBAR -->
         <aside
-            class="theme-sidebar fixed inset-y-0 left-0 z-50 w-72 lg:w-64 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
-            :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            class="theme-sidebar fixed inset-y-0 start-0 z-50 w-72 lg:w-64 flex flex-col transition-transform duration-300 ease-in-out lg:static lg:inset-auto lg:!translate-x-0"
+            :class="
+                isSidebarOpen
+                    ? 'translate-x-0'
+                    : '-translate-x-full rtl:translate-x-full lg:!translate-x-0'
+            "
         >
             <!-- Sidebar Header -->
             <div
@@ -465,15 +472,15 @@ const toggleDropdown = (name) => {
                 >
                     <img
                         src="/storage/images/logo.png"
-                        alt="Decoration Lights ERP"
+                        :alt="t('Decoration Lights ERP')"
                         class="w-14 h-12 object-contain scale-110"
                     />
                 </div>
 
-                <!-- Close Button (Positioned absolutely to keep logo in dead center) -->
+                <!-- Close Button -->
                 <button
                     @click="isSidebarOpen = false"
-                    class="absolute right-6 lg:hidden p-2 text-slate-700 dark:text-white"
+                    class="absolute end-6 lg:hidden p-2 text-slate-700 dark:text-white"
                 >
                     <svg
                         class="w-6 h-6"
@@ -503,7 +510,7 @@ const toggleDropdown = (name) => {
                         v-if="item.category"
                         class="theme-sidebar-category px-7 pt-3 pb-3 text-[10px] font-semibold tracking-[0.15em] uppercase"
                     >
-                        {{ item.category }}
+                        {{ t(item.category) }}
                     </div>
 
                     <!-- Dropdown Item (has children) -->
@@ -518,9 +525,9 @@ const toggleDropdown = (name) => {
                                     : 'theme-sidebar-nav-inactive'
                             "
                         >
-                            <span class="flex items-center text-left">
+                            <span class="flex items-center text-start">
                                 <svg
-                                    class="w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-200"
+                                    class="w-5 h-5 me-3 flex-shrink-0 transition-colors duration-200"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -535,7 +542,7 @@ const toggleDropdown = (name) => {
                                 <span
                                     class="text-sm font-semibold tracking-wide whitespace-nowrap"
                                 >
-                                    {{ item.name }}
+                                    {{ t(item.name) }}
                                 </span>
                             </span>
 
@@ -561,7 +568,7 @@ const toggleDropdown = (name) => {
                         <!-- Children (collapsible) -->
                         <div
                             v-show="openDropdowns[item.name]"
-                            class="mt-1 ml-6 pl-4 border-l theme-sidebar-nav-inactive space-y-1"
+                            class="mt-1 ms-6 ps-4 border-s theme-sidebar-nav-inactive space-y-1"
                         >
                             <Link
                                 v-for="child in item.children"
@@ -574,7 +581,7 @@ const toggleDropdown = (name) => {
                                         : 'theme-sidebar-nav-inactive'
                                 "
                             >
-                                {{ child.name }}
+                                {{ t(child.name) }}
                             </Link>
                         </div>
                     </div>
@@ -591,7 +598,7 @@ const toggleDropdown = (name) => {
                             "
                         >
                             <svg
-                                class="w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-200"
+                                class="w-5 h-5 me-3 flex-shrink-0 transition-colors duration-200"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -604,9 +611,9 @@ const toggleDropdown = (name) => {
                                 />
                             </svg>
                             <span
-                                class="text-sm font-semibold tracking-wide whitespace-nowrap text-left"
+                                class="text-sm font-semibold tracking-wide whitespace-nowrap text-start"
                             >
-                                {{ item.name }}
+                                {{ t(item.name) }}
                             </span>
                         </Link>
                     </div>
@@ -634,7 +641,7 @@ const toggleDropdown = (name) => {
                             <p
                                 class="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400"
                             >
-                                Signed in as
+                                {{ t('Signed in as') }}
                             </p>
                             <p
                                 class="mt-1 truncate text-sm font-bold text-slate-800 dark:text-white"
@@ -680,7 +687,7 @@ const toggleDropdown = (name) => {
                                         />
                                     </svg>
                                 </span>
-                                My Profile
+                                {{ t('My Profile') }}
                             </Link>
 
                             <Link
@@ -706,7 +713,7 @@ const toggleDropdown = (name) => {
                                         />
                                     </svg>
                                 </span>
-                                Log Out
+                                {{ t('Log Out') }}
                             </Link>
                         </div>
                     </div>
@@ -714,7 +721,7 @@ const toggleDropdown = (name) => {
 
                 <button
                     @click="isProfileMenuOpen = !isProfileMenuOpen"
-                    class="group flex w-full items-center space-x-3 rounded-xl p-3 transition-colors hover:bg-indigo-500/10"
+                    class="group flex w-full items-center gap-3 rounded-xl p-3 transition-colors hover:bg-indigo-500/10"
                     :class="{
                         'bg-indigo-500/10 ring-1 ring-indigo-500/40':
                             isProfileMenuOpen,
@@ -726,7 +733,7 @@ const toggleDropdown = (name) => {
                         {{ userInitials() }}
                     </div>
                     <div
-                        class="flex-1 overflow-hidden text-left text-slate-800 dark:text-white"
+                        class="flex-1 overflow-hidden text-start text-slate-800 dark:text-white"
                     >
                         <p class="truncate text-xs font-semibold leading-none">
                             {{ $page.props.auth.user.name }}
@@ -734,7 +741,7 @@ const toggleDropdown = (name) => {
                         <p
                             class="mt-1 text-[10px] text-slate-500 dark:text-slate-400"
                         >
-                            Administrator
+                            {{ t('Administrator') }}
                         </p>
                     </div>
                     <svg
@@ -760,7 +767,7 @@ const toggleDropdown = (name) => {
                 <div class="flex items-center">
                     <button
                         @click="isSidebarOpen = true"
-                        class="p-2 -ml-2 mr-3 text-gray-500 lg:hidden dark:text-slate-300"
+                        class="p-2 -ms-2 me-3 text-gray-500 lg:hidden dark:text-slate-300"
                     >
                         <svg
                             class="w-7 h-7"
@@ -776,24 +783,25 @@ const toggleDropdown = (name) => {
                         <h1
                             class="text-sm lg:text-lg font-bold text-slate-800 leading-none dark:text-slate-100"
                         >
-                            Dashboard
+                            {{ t('Dashboard') }}
                         </h1>
                         <p
                             class="hidden sm:block text-[10px] text-slate-400 uppercase tracking-widest mt-1 dark:text-slate-500"
                         >
-                            Decoration Lights Wholesale &amp; Retail ERP
+                            {{ t('Decoration Lights Wholesale & Retail ERP') }}
                         </p>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-2 sm:space-x-4">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <LanguageSwitcher />
                     <!-- Light / Dark Mode Toggle -->
                     <button
                         @click="toggleDarkMode"
                         type="button"
                         class="relative inline-flex items-center justify-center gap-1.5 h-9 min-w-9 px-2 sm:px-2.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-slate-600 dark:bg-slate-700 dark:text-amber-300 dark:hover:bg-slate-600"
-                        :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
-                        :aria-label="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+                        :title="isDark ? t('Switch to Light Mode') : t('Switch to Dark Mode')"
+                        :aria-label="isDark ? t('Switch to Light Mode') : t('Switch to Dark Mode')"
                         :aria-pressed="isDark"
                     >
                         <!-- Sun: shown in dark mode (click → light) -->
@@ -829,34 +837,9 @@ const toggleDropdown = (name) => {
                             />
                         </svg>
                         <span class="hidden lg:inline text-[10px] font-bold uppercase tracking-wider">
-                            {{ isDark ? 'Light' : 'Dark' }}
+                            {{ isDark ? t('Light') : t('Dark') }}
                         </span>
                     </button>
-                    <a
-                        href="/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="group hidden sm:inline-flex items-center gap-2 bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:bg-indigo-50 hover:text-indigo-700 hover:shadow dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:border-indigo-400/40 dark:hover:bg-indigo-500/10 dark:hover:text-indigo-300"
-                    >
-                        <span
-                            class="flex h-5 w-5 items-center justify-center rounded-md bg-white text-slate-500 transition-colors group-hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-300 dark:group-hover:text-indigo-300"
-                        >
-                            <svg
-                                class="h-3.5 w-3.5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M13.5 3H21m0 0v7.5M21 3l-9.75 9.75M7.5 6H6A2.25 2.25 0 003.75 8.25v9.75A2.25 2.25 0 006 20.25h9.75A2.25 2.25 0 0018 18v-1.5"
-                                />
-                            </svg>
-                        </span>
-                        View Site
-                    </a>
                     <span
                         class="hidden md:block text-sm font-semibold text-slate-700 dark:text-slate-200"
                         >{{ $page.props.auth.user.name }} (
@@ -884,7 +867,7 @@ const toggleDropdown = (name) => {
                     class="mt-1 pt-8 pb-3 border-t border-slate-200 text-center text-slate-500 text-[10px] lg:text-xs dark:border-slate-700 dark:text-slate-500"
                 >
                     <div class="uppercase tracking-widest font-bold">
-                        Decoration Lights Wholesale &amp; Retail ERP
+                        {{ t('Decoration Lights Wholesale & Retail ERP') }}
                     </div>
                 </footer>
             </main>

@@ -43,13 +43,13 @@ const clearSearch = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Outstanding Balance" />
+        <Head :title="$t('Outstanding Balance')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">Outstanding Balance</h2>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Outstanding Balance') }}</h2>
                 <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">
-                    Customers with a non-zero ledger balance · Total receivable
+                    {{ $t('Customers with a non-zero ledger balance · Total receivable') }}
                     <span class="font-bold text-indigo-600">${{ formatMoney(totalOutstanding) }}</span>
                 </p>
             </div>
@@ -57,7 +57,7 @@ const clearSearch = () => {
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Debit / Credit Entry
+                {{ $t('Debit / Credit Entry') }}
             </Link>
         </div>
 
@@ -71,22 +71,22 @@ const clearSearch = () => {
                         placeholder="Search by code, name, company or phone..."
                     />
                     <select v-model="customerType" class="theme-form-input md:w-48">
-                        <option value="">All Types</option>
+                        <option value="">{{ $t('All Types') }}</option>
                         <option v-for="t in customerTypes" :key="t" :value="t">{{ formatType(t) }}</option>
                     </select>
                     <select v-model="onlyDue" class="theme-form-input md:w-44">
-                        <option value="">All Balances</option>
-                        <option value="1">Due only (&gt; 0)</option>
+                        <option value="">{{ $t('All Balances') }}</option>
+                        <option value="1">{{ $t('Due only (&gt; 0)') }}</option>
                     </select>
                     <div class="flex gap-2">
-                        <button type="submit" class="theme-btn-primary px-6 py-2.5">Search</button>
+                        <button type="submit" class="theme-btn-primary px-6 py-2.5">{{ $t('Search') }}</button>
                         <button
                             v-if="filters?.search || filters?.customer_type || filters?.only_due"
                             type="button"
                             @click="clearSearch"
                             class="theme-form-back-link px-4 py-2.5"
                         >
-                            Clear
+                            {{ $t('Clear') }}
                         </button>
                     </div>
                 </form>
@@ -96,12 +96,12 @@ const clearSearch = () => {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="theme-table-header">
-                            <th class="theme-table-header-cell">Code</th>
-                            <th class="theme-table-header-cell">Customer</th>
-                            <th class="theme-table-header-cell">Type</th>
-                            <th class="theme-table-header-cell text-right">Credit Limit</th>
-                            <th class="theme-table-header-cell text-right">Outstanding</th>
-                            <th class="theme-table-header-cell text-right">Actions</th>
+                            <th class="theme-table-header-cell">{{ $t('Code') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Type') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Credit Limit') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Outstanding') }}</th>
+                            <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -132,7 +132,7 @@ const clearSearch = () => {
                                     <Link
                                         :href="route('customers.show', c.id)"
                                         class="theme-table-action-btn"
-                                        title="Profile"
+                                        :title="$t('Profile')"
                                     >
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -142,7 +142,7 @@ const clearSearch = () => {
                                     <Link
                                         :href="route('customer-ledgers.create', { customer_id: c.id })"
                                         class="theme-table-action-btn theme-table-action-edit"
-                                        title="Debit / Credit Entry"
+                                        :title="$t('Debit / Credit Entry')"
                                     >
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -151,7 +151,7 @@ const clearSearch = () => {
                                     <Link
                                         :href="route('customer-ledgers.index', { customer_id: c.id })"
                                         class="theme-table-action-btn"
-                                        title="Ledger"
+                                        :title="$t('Ledger')"
                                     >
                                         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
@@ -162,7 +162,7 @@ const clearSearch = () => {
                         </tr>
                         <tr v-if="customers.length === 0">
                             <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">
-                                No outstanding balances found.
+                                {{ $t('No outstanding balances found.') }}
                             </td>
                         </tr>
                     </tbody>

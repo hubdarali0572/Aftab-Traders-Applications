@@ -18,19 +18,19 @@ const cards = computed(() => [
 <template>
     <AuthenticatedLayout>
         <Head title="Customer Ledger Report" />
-        <ReportToolbar title="Customer Ledger" subtitle="Select a customer for full ledger detail" route-name="reports.customers.ledger" :filters="filters" :options="options" show-customer show-transaction-type :transaction-types="transactionTypes" />
+        <ReportToolbar :title="$t('Customer Ledger')" subtitle="Select a customer for full ledger detail" route-name="reports.customers.ledger" :filters="filters" :options="options" show-customer show-transaction-type :transaction-types="transactionTypes" />
         <ReportSummaryCards :cards="cards" />
         <div class="theme-table-card overflow-x-auto">
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Date</th>
-                        <th class="theme-table-header-cell">Customer</th>
-                        <th class="theme-table-header-cell">Voucher Type</th>
-                        <th class="theme-table-header-cell">Voucher No</th>
-                        <th class="theme-table-header-cell text-right">Debit</th>
-                        <th class="theme-table-header-cell text-right">Credit</th>
-                        <th class="theme-table-header-cell text-right">Balance</th>
+                        <th class="theme-table-header-cell">{{ $t('Date') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Voucher Type') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Voucher No') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Debit') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Credit') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Balance') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -43,7 +43,7 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-right">${{ money(r.credit) }}</td>
                         <td class="px-6 py-3 text-right font-black">${{ money(r.balance) }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">No ledger entries. Select a customer or date range.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">{{ $t('No ledger entries. Select a customer or date range.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

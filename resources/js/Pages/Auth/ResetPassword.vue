@@ -37,7 +37,7 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Reset Password" />
+        <Head :title="$t('Reset Password')" />
 
         <div class="mb-6 text-center sm:mb-8">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 mb-4 dark:bg-indigo-500/15">
@@ -46,16 +46,16 @@ const submit = () => {
                 </svg>
             </div>
             <h2 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white">
-                Reset your password
+                {{ $t('Reset your password') }}
             </h2>
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                Enter a new password for your account.
+                {{ $t('Enter a new password for your account.') }}
             </p>
         </div>
 
         <form @submit.prevent="submit" class="space-y-5">
             <div>
-                <InputLabel for="email" value="Email Address" />
+                <InputLabel for="email" :value="$t('Email Address')" />
                 <TextInput
                     id="email"
                     type="email"
@@ -98,7 +98,7 @@ const submit = () => {
             </div>
 
             <div>
-                <InputLabel for="password_confirmation" value="Confirm Password" />
+                <InputLabel for="password_confirmation" :value="$t('Confirm Password')" />
                 <div class="mt-1.5 relative">
                     <TextInput
                         id="password_confirmation"
@@ -132,9 +132,9 @@ const submit = () => {
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Resetting...
+                    {{ $t('Resetting...') }}
                 </span>
-                <span v-else>Reset Password</span>
+                <span v-else>{{ $t('Reset Password') }}</span>
             </PrimaryButton>
         </form>
     </GuestLayout>

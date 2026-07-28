@@ -24,13 +24,13 @@ const cards = computed(() => [
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
                     <tr class="theme-table-header">
-                        <th class="theme-table-header-cell">Payment Date</th>
-                        <th class="theme-table-header-cell">Customer</th>
-                        <th class="theme-table-header-cell">Invoice</th>
-                        <th class="theme-table-header-cell">Payment Method</th>
-                        <th class="theme-table-header-cell">Reference</th>
-                        <th class="theme-table-header-cell text-right">Amount</th>
-                        <th class="theme-table-header-cell">Received By</th>
+                        <th class="theme-table-header-cell">{{ $t('Payment Date') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Invoice') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Payment Method') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Reference') }}</th>
+                        <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Received By') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -43,7 +43,7 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-right font-black text-emerald-600">${{ money(r.amount) }}</td>
                         <td class="px-6 py-3 text-sm">{{ r.received_by || '—' }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">No payments found.</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">{{ $t('No payments found.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">
