@@ -52,6 +52,7 @@ class RolePermissionSeeder extends Seeder
             'sale detail',
             'sale Returns',
             'sale Return Details',
+            'sales history',
         ];
 
         $actions = ['view', 'create', 'edit', 'show', 'delete'];

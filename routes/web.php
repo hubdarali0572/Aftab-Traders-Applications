@@ -21,13 +21,12 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseDetailController;
 use App\Http\Controllers\PurchaseExpenseController;
 use App\Http\Controllers\PurchaseHistoryController;
+use App\Http\Controllers\SaleHistoryController;
 use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\PurchaseReturnDetailController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
-use App\Http\Controllers\SaleDetailController;
 use App\Http\Controllers\SaleReturnController;
-use App\Http\Controllers\SaleReturnDetailController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockHistoryController;
@@ -119,12 +118,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('customer-ledgers', CustomerLedgerController::class);
     // sales Routes
     Route::resource('sales', SaleController::class);
-    // sale Detail Routes
-    Route::resource('sale-details', SaleDetailController::class);
     // sale Return Routes
     Route::resource('sale-returns', SaleReturnController::class);
-    // sale Return Detail Routes
-    Route::resource('sale-return-details', SaleReturnDetailController::class);
+    Route::get('sales-history', [SaleHistoryController::class, 'index'])->name('sales-history.index');
+    Route::redirect('sale-details', '/sales')->name('sale-details.index');
+    Route::redirect('sale-details/create', '/sales/create')->name('sale-details.create');
+    Route::redirect('sale-return-details', '/sale-returns')->name('sale-return-details.index');
+    Route::redirect('sale-return-details/create', '/sale-returns/create')->name('sale-return-details.create');
 
     // Order Management
     Route::post('orders/{order}/convert-to-sale', [OrderController::class, 'convertToSale'])

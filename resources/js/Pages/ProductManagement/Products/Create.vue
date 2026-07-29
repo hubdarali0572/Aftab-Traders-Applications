@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -11,7 +11,6 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 const props = defineProps({
     categories: { type: Array, default: () => [] },
     brands: { type: Array, default: () => [] },
-    units: { type: Array, default: () => [] },
 });
 
 const slugTouched = ref(false);
@@ -19,7 +18,6 @@ const slugTouched = ref(false);
 const form = useForm({
     product_category_id: '',
     brand_id: '',
-    unit_id: '',
     name: '',
     slug: '',
     sku: '',
@@ -47,20 +45,6 @@ watch(() => form.name, (newName) => {
 });
 
 const onSlugInput = () => { slugTouched.value = true; };
-
-onMounted(() => {
-    setDefaultUnit();
-});
-
-watch(() => props.units, () => {
-    setDefaultUnit();
-}, { immediate: true });
-
-const setDefaultUnit = () => {
-    if (!form.unit_id && props.units.length > 0) {
-        form.unit_id = props.units[0].id;
-    }
-};
 
 const submit = () => {
     prepareProductPricing();

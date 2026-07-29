@@ -12,7 +12,6 @@ const props = defineProps({
     product: { type: Object, required: true },
     categories: { type: Array, default: () => [] },
     brands: { type: Array, default: () => [] },
-    units: { type: Array, default: () => [] },
 });
 
 const slugTouched = ref(false);
@@ -20,7 +19,6 @@ const slugTouched = ref(false);
 const form = useForm({
     product_category_id: props.product.product_category_id ?? '',
     brand_id: props.product.brand_id ?? '',
-    unit_id: props.product.unit_id ?? '',
     name: props.product.name ?? '',
     slug: props.product.slug ?? '',
     sku: props.product.sku ?? '',
