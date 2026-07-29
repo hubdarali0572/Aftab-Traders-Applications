@@ -17,7 +17,7 @@ use App\Models\SaleReturn;
 use App\Models\StockAdjustment;
 use App\Models\StockTransfer;
 use App\Models\Warehouse;
-use App\Models\WarehouseStock;
+use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -25,8 +25,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalInventoryQty = (float) WarehouseStock::sum('quantity');
-        $inventoryValue = (float) WarehouseStock::sum('stock_value');
+        $totalInventoryQty = (float) Stock::sum('quantity');
+        $inventoryValue = (float) Stock::selectRaw('SUM(quantity * average_cost) as val')->value('val');
 
         $purchaseAmount = (float) Purchase::where('purchase_status', '!=', 'cancelled')->sum('grand_total');
         $salesAmount = (float) Sale::where('sale_status', 'completed')->sum('grand_total');
@@ -92,26 +92,26 @@ class DashboardController extends Controller
         // COGS approximation: sum of sale line quantities × warehouse average cost
         $cogs = (float) SaleDetail::query()
             ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
-            ->join('warehouse_stocks', function ($join) {
-                $join->on('warehouse_stocks.product_id', '=', 'sale_details.product_id')
-                    ->on('warehouse_stocks.warehouse_id', '=', 'sales.warehouse_id');
+            ->join('stocks', function ($join) {
+                $join->on('stocks.product_id', '=', 'sale_details.product_id')
+                    ->on('stocks.warehouse_id', '=', 'sales.warehouse_id');
             })
             ->where('sales.sale_status', 'completed')
-            ->selectRaw('COALESCE(SUM(sale_details.quantity * warehouse_stocks.average_cost), 0) as cogs')
+            ->selectRaw('COALESCE(SUM(sale_details.quantity * stocks.average_cost), 0) as cogs')
             ->value('cogs');
 
         $grossProfit = $salesAmount - $cogs;
         $netProfit = $grossProfit - $purchaseExpenseTotal;
 
-        $lowStock = WarehouseStock::with(['product', 'warehouse'])
-            ->whereColumn('available_quantity', '<=', 'minimum_stock')
-            ->where('available_quantity', '>', 0)
-            ->orderBy('available_quantity')
+        $lowStock = Stock::with(['product', 'warehouse'])
+            ->whereColumn('quantity', '<=', 'minimum_stock')
+            ->where('quantity', '>', 0)
+            ->orderBy('quantity')
             ->limit(10)
             ->get();
 
-        $outOfStock = WarehouseStock::with(['product', 'warehouse'])
-            ->where('available_quantity', '<=', 0)
+        $outOfStock = Stock::with(['product', 'warehouse'])
+            ->where('quantity', '<=', 0)
             ->orderBy('updated_at', 'desc')
             ->limit(10)
             ->get();
@@ -163,17 +163,17 @@ class DashboardController extends Controller
             ];
         })->values();
 
-        $warehouseDistribution = WarehouseStock::query()
-            ->join('warehouses', 'warehouse_stocks.warehouse_id', '=', 'warehouses.id')
-            ->selectRaw('warehouses.name as name, SUM(warehouse_stocks.quantity) as quantity, SUM(warehouse_stocks.stock_value) as value')
+        $warehouseDistribution = Stock::query()
+            ->join('warehouses', 'stocks.warehouse_id', '=', 'warehouses.id')
+            ->selectRaw('warehouses.name as name, SUM(stocks.quantity) as quantity, SUM(stocks.quantity * stocks.average_cost) as value')
             ->groupBy('warehouses.id', 'warehouses.name')
             ->orderByDesc('quantity')
             ->get();
 
-        $categoryInventory = WarehouseStock::query()
-            ->join('products', 'warehouse_stocks.product_id', '=', 'products.id')
+        $categoryInventory = Stock::query()
+            ->join('products', 'stocks.product_id', '=', 'products.id')
             ->leftJoin('product_categories', 'products.product_category_id', '=', 'product_categories.id')
-            ->selectRaw("COALESCE(product_categories.name, 'Uncategorized') as name, SUM(warehouse_stocks.quantity) as quantity, SUM(warehouse_stocks.stock_value) as value")
+            ->selectRaw("COALESCE(product_categories.name, 'Uncategorized') as name, SUM(stocks.quantity) as quantity, SUM(stocks.quantity * stocks.average_cost) as value")
             ->groupBy('name')
             ->orderByDesc('quantity')
             ->limit(10)
@@ -266,8 +266,8 @@ class DashboardController extends Controller
                 'gross_profit' => $grossProfit,
                 'net_profit' => $netProfit,
                 'outstanding_balance' => $allOutstanding,
-                'low_stock_count' => WarehouseStock::whereColumn('available_quantity', '<=', 'minimum_stock')->where('available_quantity', '>', 0)->count(),
-                'out_of_stock_count' => WarehouseStock::where('available_quantity', '<=', 0)->count(),
+                'low_stock_count' => Stock::whereColumn('quantity', '<=', 'minimum_stock')->where('quantity', '>', 0)->count(),
+                'out_of_stock_count' => Stock::where('quantity', '<=', 0)->count(),
             ],
             'charts' => [
                 'monthly' => $chartMonthly,
@@ -282,7 +282,7 @@ class DashboardController extends Controller
             'tables' => [
                 'recent_purchases' => Purchase::with('warehouse')->latest('purchase_date')->limit(8)->get(),
                 'recent_sales' => Sale::with(['customer', 'warehouse'])->latest('sale_date')->limit(8)->get(),
-                'recent_transfers' => StockTransfer::with(['fromWarehouse', 'toWarehouse'])->latest('transfer_date')->limit(8)->get(),
+                'recent_transfers' => StockTransfer::with(['fromWarehouse', 'toWarehouse', 'product'])->latest('transfer_date')->limit(8)->get(),
                 'recent_damaged' => DamagedStock::with('warehouse')->latest('damage_date')->limit(8)->get(),
                 'recent_adjustments' => StockAdjustment::with('warehouse')->latest('adjustment_date')->limit(8)->get(),
                 'low_stock' => $lowStock,

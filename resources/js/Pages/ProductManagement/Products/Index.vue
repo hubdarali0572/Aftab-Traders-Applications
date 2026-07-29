@@ -71,14 +71,15 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                     <thead>
                         <tr class="theme-table-header">
                             <th class="theme-table-header-cell">{{ $t('Product Name') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Manufacturer') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Model Number') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('color') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Size') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Price per Carton') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Carton Qty') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Color') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Pieces per Carton') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Weight') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Brand') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Category') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Unit') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Purchase Price') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Selling Price') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Status') }}</th>
                             <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
@@ -86,14 +87,15 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         <tr v-for="product in products.data" :key="product.id" class="theme-table-row group">
                             <td class="px-6 py-2"><div class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ product.name }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.manufacturer }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.model_number }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.size }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.weight }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.color }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.category?.name || '—' }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.unit?.name || '—' }}({{ product.unit?.base_value || '—' }})</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.price_per_carton ?? '—' }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.carton_qty ?? '—' }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.color || '—' }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.pieces_per_carton ?? '—' }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.weight ?? '—' }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.brand?.name || '—' }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.category?.name || '—' }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.purchase_price ?? '—' }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ product.selling_price ?? '—' }}</div></td>
                             <td class="px-6 py-2">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold" :class="product.status ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'">{{ product.status ? 'Active' : 'Inactive' }}</span>
                             </td>
@@ -123,7 +125,7 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                             </div>
                         </td>
                         </tr>
-                        <tr v-if="products.data.length === 0"><td colspan="9" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No products found.') }}</td></tr>
+                        <tr v-if="products.data.length === 0"><td colspan="12" class="px-6 py-12 text-center text-slate-400 font-medium dark:text-slate-500">{{ $t('No products found.') }}</td></tr>
                     </tbody>
                 </table>
             </div>

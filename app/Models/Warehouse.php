@@ -32,7 +32,7 @@ class Warehouse extends Model
 
     public function stocks(): HasMany
     {
-        return $this->hasMany(WarehouseStock::class);
+        return $this->hasMany(Stock::class);
     }
 
     public function getActivitylogOptions(): LogOptions

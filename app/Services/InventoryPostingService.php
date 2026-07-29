@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\DamagedStock;
-use App\Models\DamagedStockDetail;
+use App\Models\DamagedStockItem;
 use App\Models\OpeningStock;
-use App\Models\OpeningStockDetail;
+use App\Models\OpeningStockItem;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseReturn;
@@ -15,9 +15,8 @@ use App\Models\SaleDetail;
 use App\Models\SaleReturn;
 use App\Models\SaleReturnDetail;
 use App\Models\StockAdjustment;
-use App\Models\StockAdjustmentDetail;
+use App\Models\StockAdjustmentItem;
 use App\Models\StockTransfer;
-use App\Models\StockTransferDetail;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -35,36 +34,36 @@ class InventoryPostingService
     /* Opening Stock                                                       */
     /* ------------------------------------------------------------------ */
 
-    public function postOpeningDetail(OpeningStockDetail $detail): void
+    public function postOpeningItem(OpeningStockItem $item): void
     {
-        $header = $detail->openingStock ?? OpeningStock::find($detail->opening_stock_id);
+        $header = $item->openingStock ?? OpeningStock::find($item->opening_stock_id);
         if (! $header) {
             return;
         }
 
-        $this->stock->reverse('opening-stock-detail', $detail->id);
+        $this->stock->reverse('opening-stock-item', $item->id);
 
         $this->stock->post(
             (int) $header->warehouse_id,
-            (int) $detail->product_id,
+            (int) $item->product_id,
             'opening_stock',
-            'opening-stock-detail',
-            (int) $detail->id,
+            'opening-stock-item',
+            (int) $item->id,
             $header->reference_no,
             $header->opening_date,
-            (float) $detail->quantity,
+            (float) $item->quantity,
             0,
-            (float) $detail->unit_cost,
-            $detail->remarks
+            (float) $item->unit_cost,
+            $item->remarks
         );
 
         $this->recalcOpeningTotals($header);
     }
 
-    public function reverseOpeningDetail(OpeningStockDetail $detail): void
+    public function reverseOpeningItem(OpeningStockItem $item): void
     {
-        $this->stock->reverse('opening-stock-detail', $detail->id);
-        $header = OpeningStock::find($detail->opening_stock_id);
+        $this->stock->reverse('opening-stock-item', $item->id);
+        $header = OpeningStock::find($item->opening_stock_id);
         if ($header) {
             $this->recalcOpeningTotals($header);
         }
@@ -73,21 +72,21 @@ class InventoryPostingService
     protected function recalcOpeningTotals(OpeningStock $header): void
     {
         $header->update([
-            'total_quantity' => $header->details()->sum('quantity'),
-            'total_amount' => $header->details()->sum('total_cost'),
+            'total_quantity' => $header->items()->sum('quantity'),
+            'total_amount' => $header->items()->sum('total_cost'),
         ]);
     }
 
     public function syncOpeningStock(OpeningStock $header): void
     {
-        $header->load('details');
+        $header->load('items');
 
-        foreach ($header->details as $detail) {
-            $this->stock->reverse('opening-stock-detail', $detail->id);
+        foreach ($header->items as $item) {
+            $this->stock->reverse('opening-stock-item', $item->id);
         }
 
-        foreach ($header->details as $detail) {
-            $this->postOpeningDetail($detail);
+        foreach ($header->items as $item) {
+            $this->postOpeningItem($item);
         }
     }
 
@@ -95,16 +94,16 @@ class InventoryPostingService
     /* Stock Adjustment                                                    */
     /* ------------------------------------------------------------------ */
 
-    public function postAdjustmentDetail(StockAdjustmentDetail $detail): void
+    public function postAdjustmentItem(StockAdjustmentItem $item): void
     {
-        $header = $detail->stockAdjustment ?? StockAdjustment::find($detail->stock_adjustment_id);
+        $header = $item->stockAdjustment ?? StockAdjustment::find($item->stock_adjustment_id);
         if (! $header) {
             return;
         }
 
-        $this->stock->reverse('stock-adjustment-detail', $detail->id);
+        $this->stock->reverse('stock-adjustment-item', $item->id);
 
-        $qty = (float) $detail->adjustment_quantity;
+        $qty = (float) $item->adjustment_quantity;
         $qtyIn = $qty > 0 ? $qty : 0;
         $qtyOut = $qty < 0 ? abs($qty) : 0;
 
@@ -115,25 +114,25 @@ class InventoryPostingService
 
         $this->stock->post(
             (int) $header->warehouse_id,
-            (int) $detail->product_id,
+            (int) $item->product_id,
             'adjustment',
-            'stock-adjustment-detail',
-            (int) $detail->id,
+            'stock-adjustment-item',
+            (int) $item->id,
             $header->reference_no,
             $header->adjustment_date,
             $qtyIn,
             $qtyOut,
-            (float) $detail->unit_cost,
-            $detail->reason ?? $detail->remarks
+            (float) $item->unit_cost,
+            $item->reason
         );
 
         $this->recalcAdjustmentTotals($header);
     }
 
-    public function reverseAdjustmentDetail(StockAdjustmentDetail $detail): void
+    public function reverseAdjustmentItem(StockAdjustmentItem $item): void
     {
-        $this->stock->reverse('stock-adjustment-detail', $detail->id);
-        $header = StockAdjustment::find($detail->stock_adjustment_id);
+        $this->stock->reverse('stock-adjustment-item', $item->id);
+        $header = StockAdjustment::find($item->stock_adjustment_id);
         if ($header) {
             $this->recalcAdjustmentTotals($header);
         }
@@ -142,21 +141,21 @@ class InventoryPostingService
     protected function recalcAdjustmentTotals(StockAdjustment $header): void
     {
         $header->update([
-            'total_quantity' => $header->details()->sum(DB::raw('ABS(adjustment_quantity)')),
-            'total_amount' => $header->details()->sum('total_cost'),
+            'total_quantity' => $header->items()->sum(DB::raw('ABS(adjustment_quantity)')),
+            'total_amount' => $header->items()->sum('total_cost'),
         ]);
     }
 
     public function syncAdjustmentStock(StockAdjustment $header): void
     {
-        $header->load('details');
+        $header->load('items');
 
-        foreach ($header->details as $detail) {
-            $this->stock->reverse('stock-adjustment-detail', $detail->id);
+        foreach ($header->items as $item) {
+            $this->stock->reverse('stock-adjustment-item', $item->id);
         }
 
-        foreach ($header->details as $detail) {
-            $this->postAdjustmentDetail($detail);
+        foreach ($header->items as $item) {
+            $this->postAdjustmentItem($item);
         }
     }
 
@@ -164,120 +163,96 @@ class InventoryPostingService
     /* Stock Transfer                                                      */
     /* ------------------------------------------------------------------ */
 
-    public function postTransferDetail(StockTransferDetail $detail): void
+    public function postTransfer(StockTransfer $transfer): void
     {
-        $header = $detail->stockTransfer ?? StockTransfer::with([])->find($detail->stock_transfer_id);
-        if (! $header || $header->stock_status !== 'completed') {
-            $this->recalcTransferTotals($header);
+        if (! $transfer->status) {
             return;
         }
 
-        $this->stock->reverse('stock-transfer-detail', $detail->id);
+        $this->stock->reverse('stock-transfer', $transfer->id);
 
-        // Out from source
+        $unitCost = $this->resolveTransferUnitCost($transfer);
+
         $this->stock->post(
-            (int) $header->from_warehouse_id,
-            (int) $detail->product_id,
+            (int) $transfer->from_warehouse_id,
+            (int) $transfer->product_id,
             'transfer_out',
-            'stock-transfer-detail',
-            (int) $detail->id,
-            $header->reference_no,
-            $header->transfer_date,
+            'stock-transfer',
+            (int) $transfer->id,
+            $transfer->reference_no,
+            $transfer->transfer_date,
             0,
-            (float) $detail->quantity,
-            (float) $detail->unit_cost,
-            $detail->remarks
+            (float) $transfer->quantity,
+            $unitCost,
+            $transfer->remarks
         );
 
-        // In to destination
         $this->stock->post(
-            (int) $header->to_warehouse_id,
-            (int) $detail->product_id,
+            (int) $transfer->to_warehouse_id,
+            (int) $transfer->product_id,
             'transfer_in',
-            'stock-transfer-detail',
-            (int) $detail->id,
-            $header->reference_no,
-            $header->transfer_date,
-            (float) $detail->quantity,
+            'stock-transfer',
+            (int) $transfer->id,
+            $transfer->reference_no,
+            $transfer->transfer_date,
+            (float) $transfer->quantity,
             0,
-            (float) $detail->unit_cost,
-            $detail->remarks
+            $unitCost,
+            $transfer->remarks
         );
-
-        $this->recalcTransferTotals($header);
     }
 
-    public function reverseTransferDetail(StockTransferDetail $detail): void
+    public function reverseTransfer(StockTransfer $transfer): void
     {
-        $this->stock->reverse('stock-transfer-detail', $detail->id);
-        $header = StockTransfer::find($detail->stock_transfer_id);
-        if ($header) {
-            $this->recalcTransferTotals($header);
-        }
+        $this->stock->reverse('stock-transfer', $transfer->id);
     }
 
-    public function syncTransferStock(StockTransfer $transfer): void
+    protected function resolveTransferUnitCost(StockTransfer $transfer): float
     {
-        $transfer->load('details');
-
-        foreach ($transfer->details as $detail) {
-            $this->stock->reverse('stock-transfer-detail', $detail->id);
+        if ((float) $transfer->unit_cost > 0) {
+            return (float) $transfer->unit_cost;
         }
 
-        if ($transfer->stock_status === 'completed') {
-            foreach ($transfer->details as $detail) {
-                $this->postTransferDetail($detail);
-            }
-        } else {
-            $this->recalcTransferTotals($transfer);
-        }
-    }
-
-    protected function recalcTransferTotals(?StockTransfer $header): void
-    {
-        if (! $header) {
-            return;
-        }
-        $header->update([
-            'total_quantity' => $header->details()->sum('quantity'),
-            'total_amount' => $header->details()->sum('total_cost'),
-        ]);
+        return (float) DB::table('stocks')
+            ->where('warehouse_id', $transfer->from_warehouse_id)
+            ->where('product_id', $transfer->product_id)
+            ->value('average_cost');
     }
 
     /* ------------------------------------------------------------------ */
     /* Damaged Stock                                                       */
     /* ------------------------------------------------------------------ */
 
-    public function postDamagedDetail(DamagedStockDetail $detail): void
+    public function postDamagedItem(DamagedStockItem $item): void
     {
-        $header = $detail->damagedStock ?? DamagedStock::find($detail->damaged_stock_id);
+        $header = $item->damagedStock ?? DamagedStock::find($item->damaged_stock_id);
         if (! $header) {
             return;
         }
 
-        $this->stock->reverse('damaged-stock-detail', $detail->id);
+        $this->stock->reverse('damaged-stock-item', $item->id);
 
         $this->stock->post(
             (int) $header->warehouse_id,
-            (int) $detail->product_id,
+            (int) $item->product_id,
             'damage',
-            'damaged-stock-detail',
-            (int) $detail->id,
+            'damaged-stock-item',
+            (int) $item->id,
             $header->reference_no,
             $header->damage_date,
             0,
-            (float) $detail->quantity,
-            (float) $detail->unit_cost,
-            $detail->damage_reason
+            (float) $item->quantity,
+            (float) $item->unit_cost,
+            $item->damage_reason
         );
 
         $this->recalcDamagedTotals($header);
     }
 
-    public function reverseDamagedDetail(DamagedStockDetail $detail): void
+    public function reverseDamagedItem(DamagedStockItem $item): void
     {
-        $this->stock->reverse('damaged-stock-detail', $detail->id);
-        $header = DamagedStock::find($detail->damaged_stock_id);
+        $this->stock->reverse('damaged-stock-item', $item->id);
+        $header = DamagedStock::find($item->damaged_stock_id);
         if ($header) {
             $this->recalcDamagedTotals($header);
         }
@@ -286,9 +261,22 @@ class InventoryPostingService
     protected function recalcDamagedTotals(DamagedStock $header): void
     {
         $header->update([
-            'total_quantity' => $header->details()->sum('quantity'),
-            'total_amount' => $header->details()->sum('total_cost'),
+            'total_quantity' => $header->items()->sum('quantity'),
+            'total_amount' => $header->items()->sum('total_cost'),
         ]);
+    }
+
+    public function syncDamagedStock(DamagedStock $header): void
+    {
+        $header->load('items');
+
+        foreach ($header->items as $item) {
+            $this->stock->reverse('damaged-stock-item', $item->id);
+        }
+
+        foreach ($header->items as $item) {
+            $this->postDamagedItem($item);
+        }
     }
 
     /* ------------------------------------------------------------------ */
@@ -641,18 +629,18 @@ class InventoryPostingService
             ->first();
 
         if ($saleDetail) {
-            $ledger = DB::table('stock_ledgers')
+            $movement = DB::table('stock_movements')
                 ->where('reference_type', 'sale-details')
                 ->where('reference_id', $saleDetail->id)
                 ->orderByDesc('id')
                 ->first();
 
-            if ($ledger && $ledger->unit_cost !== null) {
-                return (float) $ledger->unit_cost;
+            if ($movement && $movement->unit_cost !== null) {
+                return (float) $movement->unit_cost;
             }
         }
 
-        return (float) DB::table('warehouse_stocks')
+        return (float) DB::table('stocks')
             ->where('warehouse_id', Sale::whereKey($saleId)->value('warehouse_id'))
             ->where('product_id', $productId)
             ->value('average_cost');

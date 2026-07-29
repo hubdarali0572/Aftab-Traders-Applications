@@ -43,22 +43,61 @@ const clearSearch = () => {
     searchQuery.value = '';
     applySearch();
 };
+
+const adjustmentType = (adjustment) => {
+    const items = adjustment.items ?? [];
+    if (!items.length) {
+        return null;
+    }
+
+    const hasIncrease = items.some((item) => Number(item.adjustment_quantity) > 0);
+    const hasDecrease = items.some((item) => Number(item.adjustment_quantity) < 0);
+
+    if (hasIncrease && hasDecrease) {
+        return 'mixed';
+    }
+    if (hasIncrease) {
+        return 'increase';
+    }
+    if (hasDecrease) {
+        return 'decrease';
+    }
+
+    return null;
+};
+
+const typeClass = (type) => {
+    const map = {
+        increase: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300',
+        decrease: 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300',
+        mixed: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300',
+    };
+
+    return map[type] ?? 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400';
+};
+
+const typeLabel = (type) => {
+    if (type === 'increase') return 'Stock In';
+    if (type === 'decrease') return 'Stock Out';
+    if (type === 'mixed') return 'Mixed';
+    return '—';
+};
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="$t('Stock Adjustments')" />
+        <Head :title="$t('Inventory Correction')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Stock Adjustments') }}</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage and track inventory increases and decreases.') }}</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Inventory Correction') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Add or remove warehouse stock for corrections and counts. Not for customer sales — use Sales module to sell products.') }}</p>
             </div>
-            <Link :href="route('stock-adjustments.create')" class="theme-btn-primary">
+            <Link :href="route('stock-adjustments.create')" class="theme-btn-primary shrink-0">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                {{ $t('New Adjustment') }}
+                {{ $t('New Correction') }}
             </Link>
         </div>
 
@@ -81,7 +120,7 @@ const clearSearch = () => {
                             <th class="theme-table-header-cell">{{ $t('Ref #') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Date') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Type') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Correction Type') }}</th>
                             <th class="theme-table-header-cell text-right">{{ $t('Total Qty') }}</th>
                             <th class="theme-table-header-cell text-right">{{ $t('Total Amount') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Status') }}</th>
@@ -94,9 +133,11 @@ const clearSearch = () => {
                             <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-400">{{ adj.adjustment_date }}</td>
                             <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-400">{{ adj.warehouse?.name }}</td>
                             <td class="px-6 py-3">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest" 
-                                    :class="adj.adjustment_type === 'increase' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/10'">
-                                    {{ adj.adjustment_type }}
+                                <span
+                                    class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest"
+                                    :class="typeClass(adjustmentType(adj))"
+                                >
+                                    {{ $t(typeLabel(adjustmentType(adj))) }}
                                 </span>
                             </td>
                             <td class="px-6 py-3 text-sm text-right font-bold text-slate-700 dark:text-slate-300">{{ adj.total_quantity }}</td>
@@ -150,8 +191,8 @@ const clearSearch = () => {
 
         <ConfirmModal 
             :show="isModalOpen" 
-            title="Delete Stock Adjustment" 
-            message="Are you sure you want to permanently remove this adjustment record? This action cannot be undone." 
+            title="Delete Inventory Correction"
+            message="Are you sure you want to permanently remove this correction record? Stock changes will be reversed. This is not a sales record."
             @close="closeModal" 
             @confirm="confirmDelete" 
         />

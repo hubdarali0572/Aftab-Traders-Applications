@@ -2,16 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\StockLedger;
-use App\Models\WarehouseStock;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Stock;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class StockService
 {
     /**
-     * Post a stock movement: ledger entry + warehouse stock update.
+     * Post a stock movement: ledger entry + stock balance update.
      */
     public function post(
         int $warehouseId,
@@ -25,7 +24,7 @@ class StockService
         float $quantityOut,
         float $unitCost,
         ?string $remarks = null
-    ): StockLedger {
+    ): StockMovement {
         if ($quantityIn <= 0 && $quantityOut <= 0) {
             throw new InvalidArgumentException('Stock movement requires a positive quantity.');
         }
@@ -37,8 +36,7 @@ class StockService
         $qty = $quantityIn > 0 ? $quantityIn : $quantityOut;
         $totalCost = round($qty * $unitCost, 2);
 
-        $ledger = StockLedger::create([
-            'user_id' => Auth::id(),
+        $movement = StockMovement::create([
             'warehouse_id' => $warehouseId,
             'product_id' => $productId,
             'transaction_type' => $transactionType,
@@ -52,10 +50,9 @@ class StockService
             'unit_cost' => $unitCost,
             'total_cost' => $totalCost,
             'remarks' => $remarks,
-            'status' => true,
         ]);
 
-        $this->applyWarehouseStockDelta(
+        $this->applyStockDelta(
             $warehouseId,
             $productId,
             $quantityIn - $quantityOut,
@@ -66,15 +63,15 @@ class StockService
 
         $this->recalculateBalances($productId, $warehouseId);
 
-        return $ledger;
+        return $movement;
     }
 
     /**
-     * Reverse all ledger movements for a reference and sync warehouse stocks.
+     * Reverse all movements for a reference and sync stock balances.
      */
     public function reverse(string $referenceType, int $referenceId): void
     {
-        $entries = StockLedger::where('reference_type', $referenceType)
+        $entries = StockMovement::where('reference_type', $referenceType)
             ->where('reference_id', $referenceId)
             ->get();
 
@@ -85,14 +82,13 @@ class StockService
         $pairs = [];
 
         foreach ($entries as $entry) {
-            // Reverse the original delta
-            $this->applyWarehouseStockDelta(
+            $this->applyStockDelta(
                 $entry->warehouse_id,
                 $entry->product_id,
                 $entry->quantity_out - $entry->quantity_in,
                 (float) $entry->unit_cost,
-                $entry->quantity_out > 0, // receiving when reversing an out
-                $entry->quantity_in > 0   // issuing when reversing an in
+                $entry->quantity_out > 0,
+                $entry->quantity_in > 0
             );
 
             $pairs[$entry->product_id . ':' . $entry->warehouse_id] = [
@@ -108,12 +104,9 @@ class StockService
         }
     }
 
-    /**
-     * Sync warehouse stock quantity to the latest ledger running balance.
-     */
-    protected function findOrCreateWarehouseStock(int $warehouseId, int $productId): WarehouseStock
+    protected function findOrCreateStock(int $warehouseId, int $productId): Stock
     {
-        $stock = WarehouseStock::where('warehouse_id', $warehouseId)
+        $stock = Stock::where('warehouse_id', $warehouseId)
             ->where('product_id', $productId)
             ->first();
 
@@ -121,42 +114,32 @@ class StockService
             return $stock;
         }
 
-        return WarehouseStock::create([
-            'user_id' => Auth::id() ?? 1,
+        return Stock::create([
             'warehouse_id' => $warehouseId,
             'product_id' => $productId,
             'quantity' => 0,
-            'reserved_quantity' => 0,
-            'available_quantity' => 0,
             'average_cost' => 0,
-            'stock_value' => 0,
             'minimum_stock' => 0,
             'reorder_level' => 0,
-            'status' => true,
         ]);
     }
 
-    public function syncWarehouseQuantity(int $productId, int $warehouseId): void
+    public function syncStockQuantity(int $productId, int $warehouseId): void
     {
-        $latest = StockLedger::where('product_id', $productId)
+        $latest = StockMovement::where('product_id', $productId)
             ->where('warehouse_id', $warehouseId)
             ->orderBy('transaction_date', 'desc')
             ->orderBy('id', 'desc')
             ->first();
 
-        $stock = $this->findOrCreateWarehouseStock($warehouseId, $productId);
-
-        $balance = $latest ? (float) $latest->balance_quantity : 0;
-        $stock->quantity = $balance;
-        $stock->available_quantity = $balance - (float) $stock->reserved_quantity;
-        $stock->stock_value = round($balance * (float) $stock->average_cost, 2);
-        $stock->last_updated_at = now();
+        $stock = $this->findOrCreateStock($warehouseId, $productId);
+        $stock->quantity = $latest ? (float) $latest->balance_quantity : 0;
         $stock->save();
     }
 
     public function recalculateBalances(int $productId, int $warehouseId): void
     {
-        $entries = StockLedger::where('product_id', $productId)
+        $entries = StockMovement::where('product_id', $productId)
             ->where('warehouse_id', $warehouseId)
             ->orderBy('transaction_date', 'asc')
             ->orderBy('id', 'asc')
@@ -168,16 +151,16 @@ class StockService
             $entry->update(['balance_quantity' => $runningBalance]);
         }
 
-        $this->syncWarehouseQuantity($productId, $warehouseId);
+        $this->syncStockQuantity($productId, $warehouseId);
     }
 
     public function getAvailableQuantity(int $warehouseId, int $productId): float
     {
-        $stock = WarehouseStock::where('warehouse_id', $warehouseId)
+        $stock = Stock::where('warehouse_id', $warehouseId)
             ->where('product_id', $productId)
             ->first();
 
-        return $stock ? (float) $stock->available_quantity : 0;
+        return $stock ? (float) $stock->quantity : 0;
     }
 
     protected function assertSufficientStock(int $warehouseId, int $productId, float $quantityOut): void
@@ -189,7 +172,7 @@ class StockService
         }
     }
 
-    protected function applyWarehouseStockDelta(
+    protected function applyStockDelta(
         int $warehouseId,
         int $productId,
         float $deltaQty,
@@ -197,7 +180,7 @@ class StockService
         bool $isReceive,
         bool $isIssue
     ): void {
-        $stock = $this->findOrCreateWarehouseStock($warehouseId, $productId);
+        $stock = $this->findOrCreateStock($warehouseId, $productId);
 
         $oldQty = (float) $stock->quantity;
         $oldAvg = (float) $stock->average_cost;
@@ -207,28 +190,18 @@ class StockService
             if ($newQty > 0) {
                 $stock->average_cost = round((($oldQty * $oldAvg) + ($deltaQty * $unitCost)) / $newQty, 2);
             }
-            $stock->last_received_at = now();
         } elseif ($deltaQty < 0 || $isIssue) {
-            // Keep average cost on outbound; quantity adjusted below
-            if ($isIssue) {
-                $stock->last_issued_at = now();
-            }
             if ($deltaQty > 0 && ! $isReceive) {
-                // Reversing an issue (stock coming back) — weighted average with existing cost
                 $newQty = $oldQty + $deltaQty;
                 if ($newQty > 0 && $oldQty > 0) {
                     $stock->average_cost = round((($oldQty * $oldAvg) + ($deltaQty * $unitCost)) / $newQty, 2);
                 } elseif ($oldQty <= 0) {
                     $stock->average_cost = $unitCost;
                 }
-                $stock->last_received_at = now();
             }
         }
 
         $stock->quantity = round($oldQty + $deltaQty, 2);
-        $stock->available_quantity = round((float) $stock->quantity - (float) $stock->reserved_quantity, 2);
-        $stock->stock_value = round((float) $stock->quantity * (float) $stock->average_cost, 2);
-        $stock->last_updated_at = now();
         $stock->save();
     }
 

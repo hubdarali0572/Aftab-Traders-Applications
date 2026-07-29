@@ -35,7 +35,7 @@ const availableStock = computed(() => {
     const row = props.warehouseStocks.find(
         (s) => s.warehouse_id == selectedSale.value.warehouse_id && s.product_id == form.product_id
     );
-    return row ? Number(row.available_quantity) : 0;
+    return row ? Number(row.quantity) : 0;
 });
 
 const stockWarning = computed(() => {

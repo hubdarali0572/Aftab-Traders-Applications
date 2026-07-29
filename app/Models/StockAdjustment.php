@@ -18,7 +18,6 @@ class StockAdjustment extends Model
         'warehouse_id',
         'reference_no',
         'adjustment_date',
-        'adjustment_type',
         'total_quantity',
         'total_amount',
         'remarks',
@@ -42,9 +41,9 @@ class StockAdjustment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function details(): HasMany
+    public function items(): HasMany
     {
-        return $this->hasMany(StockAdjustmentDetail::class);
+        return $this->hasMany(StockAdjustmentItem::class);
     }
 
     public function getActivitylogOptions(): LogOptions

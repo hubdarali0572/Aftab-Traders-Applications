@@ -1,21 +1,21 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import InventoryItemsEditor from '@/Components/Inventory/InventoryItemsEditor.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
-const props = defineProps({ warehouses: Array });
+defineProps({ warehouses: Array, products: Array });
+
 const form = useForm({
     reference_no: 'ADJ-' + Date.now(),
     adjustment_date: new Date().toISOString().split('T')[0],
     warehouse_id: '',
-    adjustment_type: 'increase',
-    total_quantity: 0,
-    total_amount: 0,
     remarks: '',
     status: true,
+    items: [{ product_id: '', adjustment_quantity: '', unit_cost: 0, reason: '' }],
 });
 
 const submit = () => form.post(route('stock-adjustments.store'));
@@ -23,51 +23,82 @@ const submit = () => form.post(route('stock-adjustments.store'));
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Create Adjustment" />
-        <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-800">{{ $t('New Stock Adjustment') }}</h2>
-            <Link :href="route('stock-adjustments.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
+        <Head :title="$t('New Inventory Correction')" />
+        <div class="max-w-8xl mx-auto mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ $t('New Inventory Correction') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">{{ $t('Correct warehouse stock only. Use Sales module to sell products to customers.') }}</p>
+            </div>
+            <Link :href="route('stock-adjustments.index')" class="theme-form-back-link text-sm font-bold shrink-0">{{ $t('Back to List') }}</Link>
         </div>
 
-        <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <form @submit.prevent="submit" class="max-w-8xl mx-auto space-y-6">
+            <div class="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+                <strong>{{ $t('Not a sale:') }}</strong>
+                {{ $t('Use positive quantity to add stock and negative quantity to remove stock from the warehouse. Customer sales must be recorded in the Sales module.') }}
+            </div>
+
+            <div class="theme-form-card p-8 md:p-10 space-y-8">
                 <div>
-                    <InputLabel value="Reference #" />
-                    <TextInput v-model="form.reference_no" class="w-full" required />
-                    <InputError :message="form.errors.reference_no" />
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Correction Details') }}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-8 gap-y-6">
+                        <div class="flex flex-col">
+                            <InputLabel :value="$t('Reference Number')" class="theme-form-label ml-1" />
+                            <TextInput v-model="form.reference_no" class="w-full theme-form-input bg-slate-50 dark:bg-slate-800" readonly />
+                            <InputError :message="form.errors.reference_no" class="mt-2 ml-1" />
+                        </div>
+                        <div class="flex flex-col">
+                            <InputLabel :value="$t('Correction Date')" class="theme-form-label ml-1" />
+                            <TextInput type="date" v-model="form.adjustment_date" class="w-full theme-form-input" required />
+                            <InputError :message="form.errors.adjustment_date" class="mt-2 ml-1" />
+                        </div>
+                        <div class="flex flex-col">
+                            <InputLabel :value="$t('Warehouse')" class="theme-form-label ml-1" />
+                            <select v-model="form.warehouse_id" class="theme-form-input w-full" required>
+                                <option value="" disabled>{{ $t('Select Warehouse') }}</option>
+                                <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
+                            </select>
+                            <InputError :message="form.errors.warehouse_id" class="mt-2 ml-1" />
+                        </div>
+                        <div class="flex flex-col">
+                            <InputLabel :value="$t('Status')" class="theme-form-label ml-1" />
+                            <div class="mt-2 flex items-center gap-3">
+                                <button type="button" @click="form.status = !form.status" class="relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
+                                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
+                                </button>
+                                <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">{{ form.status ? $t('Active') : $t('Inactive') }}</span>
+                            </div>
+                            <InputError :message="form.errors.status" class="mt-2 ml-1" />
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <InputLabel :value="$t('Adjustment Date')" />
-                    <TextInput type="date" v-model="form.adjustment_date" class="w-full" required />
+
+                <div class="flex flex-col">
+                    <InputLabel :value="$t('Remarks')" class="theme-form-label ml-1" />
+                    <textarea v-model="form.remarks" class="theme-form-input w-full h-24 mt-1" :placeholder="$t('Optional notes about this correction...')"></textarea>
+                    <InputError :message="form.errors.remarks" class="mt-2 ml-1" />
                 </div>
-                <div>
-                    <InputLabel :value="$t('Warehouse')" />
-                    <select v-model="form.warehouse_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>{{ $t('Select Warehouse') }}</option>
-                        <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
-                    </select>
+
+                <div class="border-t border-slate-100 dark:border-slate-700 pt-8">
+                    <InventoryItemsEditor
+                        v-model="form.items"
+                        :products="products"
+                        quantity-field="adjustment_quantity"
+                        :quantity-label="$t('Qty (+ add / − remove)')"
+                        :allow-negative="true"
+                        extra-field="reason"
+                        :extra-label="$t('Reason')"
+                        :errors="form.errors"
+                        :hint="$t('Positive = add stock. Negative = remove stock. This is not a customer sale.')"
+                    />
                 </div>
-                <div>
-                    <InputLabel value="Adjustment Type" />
-                    <select v-model="form.adjustment_type" class="theme-form-input w-full">
-                        <option value="increase">{{ $t('Increase (+)') }}</option>
-                        <option value="decrease">{{ $t('Decrease (-)') }}</option>
-                    </select>
-                </div>
-                <div>
-                    <InputLabel :value="$t('Total Quantity')" />
-                    <TextInput type="number" step="0.01" v-model="form.total_quantity" class="w-full" />
-                </div>
-                <div>
-                    <InputLabel :value="$t('Total Amount')" />
-                    <TextInput type="number" step="0.01" v-model="form.total_amount" class="w-full" />
+
+                <div class="flex justify-center pt-2">
+                    <PrimaryButton class="theme-btn-primary px-12 py-4 rounded-full text-white font-black text-xs uppercase tracking-widest" :disabled="form.processing">
+                        {{ $t('Save Correction') }}
+                    </PrimaryButton>
                 </div>
             </div>
-            <div>
-                <InputLabel :value="$t('Remarks')" />
-                <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
-            </div>
-            <div class="flex justify-center"><PrimaryButton :disabled="form.processing">{{ $t('Save Adjustment') }}</PrimaryButton></div>
         </form>
     </AuthenticatedLayout>
 </template>

@@ -2,9 +2,9 @@
 
 namespace App\Services\Reports;
 
-use App\Models\DamagedStockDetail;
-use App\Models\StockLedger;
-use App\Models\WarehouseStock;
+use App\Models\DamagedStockItem;
+use App\Models\Stock;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +16,7 @@ class InventoryReportService
 
     public function currentStock(Request $request): array
     {
-        $query = WarehouseStock::query()
+        $query = Stock::query()
             ->with(['product.category', 'product.brand', 'product.unit', 'warehouse'])
             ->when($request->filled('warehouse_id'), fn ($q) => $q->where('warehouse_id', $request->warehouse_id))
             ->when($request->filled('product_id'), fn ($q) => $q->where('product_id', $request->product_id))
@@ -31,9 +31,9 @@ class InventoryReportService
                 $q->whereHas('product', fn ($p) => $p->where('name', 'like', "%{$search}%")->orWhere('sku', 'like', "%{$search}%"));
             });
 
-        $stocks = $query->orderByDesc('available_quantity')->get();
+        $stocks = $query->orderByDesc('quantity')->get();
 
-        $movementAgg = StockLedger::query()
+        $movementAgg = StockMovement::query()
             ->selectRaw('warehouse_id, product_id')
             ->selectRaw("SUM(CASE WHEN transaction_type = 'opening_stock' THEN quantity_in ELSE 0 END) as opening_stock")
             ->selectRaw("SUM(CASE WHEN transaction_type = 'purchase' THEN quantity_in ELSE 0 END) as purchased")
@@ -50,6 +50,7 @@ class InventoryReportService
         $rows = $stocks->map(function ($stock) use ($movementAgg) {
             $key = $stock->warehouse_id . ':' . $stock->product_id;
             $m = $movementAgg->get($key);
+            $stockValue = round((float) $stock->quantity * (float) $stock->average_cost, 2);
 
             return [
                 'warehouse' => $stock->warehouse?->name,
@@ -67,8 +68,8 @@ class InventoryReportService
                 'stock_in' => (float) ($m->stock_in ?? 0),
                 'stock_out' => (float) ($m->stock_out ?? 0),
                 'adjustments' => (float) ($m->adjustments ?? 0),
-                'current_available' => (float) $stock->available_quantity,
-                'stock_value' => (float) $stock->stock_value,
+                'current_available' => (float) $stock->quantity,
+                'stock_value' => $stockValue,
                 'average_cost' => (float) $stock->average_cost,
             ];
         })->values();
@@ -84,18 +85,18 @@ class InventoryReportService
 
     public function lowStock(Request $request): array
     {
-        $query = WarehouseStock::query()
+        $query = Stock::query()
             ->with(['product', 'warehouse'])
-            ->whereColumn('available_quantity', '<=', 'minimum_stock')
+            ->whereColumn('quantity', '<=', 'minimum_stock')
             ->when($request->filled('warehouse_id'), fn ($q) => $q->where('warehouse_id', $request->warehouse_id))
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = $request->search;
                 $q->whereHas('product', fn ($p) => $p->where('name', 'like', "%{$search}%")->orWhere('sku', 'like', "%{$search}%"));
             })
-            ->orderBy('available_quantity');
+            ->orderBy('quantity');
 
         $rows = $query->get()->map(function ($stock) {
-            $current = (float) $stock->available_quantity;
+            $current = (float) $stock->quantity;
             $min = (float) $stock->minimum_stock;
             $diff = $min - $current;
 
@@ -121,8 +122,8 @@ class InventoryReportService
 
     public function stockMovement(Request $request)
     {
-        $query = StockLedger::query()
-            ->with(['product', 'warehouse', 'user']);
+        $query = StockMovement::query()
+            ->with(['product', 'warehouse']);
 
         $this->export->applyDateRange($query, $request, 'transaction_date');
 
@@ -134,9 +135,6 @@ class InventoryReportService
         }
         if ($request->filled('transaction_type')) {
             $query->where('transaction_type', $request->transaction_type);
-        }
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
         }
         if ($request->filled('search')) {
             $search = $request->search;
@@ -163,7 +161,7 @@ class InventoryReportService
         return compact('query', 'typeLabels');
     }
 
-    public function mapMovementRow(StockLedger $row, array $typeLabels): array
+    public function mapMovementRow(StockMovement $row, array $typeLabels): array
     {
         return [
             'date' => $row->transaction_date?->format('Y-m-d'),
@@ -175,14 +173,14 @@ class InventoryReportService
             'stock_in' => (float) $row->quantity_in,
             'stock_out' => (float) $row->quantity_out,
             'running_balance' => (float) $row->balance_quantity,
-            'user' => $row->user?->name,
+            'user' => '—',
         ];
     }
 
     public function damagedStock(Request $request): array
     {
-        $query = DamagedStockDetail::query()
-            ->with(['product', 'damagedStock.warehouse', 'damagedStock.user', 'user'])
+        $query = DamagedStockItem::query()
+            ->with(['product', 'damagedStock.warehouse', 'damagedStock.user'])
             ->whereHas('damagedStock');
 
         if ($request->filled('date_from') || $request->filled('date_to')) {
@@ -210,18 +208,18 @@ class InventoryReportService
             });
         }
 
-        $rows = $query->latest('id')->get()->map(function ($detail) {
+        $rows = $query->latest('id')->get()->map(function ($item) {
             return [
-                'product' => $detail->product?->name,
-                'sku' => $detail->product?->sku,
-                'warehouse' => $detail->damagedStock?->warehouse?->name,
-                'damage_date' => $detail->damagedStock?->damage_date?->format('Y-m-d'),
-                'reference_no' => $detail->damagedStock?->reference_no,
-                'quantity' => (float) $detail->quantity,
-                'unit_cost' => (float) $detail->unit_cost,
-                'total_cost' => (float) $detail->total_cost,
-                'reason' => $detail->damage_reason,
-                'recorded_by' => $detail->damagedStock?->user?->name ?? $detail->user?->name,
+                'product' => $item->product?->name,
+                'sku' => $item->product?->sku,
+                'warehouse' => $item->damagedStock?->warehouse?->name,
+                'damage_date' => $item->damagedStock?->damage_date?->format('Y-m-d'),
+                'reference_no' => $item->damagedStock?->reference_no,
+                'quantity' => (float) $item->quantity,
+                'unit_cost' => (float) $item->unit_cost,
+                'total_cost' => (float) $item->total_cost,
+                'reason' => $item->damage_reason,
+                'recorded_by' => $item->damagedStock?->user?->name,
             ];
         })->values();
 

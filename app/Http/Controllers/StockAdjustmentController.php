@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\StockAdjustment;
 use App\Models\Warehouse;
 use App\Services\InventoryPostingService;
@@ -21,12 +22,12 @@ class StockAdjustmentController extends Controller
     public function index(Request $request)
     {
         $adjustments = StockAdjustment::query()
-            ->with(['warehouse', 'user'])
+            ->with(['warehouse', 'user', 'items'])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('reference_no', 'like', "%{$search}%")
-                        ->orWhereHas('warehouse', fn($w) => $w->where('name', 'like', "%{$search}%"));
+                        ->orWhereHas('warehouse', fn ($w) => $w->where('name', 'like', "%{$search}%"));
                 });
             })
             ->latest()
@@ -43,6 +44,7 @@ class StockAdjustmentController extends Controller
     {
         return Inertia::render('InventoryManagement/StockAdjustments/Create', [
             'warehouses' => Warehouse::select('id', 'name')->get(),
+            'products' => Product::select('id', 'name', 'purchase_price')->orderBy('name')->get(),
         ]);
     }
 
@@ -52,14 +54,43 @@ class StockAdjustmentController extends Controller
             'reference_no' => 'required|string|unique:stock_adjustments,reference_no',
             'adjustment_date' => 'required|date',
             'warehouse_id' => 'required|exists:warehouses,id',
-            'adjustment_type' => 'required|in:increase,decrease',
-            'total_quantity' => 'required|numeric|min:0',
-            'total_amount' => 'required|numeric|min:0',
             'remarks' => 'nullable|string',
             'status' => 'boolean',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id|distinct',
+            'items.*.adjustment_quantity' => 'required|numeric|not_in:0',
+            'items.*.unit_cost' => 'required|numeric|min:0',
+            'items.*.reason' => 'nullable|string',
         ]);
 
-        StockAdjustment::create(array_merge($request->all(), ['user_id' => Auth::id()]));
+        try {
+            DB::transaction(function () use ($request) {
+                $header = StockAdjustment::create([
+                    'user_id' => Auth::id(),
+                    'warehouse_id' => $request->warehouse_id,
+                    'reference_no' => $request->reference_no,
+                    'adjustment_date' => $request->adjustment_date,
+                    'remarks' => $request->remarks,
+                    'status' => $request->boolean('status', true),
+                    'total_quantity' => 0,
+                    'total_amount' => 0,
+                ]);
+
+                foreach ($request->items as $row) {
+                    $qty = (float) $row['adjustment_quantity'];
+                    $item = $header->items()->create([
+                        'product_id' => $row['product_id'],
+                        'adjustment_quantity' => $qty,
+                        'unit_cost' => $row['unit_cost'],
+                        'total_cost' => round(abs($qty) * (float) $row['unit_cost'], 2),
+                        'reason' => $row['reason'] ?? null,
+                    ]);
+                    $this->posting->postAdjustmentItem($item);
+                }
+            });
+        } catch (InvalidArgumentException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('stock-adjustments.index')->with('success', 'Adjustment recorded successfully');
     }
@@ -67,42 +98,67 @@ class StockAdjustmentController extends Controller
     public function show(string $id)
     {
         return Inertia::render('InventoryManagement/StockAdjustments/Show', [
-            'adjustment' => StockAdjustment::with(['warehouse', 'user', 'details.product'])->findOrFail($id),
+            'adjustment' => StockAdjustment::with(['warehouse', 'user', 'items.product'])->findOrFail($id),
         ]);
     }
 
     public function edit(string $id)
     {
         return Inertia::render('InventoryManagement/StockAdjustments/Edit', [
-            'adjustment' => StockAdjustment::findOrFail($id),
+            'adjustment' => StockAdjustment::with('items.product')->findOrFail($id),
             'warehouses' => Warehouse::select('id', 'name')->get(),
+            'products' => Product::select('id', 'name', 'purchase_price')->orderBy('name')->get(),
         ]);
     }
 
     public function update(Request $request, string $id)
     {
-        $adjustment = StockAdjustment::withCount('details')->findOrFail($id);
+        $adjustment = StockAdjustment::with('items')->findOrFail($id);
 
         $request->validate([
             'reference_no' => 'required|string|unique:stock_adjustments,reference_no,' . $id,
             'adjustment_date' => 'required|date',
             'warehouse_id' => 'required|exists:warehouses,id',
-            'adjustment_type' => 'required|in:increase,decrease',
-            'total_quantity' => 'required|numeric|min:0',
-            'total_amount' => 'required|numeric|min:0',
+            'remarks' => 'nullable|string',
             'status' => 'boolean',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id|distinct',
+            'items.*.adjustment_quantity' => 'required|numeric|not_in:0',
+            'items.*.unit_cost' => 'required|numeric|min:0',
+            'items.*.reason' => 'nullable|string',
         ]);
 
-        $mustResync = $adjustment->details_count > 0 && (
-            $adjustment->warehouse_id != $request->warehouse_id ||
-            $adjustment->adjustment_type !== $request->adjustment_type ||
-            $adjustment->adjustment_date->format('Y-m-d') !== $request->adjustment_date ||
-            $adjustment->reference_no !== $request->reference_no
-        );
+        $mustResync = $adjustment->warehouse_id != $request->warehouse_id
+            || $adjustment->adjustment_date->format('Y-m-d') !== $request->adjustment_date
+            || $adjustment->reference_no !== $request->reference_no;
 
         try {
             DB::transaction(function () use ($adjustment, $request, $mustResync) {
-                $adjustment->update($request->all());
+                foreach ($adjustment->items as $item) {
+                    $this->posting->reverseAdjustmentItem($item);
+                }
+
+                $adjustment->update([
+                    'reference_no' => $request->reference_no,
+                    'adjustment_date' => $request->adjustment_date,
+                    'warehouse_id' => $request->warehouse_id,
+                    'remarks' => $request->remarks,
+                    'status' => $request->boolean('status', true),
+                ]);
+
+                $adjustment->items()->delete();
+
+                foreach ($request->items as $row) {
+                    $qty = (float) $row['adjustment_quantity'];
+                    $item = $adjustment->items()->create([
+                        'product_id' => $row['product_id'],
+                        'adjustment_quantity' => $qty,
+                        'unit_cost' => $row['unit_cost'],
+                        'total_cost' => round(abs($qty) * (float) $row['unit_cost'], 2),
+                        'reason' => $row['reason'] ?? null,
+                    ]);
+                    $this->posting->postAdjustmentItem($item);
+                }
 
                 if ($mustResync) {
                     $this->posting->syncAdjustmentStock($adjustment->fresh());
@@ -117,13 +173,13 @@ class StockAdjustmentController extends Controller
 
     public function destroy(string $id)
     {
-        $adjustment = StockAdjustment::with('details')->findOrFail($id);
+        $adjustment = StockAdjustment::with('items')->findOrFail($id);
 
         try {
             DB::transaction(function () use ($adjustment) {
-                foreach ($adjustment->details as $detail) {
-                    $this->posting->reverseAdjustmentDetail($detail);
-                    $detail->delete();
+                foreach ($adjustment->items as $item) {
+                    $this->posting->reverseAdjustmentItem($item);
+                    $item->delete();
                 }
 
                 $adjustment->delete();

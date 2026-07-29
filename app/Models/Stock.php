@@ -8,34 +8,32 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class OpeningStockDetail extends Model
+class Stock extends Model
 {
-    use SoftDeletes, LogsActivity;
+    use LogsActivity, SoftDeletes;
 
     protected $fillable = [
-        'opening_stock_id',
+        'warehouse_id',
         'product_id',
         'quantity',
-        'unit_cost',
-        'total_cost',
-        'batch_no',
-        'serial_no',
-        'expiry_date',
-        'remarks',
-        'status',
+        'average_cost',
+        'minimum_stock',
+        'reorder_level',
     ];
 
-    protected $casts = [
-        'expiry_date' => 'date:Y-m-d',
-        'status' => 'boolean',
-        'quantity' => 'decimal:2',
-        'unit_cost' => 'decimal:2',
-        'total_cost' => 'decimal:2',
-    ];
-
-    public function openingStock(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(OpeningStock::class);
+        return [
+            'quantity' => 'decimal:2',
+            'average_cost' => 'decimal:2',
+            'minimum_stock' => 'decimal:2',
+            'reorder_level' => 'decimal:2',
+        ];
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
     }
 
     public function product(): BelongsTo
@@ -49,6 +47,6 @@ class OpeningStockDetail extends Model
             ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
-            ->useLogName('opening-stock-detail');
+            ->useLogName('stock');
     }
 }

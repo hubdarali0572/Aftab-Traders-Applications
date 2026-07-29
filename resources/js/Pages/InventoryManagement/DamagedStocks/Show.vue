@@ -92,12 +92,9 @@ const fmtNumber = (value, prefix = '') => {
                 </div>
             </div>
 
-            <div class="theme-form-card" v-if="stock.details?.length">
+            <div class="theme-form-card" v-if="stock.items?.length">
                 <div class="p-8 md:p-10">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">{{ $t('Damaged Items') }}</h3>
-                        <Link :href="route('damaged-stock-details.create')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">{{ $t('+ Add Item') }}</Link>
-                    </div>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Damaged Items') }}</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead>
@@ -105,15 +102,17 @@ const fmtNumber = (value, prefix = '') => {
                                     <th class="theme-table-header-cell">{{ $t('Product') }}</th>
                                     <th class="theme-table-header-cell">{{ $t('Reason') }}</th>
                                     <th class="theme-table-header-cell text-right">{{ $t('Qty') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Unit Cost') }}</th>
                                     <th class="theme-table-header-cell text-right">{{ $t('Total') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                                <tr v-for="item in stock.details" :key="item.id" class="theme-table-row">
+                                <tr v-for="item in stock.items" :key="item.id" class="theme-table-row">
                                     <td class="px-6 py-3 font-bold text-slate-800 dark:text-slate-200">{{ item.product?.name }}</td>
-                                    <td class="px-6 py-3 text-sm text-rose-600">{{ item.damage_reason }}</td>
+                                    <td class="px-6 py-3 text-sm text-rose-600">{{ item.damage_reason || '—' }}</td>
                                     <td class="px-6 py-3 text-right text-slate-600">{{ item.quantity }}</td>
-                                    <td class="px-6 py-3 text-right font-bold text-indigo-600">${{ item.total_cost }}</td>
+                                    <td class="px-6 py-3 text-right text-slate-600">{{ item.unit_cost }}</td>
+                                    <td class="px-6 py-3 text-right font-bold text-indigo-600">{{ item.total_cost }}</td>
                                 </tr>
                             </tbody>
                         </table>

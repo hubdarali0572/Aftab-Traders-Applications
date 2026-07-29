@@ -646,8 +646,9 @@ const barHeight = (value, max) =>
                             <thead>
                                 <tr class="theme-table-header">
                                     <th class="theme-table-header-cell">{{ $t('Ref #') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Product') }}</th>
                                     <th class="theme-table-header-cell">{{ $t('Date') }}</th>
-                                    <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
+                                    <th class="theme-table-header-cell text-right">{{ $t('Quantity') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -655,11 +656,12 @@ const barHeight = (value, max) =>
                                     <td class="px-4 py-2.5">
                                         <Link :href="route('stock-transfers.show', t.id)" class="text-xs font-bold text-indigo-600 hover:underline dark:text-indigo-400">{{ t.reference_no }}</Link>
                                     </td>
+                                    <td class="px-4 py-2.5 text-xs text-slate-600 dark:text-slate-400">{{ t.product?.name ?? '—' }}</td>
                                     <td class="px-4 py-2.5 text-xs text-slate-500 dark:text-slate-400">{{ t.transfer_date }}</td>
-                                    <td class="px-4 py-2.5 text-xs text-right font-bold text-slate-700 dark:text-slate-300">${{ money(t.total_amount) }}</td>
+                                    <td class="px-4 py-2.5 text-xs text-right font-bold text-slate-700 dark:text-slate-300">{{ t.quantity }}</td>
                                 </tr>
                                 <tr v-if="!recentTransfers.length">
-                                    <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-400">{{ $t('No recent transfers.') }}</td>
+                                    <td colspan="4" class="px-4 py-6 text-center text-xs text-slate-400">{{ $t('No recent transfers.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -687,7 +689,7 @@ const barHeight = (value, max) =>
                                 <tr v-for="row in lowStock" :key="`${row.product_id}-${row.warehouse_id}`" class="theme-table-row">
                                     <td class="px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-300">{{ row.product?.name }}</td>
                                     <td class="px-4 py-2.5 text-xs text-slate-500 dark:text-slate-400">{{ row.warehouse?.name }}</td>
-                                    <td class="px-4 py-2.5 text-xs text-right font-bold text-amber-600 dark:text-amber-400">{{ num(row.available_quantity) }} / {{ num(row.minimum_stock) }}</td>
+                                    <td class="px-4 py-2.5 text-xs text-right font-bold text-amber-600 dark:text-amber-400">{{ num(row.quantity) }} / {{ num(row.minimum_stock) }}</td>
                                 </tr>
                                 <tr v-if="!lowStock.length">
                                     <td colspan="3" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">{{ $t('All stock levels healthy.') }}</td>
@@ -715,7 +717,7 @@ const barHeight = (value, max) =>
                                 <tr v-for="row in outOfStock" :key="`oos-${row.product_id}-${row.warehouse_id}`" class="theme-table-row">
                                     <td class="px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-300">{{ row.product?.name }}</td>
                                     <td class="px-4 py-2.5 text-xs text-slate-500 dark:text-slate-400">{{ row.warehouse?.name }}</td>
-                                    <td class="px-4 py-2.5 text-xs text-right font-bold text-rose-600 dark:text-rose-400">{{ num(row.available_quantity) }}</td>
+                                    <td class="px-4 py-2.5 text-xs text-right font-bold text-rose-600 dark:text-rose-400">{{ num(row.quantity) }}</td>
                                 </tr>
                                 <tr v-if="!outOfStock.length">
                                     <td colspan="3" class="px-4 py-6 text-center text-xs text-emerald-600 dark:text-emerald-400">{{ $t('No out-of-stock items.') }}</td>

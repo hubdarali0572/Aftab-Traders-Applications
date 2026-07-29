@@ -41,9 +41,9 @@ class OpeningStock extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function details(): HasMany
+    public function items(): HasMany
     {
-        return $this->hasMany(OpeningStockDetail::class);
+        return $this->hasMany(OpeningStockItem::class);
     }
 
     public function getActivitylogOptions(): LogOptions

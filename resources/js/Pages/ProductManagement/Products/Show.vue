@@ -53,9 +53,6 @@ const fmtNumber = (value, suffix = '') => {
                             <span class="h-1.5 w-1.5 rounded-full" :class="product.status ? 'bg-emerald-500' : 'bg-slate-400'" />
                             {{ product.status ? 'Active' : 'Inactive' }}
                         </span>
-                        <span v-if="product.track_stock" class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">{{ $t('Tracked') }}</span>
-                        <span v-if="product.has_expiry" class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">{{ $t('Has Expiry') }}</span>
-                        <span v-if="product.is_serialized" class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">{{ $t('Serialized') }}</span>
                     </div>
 
                     <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Basic Information') }}</h3>
@@ -73,8 +70,12 @@ const fmtNumber = (value, suffix = '') => {
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.sku) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Barcode') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.barcode) }}</dd>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Purchase Price') }}</dt>
+                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.purchase_price) }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Selling Price') }}</dt>
+                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.selling_price) }}</dd>
                         </div>
                         <div>
                             <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Category') }}</dt>
@@ -83,16 +84,6 @@ const fmtNumber = (value, suffix = '') => {
                         <div>
                             <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Brand') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.brand?.name) }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Unit') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">
-                                {{ fmt(product.unit?.name) }}<span v-if="product.unit?.short_name"> ({{ product.unit.short_name }})</span>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Tax') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.tax, '%') }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -103,28 +94,28 @@ const fmtNumber = (value, suffix = '') => {
                     <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Product Details') }}</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6">
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Model Number') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.model_number) }}</dd>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Carton Qty') }}</dt>
+                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.carton_qty) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Manufacturer') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.manufacturer) }}</dd>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Price per Carton') }}</dt>
+                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.price_per_carton) }}</dd>
                         </div>
                         <div>
                             <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Color') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.color) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Size') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.size) }}</dd>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Pieces per Carton') }}</dt>
+                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.pieces_per_carton) }}</dd>
                         </div>
                         <div>
                             <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Weight') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.weight, ' kg') }}</dd>
+                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.weight) }}</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('HSN Code') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmt(product.hsn_code) }}</dd>
+                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Price per Piece') }}</dt>
+                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.price_per_piece) }}</dd>
                         </div>
                         <div>
                             <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Origin Country') }}</dt>
@@ -145,28 +136,6 @@ const fmtNumber = (value, suffix = '') => {
                         <div>
                             <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Minimum Stock') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.minimum_stock) }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Maximum Stock') }}</dt>
-                            <dd class="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{{ fmtNumber(product.maximum_stock) }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Track Stock') }}</dt>
-                            <dd class="mt-1">
-                                <span class="text-sm font-bold" :class="product.track_stock ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'">{{ product.track_stock ? 'Enabled' : 'Disabled' }}</span>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Has Expiry') }}</dt>
-                            <dd class="mt-1">
-                                <span class="text-sm font-bold" :class="product.has_expiry ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'">{{ product.has_expiry ? 'Yes' : 'No' }}</span>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Is Serialized') }}</dt>
-                            <dd class="mt-1">
-                                <span class="text-sm font-bold" :class="product.is_serialized ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'">{{ product.is_serialized ? 'Yes' : 'No' }}</span>
-                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ $t('Status') }}</dt>

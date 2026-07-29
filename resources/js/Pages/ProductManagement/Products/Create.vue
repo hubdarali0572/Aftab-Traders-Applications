@@ -1,10 +1,11 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { usePricePerPieceCalculation } from '@/composables/usePricePerPieceCalculation';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -19,26 +20,24 @@ const form = useForm({
     product_category_id: '',
     brand_id: '',
     unit_id: '',
-    tax: 0,
     name: '',
     slug: '',
     sku: '',
-    barcode: '',
-    model_number: '',
-    manufacturer: '',
-    color: '',
-    size: '',
+    purchase_price: '',
+    selling_price: '',
+    carton_qty: '',
+    price_per_carton: '',
+    pieces_per_carton: '',
+    price_per_piece: 0,
     weight: '',
-    hsn_code: '',
+    color: '',
     origin_country: '',
     description: '',
     minimum_stock: 0,
-    maximum_stock: '',
-    track_stock: true,
-    has_expiry: false,
-    is_serialized: false,
     status: true,
 });
+
+const { formattedPricePerPiece, prepareProductPricing } = usePricePerPieceCalculation(form);
 
 const slugify = (value) =>
     value.toString().trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
@@ -49,7 +48,22 @@ watch(() => form.name, (newName) => {
 
 const onSlugInput = () => { slugTouched.value = true; };
 
+onMounted(() => {
+    setDefaultUnit();
+});
+
+watch(() => props.units, () => {
+    setDefaultUnit();
+}, { immediate: true });
+
+const setDefaultUnit = () => {
+    if (!form.unit_id && props.units.length > 0) {
+        form.unit_id = props.units[0].id;
+    }
+};
+
 const submit = () => {
+    prepareProductPricing();
     form.post(route('products.store'));
 };
 </script>
@@ -89,9 +103,14 @@ const submit = () => {
                                 <InputError :message="form.errors.sku" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="barcode" :value="$t('Barcode')" class="theme-form-label ml-1" />
-                                <TextInput id="barcode" type="text" class="theme-form-input" v-model="form.barcode" placeholder="Optional barcode" />
-                                <InputError :message="form.errors.barcode" class="mt-2 ml-1" />
+                                <InputLabel for="purchase_price" :value="$t('Purchase Price')" class="theme-form-label ml-1" />
+                                <TextInput id="purchase_price" type="number" min="0" step="0.01" class="theme-form-input" v-model="form.purchase_price" :placeholder="$t('Purchase Price')" />
+                                <InputError :message="form.errors.purchase_price" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="selling_price" :value="$t('Selling Price')" class="theme-form-label ml-1" />
+                                <TextInput id="selling_price" type="number" min="0" step="0.01" class="theme-form-input" v-model="form.selling_price" :placeholder="$t('Selling Price')" />
+                                <InputError :message="form.errors.selling_price" class="mt-2 ml-1" />
                             </div>
 
                             <div class="flex flex-col">
@@ -110,52 +129,47 @@ const submit = () => {
                                 </select>
                                 <InputError :message="form.errors.brand_id" class="mt-2 ml-1" />
                             </div>
-                            <div class="flex flex-col">
-                                <InputLabel for="unit_id" :value="$t('Unit')" class="theme-form-label ml-1" />
-                                <select id="unit_id" class="theme-form-input" v-model="form.unit_id" required>
-                                    <option value="" disabled>{{ $t('Select unit') }}</option>
-                                    <option v-for="unit in props.units" :key="unit.id" :value="unit.id">{{ unit.name }} ({{ unit.base_value }})</option>
-                                </select>
-                                <InputError :message="form.errors.unit_id" class="mt-2 ml-1" />
-                            </div>
-                            <div class="flex flex-col">
-                                <InputLabel for="tax" value="Tax (%)" class="theme-form-label ml-1" />
-                                <TextInput id="tax" type="number" step="0.01" min="0" class="theme-form-input" v-model="form.tax" placeholder="e.g. 5.00" />
-                                <InputError :message="form.errors.tax" class="mt-2 ml-1" />
-                            </div>
                         </div>
 
                         <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mt-10 mb-6">{{ $t('Product Details') }}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                             <div class="flex flex-col">
-                                <InputLabel for="model_number" :value="$t('Model Number')" class="theme-form-label ml-1" />
-                                <TextInput id="model_number" type="text" class="theme-form-input" v-model="form.model_number" placeholder="Optional model number" />
-                                <InputError :message="form.errors.model_number" class="mt-2 ml-1" />
+                                <InputLabel for="carton_qty" :value="$t('Carton Qty')" class="theme-form-label ml-1" />
+                                <TextInput id="carton_qty" type="number" min="0" step="1" class="theme-form-input" v-model="form.carton_qty" :placeholder="$t('Carton Qty')" />
+                                <InputError :message="form.errors.carton_qty" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="manufacturer" :value="$t('Manufacturer')" class="theme-form-label ml-1" />
-                                <TextInput id="manufacturer" type="text" class="theme-form-input" v-model="form.manufacturer" placeholder="Optional manufacturer" />
-                                <InputError :message="form.errors.manufacturer" class="mt-2 ml-1" />
+                                <InputLabel for="price_per_carton" :value="$t('Price per Carton')" class="theme-form-label ml-1" />
+                                <TextInput id="price_per_carton" type="number" min="0" step="0.01" class="theme-form-input" v-model="form.price_per_carton" :placeholder="$t('Price per Carton')" />
+                                <InputError :message="form.errors.price_per_carton" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="pieces_per_carton" :value="$t('Pieces per Carton')" class="theme-form-label ml-1" />
+                                <TextInput id="pieces_per_carton" type="number" min="0" step="1" class="theme-form-input" v-model="form.pieces_per_carton" :placeholder="$t('Pieces per Carton')" />
+                                <InputError :message="form.errors.pieces_per_carton" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="price_per_piece" :value="$t('Price per Piece')" class="theme-form-label ml-1" />
+                                <TextInput
+                                    id="price_per_piece"
+                                    type="text"
+                                    class="theme-form-input bg-slate-50 dark:bg-slate-800/60 cursor-not-allowed"
+                                    :model-value="formattedPricePerPiece"
+                                    readonly
+                                    tabindex="-1"
+                                    :placeholder="$t('Price per Piece')"
+                                />
+                                <InputError :message="form.errors.price_per_piece" class="mt-2 ml-1" />
+                            </div>
+                            <div class="flex flex-col">
+                                <InputLabel for="weight" :value="$t('Weight')" class="theme-form-label ml-1" />
+                                <TextInput id="weight" type="number" step="0.001" min="0" class="theme-form-input" v-model="form.weight" :placeholder="$t('Weight')" />
+                                <InputError :message="form.errors.weight" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
                                 <InputLabel for="color" :value="$t('Color')" class="theme-form-label ml-1" />
                                 <TextInput id="color" type="text" class="theme-form-input" v-model="form.color" placeholder="e.g. Black" />
                                 <InputError :message="form.errors.color" class="mt-2 ml-1" />
-                            </div>
-                            <div class="flex flex-col">
-                                <InputLabel for="size" :value="$t('Size')" class="theme-form-label ml-1" />
-                                <TextInput id="size" type="text" class="theme-form-input" v-model="form.size" placeholder="e.g. Medium" />
-                                <InputError :message="form.errors.size" class="mt-2 ml-1" />
-                            </div>
-                            <div class="flex flex-col">
-                                <InputLabel for="weight" value="Weight (kg)" class="theme-form-label ml-1" />
-                                <TextInput id="weight" type="number" step="0.001" min="0" class="theme-form-input" v-model="form.weight" placeholder="e.g. 0.250" />
-                                <InputError :message="form.errors.weight" class="mt-2 ml-1" />
-                            </div>
-                            <div class="flex flex-col">
-                                <InputLabel for="hsn_code" :value="$t('HSN Code')" class="theme-form-label ml-1" />
-                                <TextInput id="hsn_code" type="text" class="theme-form-input" v-model="form.hsn_code" placeholder="Optional HSN code" />
-                                <InputError :message="form.errors.hsn_code" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col md:col-span-2">
                                 <InputLabel for="origin_country" :value="$t('Origin Country')" class="theme-form-label ml-1" />
@@ -170,65 +184,28 @@ const submit = () => {
                         </div>
 
                         <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mt-10 mb-6">{{ $t('Stock Settings') }}</h3>
-                     <div class="space-y-8">
-                    <!-- Stock Numbers -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
-                        <div class="flex flex-col">
-                            <InputLabel for="minimum_stock" :value="$t('Minimum Stock')" class="theme-form-label ml-1" />
-                            <TextInput id="minimum_stock" type="number" min="0" class="theme-form-input" v-model="form.minimum_stock" placeholder="e.g. 10" />
-                            <InputError :message="form.errors.minimum_stock" class="mt-2 ml-1" />
-                        </div>
-                        <div class="flex flex-col">
-                            <InputLabel for="maximum_stock" :value="$t('Maximum Stock')" class="theme-form-label ml-1" />
-                            <TextInput id="maximum_stock" type="number" min="0" class="theme-form-input" v-model="form.maximum_stock" placeholder="Optional maximum stock" />
-                            <InputError :message="form.errors.maximum_stock" class="mt-2 ml-1" />
-                        </div>
-                    </div>
+                        <div class="space-y-8">
+                            <div class="grid grid-cols-1 md:grid-cols-1 gap-x-10 gap-y-8">
+                                <div class="flex flex-col">
+                                    <InputLabel for="minimum_stock" :value="$t('Minimum Stock')" class="theme-form-label ml-1" />
+                                    <TextInput id="minimum_stock" type="number" min="0" class="theme-form-input" v-model="form.minimum_stock" :placeholder="$t('Minimum Stock')" />
+                                    <InputError :message="form.errors.minimum_stock" class="mt-2 ml-1" />
+                                </div>
+                            </div>
 
-                    <!-- Toggles -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-x-10 gap-y-8">
-                        <div class="flex flex-col">
-                            <InputLabel :value="$t('Track Stock')" class="theme-form-label ml-1" />
-                            <label class="inline-flex items-center gap-3 mt-2 cursor-pointer select-none">
-                                <button type="button" role="switch" :aria-checked="form.track_stock" @click="form.track_stock = !form.track_stock" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none" :class="form.track_stock ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-600'">
-                                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200" :class="form.track_stock ? 'translate-x-6' : 'translate-x-1'" />
-                                </button>
-                                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ form.track_stock ? 'Enabled' : 'Disabled' }}</span>
-                            </label>
-                            <InputError :message="form.errors.track_stock" class="mt-2 ml-1" />
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-x-10 gap-y-8">
+                                <div class="flex flex-col">
+                                    <InputLabel :value="$t('Status')" class="theme-form-label ml-1" />
+                                    <label class="inline-flex items-center gap-3 mt-2 cursor-pointer select-none">
+                                        <button type="button" role="switch" :aria-checked="form.status" @click="form.status = !form.status" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-600'">
+                                            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
+                                        </button>
+                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ form.status ? 'Active' : 'Inactive' }}</span>
+                                    </label>
+                                    <InputError :message="form.errors.status" class="mt-2 ml-1" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex flex-col">
-                            <InputLabel :value="$t('Has Expiry')" class="theme-form-label ml-1" />
-                            <label class="inline-flex items-center gap-3 mt-2 cursor-pointer select-none">
-                                <button type="button" role="switch" :aria-checked="form.has_expiry" @click="form.has_expiry = !form.has_expiry" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none" :class="form.has_expiry ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-600'">
-                                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200" :class="form.has_expiry ? 'translate-x-6' : 'translate-x-1'" />
-                                </button>
-                                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ form.has_expiry ? 'Yes' : 'No' }}</span>
-                            </label>
-                            <InputError :message="form.errors.has_expiry" class="mt-2 ml-1" />
-                        </div>
-                        <div class="flex flex-col">
-                            <InputLabel :value="$t('Is Serialized')" class="theme-form-label ml-1" />
-                            <label class="inline-flex items-center gap-3 mt-2 cursor-pointer select-none">
-                                <button type="button" role="switch" :aria-checked="form.is_serialized" @click="form.is_serialized = !form.is_serialized" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none" :class="form.is_serialized ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-600'">
-                                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200" :class="form.is_serialized ? 'translate-x-6' : 'translate-x-1'" />
-                                </button>
-                                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ form.is_serialized ? 'Yes' : 'No' }}</span>
-                            </label>
-                            <InputError :message="form.errors.is_serialized" class="mt-2 ml-1" />
-                        </div>
-                        <div class="flex flex-col">
-                            <InputLabel :value="$t('Status')" class="theme-form-label ml-1" />
-                            <label class="inline-flex items-center gap-3 mt-2 cursor-pointer select-none">
-                                <button type="button" role="switch" :aria-checked="form.status" @click="form.status = !form.status" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-600'">
-                                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
-                                </button>
-                                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ form.status ? 'Active' : 'Inactive' }}</span>
-                            </label>
-                            <InputError :message="form.errors.status" class="mt-2 ml-1" />
-                        </div>
-                    </div>
-                </div>
                     </div>
                 </div>
                 <div class="flex items-center justify-center pt-4">

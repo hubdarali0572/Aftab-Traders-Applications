@@ -18,7 +18,7 @@ const cards = computed(() => [
 <template>
     <AuthenticatedLayout>
         <Head title="Current Stock Report" />
-        <ReportToolbar title="Current Stock Report" subtitle="Calculated from warehouse stocks and stock ledger" route-name="reports.inventory.current-stock" :filters="filters" :options="options" :show-date="false" show-product show-category show-brand />
+        <ReportToolbar title="Current Stock Report" subtitle="Calculated from stock balances and movement history" route-name="reports.inventory.current-stock" :filters="filters" :options="options" :show-date="false" show-product show-category show-brand />
         <ReportSummaryCards :cards="cards" />
         <div class="theme-table-card overflow-x-auto">
             <table class="w-full text-left min-w-[1300px]">

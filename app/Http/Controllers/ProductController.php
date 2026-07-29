@@ -24,11 +24,11 @@ class ProductController extends Controller
                     $q->where('name', 'like', "%{$search}%")
                         ->orWhere('slug', 'like', "%{$search}%")
                         ->orWhere('sku', 'like', "%{$search}%")
-                        ->orWhere('barcode', 'like', "%{$search}%")
-                        ->orWhere('model_number', 'like', "%{$search}%")
-                        ->orWhere('manufacturer', 'like', "%{$search}%")
-                        ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                        ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"));
+                        ->orWhere('selling_price', 'like', "%{$search}%")
+                        ->orWhere('carton_qty', 'like', "%{$search}%")
+                        ->orWhere('price_per_carton', 'like', "%{$search}%")
+                        ->orWhereHas('category', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                        ->orWhereHas('brand', fn ($q) => $q->where('name', 'like', "%{$search}%"));
                 });
             })
             ->latest()
@@ -43,19 +43,18 @@ class ProductController extends Controller
 
     public function create()
     {
-
         return Inertia::render('ProductManagement/Products/Create', $this->formOptions());
     }
 
     public function store(Request $request)
     {
         $validated = $this->validateProduct($request);
-         $authUser = Auth::user();
+        $authUser = Auth::user();
 
         Product::create([
-            ...$validated,
+            ...$this->normalizeProductInput($validated),
             'slug' => Str::slug($validated['slug']),
-              'user_id' =>  $authUser->id,
+            'user_id' => $authUser->id,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully');
@@ -84,7 +83,7 @@ class ProductController extends Controller
         $validated = $this->validateProduct($request, $product);
 
         $product->update([
-            ...$validated,
+            ...$this->normalizeProductInput($validated),
             'slug' => Str::slug($validated['slug']),
         ]);
 
@@ -115,8 +114,7 @@ class ProductController extends Controller
         return $request->validate([
             'product_category_id' => 'required|exists:product_categories,id',
             'brand_id' => 'required|exists:brands,id',
-            'unit_id' => 'required|exists:units,id',
-            'tax' => 'nullable|numeric|min:0|max:100',
+            'unit_id' => 'nullable|exists:units,id',
             'name' => 'required|string|max:255',
             'slug' => [
                 'required',
@@ -130,21 +128,40 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products', 'sku')->ignore($productId),
             ],
-            'barcode' => 'nullable|string|max:255',
-            'model_number' => 'nullable|string|max:255',
-            'manufacturer' => 'nullable|string|max:255',
-            'color' => 'nullable|string|max:255',
-            'size' => 'nullable|string|max:255',
+            'purchase_price' => 'nullable|numeric|min:0',
+            'selling_price' => 'nullable|numeric|min:0',
+            'carton_qty' => 'nullable|numeric|min:0',
+            'price_per_carton' => 'nullable|numeric|min:0',
+            'pieces_per_carton' => 'nullable|numeric|min:0',
+            'price_per_piece' => 'nullable|numeric|min:0',
             'weight' => 'nullable|numeric|min:0',
-            'hsn_code' => 'nullable|string|max:255',
+            'color' => 'nullable|string|max:255',
             'origin_country' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'minimum_stock' => 'nullable|integer|min:0',
-            'maximum_stock' => 'nullable|integer|min:0|gte:minimum_stock',
-            'track_stock' => 'nullable|boolean',
-            'has_expiry' => 'nullable|boolean',
-            'is_serialized' => 'nullable|boolean',
             'status' => 'nullable|boolean',
         ]);
+    }
+
+    private function normalizeProductInput(array $validated): array
+    {
+        foreach (['purchase_price', 'selling_price', 'price_per_carton', 'price_per_piece', 'weight'] as $field) {
+            if (! array_key_exists($field, $validated) || $validated[$field] === null || $validated[$field] === '') {
+                $validated[$field] = null;
+                continue;
+            }
+
+            $validated[$field] = round((float) $validated[$field], 2);
+        }
+
+        foreach (['carton_qty', 'pieces_per_carton', 'minimum_stock'] as $field) {
+            if (! array_key_exists($field, $validated) || $validated[$field] === null || $validated[$field] === '') {
+                continue;
+            }
+
+            $validated[$field] = (int) $validated[$field];
+        }
+
+        return $validated;
     }
 }

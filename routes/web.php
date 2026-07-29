@@ -5,12 +5,10 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerLedgerController;
 use App\Http\Controllers\DamagedStockController;
-use App\Http\Controllers\DamagedStockDetailController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ExpenseHeadController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OpeningStockController;
-use App\Http\Controllers\OpeningStockDetailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\OrderReturnController;
@@ -30,15 +28,12 @@ use App\Http\Controllers\SaleDetailController;
 use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SaleReturnDetailController;
 use App\Http\Controllers\StockAdjustmentController;
-use App\Http\Controllers\StockAdjustmentDetailController;
-use App\Http\Controllers\StockLedgerController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockTransferController;
-use App\Http\Controllers\StockTransferDetailController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WarehouseController;
-use App\Http\Controllers\WarehouseStockController;
 use App\Http\Controllers\Reports\CustomerReportController;
 use App\Http\Controllers\Reports\FinancialReportController;
 use App\Http\Controllers\Reports\InventoryReportController;
@@ -84,26 +79,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('product-selling-prices', ProductSellingPriceController::class);
     // warehouse Routes
     Route::resource('warehouses', WarehouseController::class);
-    // warehouse-stocks Routes
-    Route::resource('warehouse-stocks', WarehouseStockController::class);
-    // stock-ledgers Routes
-    Route::resource('stock-ledgers', StockLedgerController::class);
+    // stocks Routes (quantities auto-updated; create registers warehouse/product thresholds)
+    Route::resource('stocks', StockController::class)->except(['destroy']);
     // opening_stocks Routes
     Route::resource('opening-stocks', OpeningStockController::class);
-    // opening_stocks Routes
-    Route::resource('opening-stock-details', OpeningStockDetailController::class);
     // stock_adjustments Routes
     Route::resource('stock-adjustments', StockAdjustmentController::class);
-    // stock_adjustment_details Routes
-    Route::resource('stock-adjustment-details', StockAdjustmentDetailController::class);
     // stock_transfers Routes
     Route::resource('stock-transfers', StockTransferController::class);
-    // stock_transfer_details Routes
-    Route::resource('stock-transfer-details', StockTransferDetailController::class);
     // damaged_stocks Routes
     Route::resource('damaged-stocks', DamagedStockController::class);
-    // damaged_stock_details Routes
-    Route::resource('damaged-stock-details', DamagedStockDetailController::class);
     // purchases Routes
     Route::resource('purchases', PurchaseController::class);
     // purchase Detail Routes

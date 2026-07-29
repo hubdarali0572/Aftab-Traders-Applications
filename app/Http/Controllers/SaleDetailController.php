@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
-use App\Models\WarehouseStock;
+use App\Models\Stock;
 use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +53,7 @@ class SaleDetailController extends Controller
             'sales' => Sale::select('id', 'invoice_no', 'sale_status', 'warehouse_id')->get(),
             'products' => Product::select('id', 'name')->get(),
             'sellingUnits' => $this->sellingUnits,
-            'warehouseStocks' => WarehouseStock::select('warehouse_id', 'product_id', 'available_quantity')->get(),
+            'warehouseStocks' => Stock::select('warehouse_id', 'product_id', 'quantity')->get(),
         ]);
     }
 
@@ -146,7 +146,7 @@ class SaleDetailController extends Controller
             'sales' => Sale::select('id', 'invoice_no', 'sale_status', 'warehouse_id')->get(),
             'products' => Product::select('id', 'name')->get(),
             'sellingUnits' => $this->sellingUnits,
-            'warehouseStocks' => WarehouseStock::select('warehouse_id', 'product_id', 'available_quantity')->get(),
+            'warehouseStocks' => Stock::select('warehouse_id', 'product_id', 'quantity')->get(),
         ]);
     }
 

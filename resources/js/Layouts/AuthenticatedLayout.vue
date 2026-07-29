@@ -53,9 +53,7 @@ const navItems = [
         active:
             route().current("brands.*") ||
             route().current("product-categories.*") ||
-            route().current("units.*") ||
-            route().current("products.*") ||
-            route().current("product-selling-prices.*"),
+            route().current("products.*"),
         children: [
             {
                 name: "Brands",
@@ -68,19 +66,9 @@ const navItems = [
                 active: route().current("product-categories.*"),
             },
             {
-                name: "Units",
-                route: "units.index",
-                active: route().current("units.*"),
-            },
-            {
                 name: "Products",
                 route: "products.index",
                 active: route().current("products.*"),
-            },
-            {
-                name: "Selling Prices",
-                route: "product-selling-prices.index",
-                active: route().current("product-selling-prices.*"),
             },
         ],
     },
@@ -94,46 +82,22 @@ const navItems = [
         name: "Inventory Management",
         icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
         active:
-            route().current("warehouse-stocks.*") ||
-            route().current("stock-ledgers.*") ||
+            route().current("stocks.*") ||
             route().current("opening-stocks.*") ||
-            route().current("opening-stock-details.*") ||
             route().current("stock-adjustments.*") ||
-            route().current("stock-adjustment-details.*") ||
             route().current("stock-transfers.*") ||
-            route().current("stock-transfer-details.*") ||
-            route().current("damaged-stocks.*") ||
-            route().current("damaged-stock-details.*"),
+            route().current("damaged-stocks.*"),
         children: [
+            
             {
-                name: "Warehouse Stocks",
-                route: "warehouse-stocks.index",
-                active: route().current("warehouse-stocks.*"),
-            },
-            {
-                name: "Stock Ledger",
-                route: "stock-ledgers.index",
-                active: route().current("stock-ledgers.*"),
-            },
-            {
-                name: "Opening Stocks",
+                name: "Opening Stock",
                 route: "opening-stocks.index",
                 active: route().current("opening-stocks.*"),
             },
             {
-                name: "Opening Stock Details",
-                route: "opening-stock-details.index",
-                active: route().current("opening-stock-details.*"),
-            },
-            {
-                name: "Stock Adjustments",
+                name: "Inventory Correction",
                 route: "stock-adjustments.index",
                 active: route().current("stock-adjustments.*"),
-            },
-            {
-                name: "Stock Adjustment Details",
-                route: "stock-adjustment-details.index",
-                active: route().current("stock-adjustment-details.*"),
             },
             {
                 name: "Stock Transfer",
@@ -141,19 +105,14 @@ const navItems = [
                 active: route().current("stock-transfers.*"),
             },
             {
-                name: "Stock Transfer Details",
-                route: "stock-transfer-details.index",
-                active: route().current("stock-transfer-details.*"),
-            },
-            {
-                name: "Damaged Stocks",
+                name: "Damaged Stock",
                 route: "damaged-stocks.index",
                 active: route().current("damaged-stocks.*"),
             },
             {
-                name: "Damaged Stock Details",
-                route: "damaged-stock-details.index",
-                active: route().current("damaged-stock-details.*"),
+                name: "Stock",
+                route: "stocks.index",
+                active: route().current("stocks.*"),
             },
         ],
     },

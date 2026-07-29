@@ -41,9 +41,9 @@ class DamagedStock extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function details(): HasMany
+    public function items(): HasMany
     {
-        return $this->hasMany(DamagedStockDetail::class);
+        return $this->hasMany(DamagedStockItem::class);
     }
 
     public function getActivitylogOptions(): LogOptions

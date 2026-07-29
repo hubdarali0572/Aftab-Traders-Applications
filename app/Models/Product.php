@@ -18,37 +18,34 @@ class Product extends Model
         'product_category_id',
         'brand_id',
         'unit_id',
-        'tax',
         'name',
         'slug',
         'sku',
-        'barcode',
-        'model_number',
-        'manufacturer',
-        'color',
-        'size',
+        'purchase_price',
+        'selling_price',
+        'carton_qty',
+        'price_per_carton',
+        'pieces_per_carton',
+        'price_per_piece',
         'weight',
-        'hsn_code',
+        'color',
         'origin_country',
         'description',
         'minimum_stock',
-        'maximum_stock',
-        'track_stock',
-        'has_expiry',
-        'is_serialized',
         'status',
     ];
 
     protected function casts(): array
     {
         return [
-            'tax' => 'decimal:2',
+            'purchase_price' => 'decimal:2',
+            'selling_price' => 'decimal:2',
+            'carton_qty' => 'integer',
+            'price_per_carton' => 'decimal:2',
+            'pieces_per_carton' => 'integer',
+            'price_per_piece' => 'decimal:2',
             'weight' => 'decimal:3',
             'minimum_stock' => 'integer',
-            'maximum_stock' => 'integer',
-            'track_stock' => 'boolean',
-            'has_expiry' => 'boolean',
-            'is_serialized' => 'boolean',
             'status' => 'boolean',
         ];
     }
@@ -68,9 +65,9 @@ class Product extends Model
         return $this->belongsTo(Unit::class);
     }
 
-    public function warehouseStocks(): HasMany
+    public function stocks(): HasMany
     {
-        return $this->hasMany(WarehouseStock::class);
+        return $this->hasMany(Stock::class);
     }
 
     public function getActivitylogOptions(): LogOptions

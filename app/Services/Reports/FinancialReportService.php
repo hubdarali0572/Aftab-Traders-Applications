@@ -8,7 +8,7 @@ use App\Models\PurchaseExpense;
 use App\Models\PurchaseReturn;
 use App\Models\Sale;
 use App\Models\SaleReturn;
-use App\Models\WarehouseStock;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -133,11 +133,11 @@ class FinancialReportService
             ->sum('amount');
         $purchaseReturns = (float) (clone $purchaseReturnsQuery)->sum('total_amount');
 
-        $stockQuery = WarehouseStock::query();
+        $stockQuery = Stock::query();
         if ($request->filled('warehouse_id')) {
             $stockQuery->where('warehouse_id', $request->warehouse_id);
         }
-        $closingStock = (float) $stockQuery->sum('stock_value');
+        $closingStock = (float) $stockQuery->selectRaw('SUM(quantity * average_cost) as val')->value('val');
 
         // Opening stock approximation: closing + COGS outflow - inflow within period is complex;
         // use opening stock documents total as opening, else derive from closing + sold cost - purchased.

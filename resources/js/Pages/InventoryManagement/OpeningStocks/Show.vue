@@ -75,6 +75,33 @@ const fmtNumber = (value, prefix = '') => {
                 </div>
             </div>
 
+            <!-- Line Items -->
+            <div v-if="stock.items?.length" class="theme-form-card">
+                <div class="p-8 md:p-10">
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">{{ $t('Line Items') }}</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="theme-table-header">
+                                    <th class="theme-table-header-cell">{{ $t('Product') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Quantity') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Unit Cost') }}</th>
+                                    <th class="theme-table-header-cell">{{ $t('Total') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                                <tr v-for="item in stock.items" :key="item.id" class="theme-table-row">
+                                    <td class="px-4 py-2 text-sm font-bold text-slate-800 dark:text-slate-100">{{ item.product?.name }}</td>
+                                    <td class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300">{{ item.quantity }}</td>
+                                    <td class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300">{{ fmtNumber(item.unit_cost) }}</td>
+                                    <td class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300">{{ fmtNumber(item.total_cost) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Totals -->
             <div class="theme-form-card">
                 <div class="p-8 md:p-10">
