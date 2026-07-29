@@ -69,20 +69,24 @@ const clearSearch = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="$t('Expense Heads')" />
+        <Head :title="$t('Expense Categories')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Expense Heads') }}</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage expense categories and heads.') }}</p>
+                <p class="text-[11px] font-black uppercase tracking-widest text-indigo-500 mb-1">{{ $t('Expense Management') }}</p>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Expense Categories') }}</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage categories used when recording expenses.') }}</p>
             </div>
 
-            <Link :href="route('expense-heads.create')" class="theme-btn-primary">
+            <div class="flex flex-wrap gap-2">
+                <Link :href="route('expenses.index')" class="theme-form-back-link px-4 py-2 text-sm font-bold">{{ $t('Back to Expenses') }}</Link>
+                <Link :href="route('expense-heads.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                {{ $t('Create Expense Head') }}
+                {{ $t('Add Category') }}
             </Link>
+            </div>
         </div>
 
         <transition name="fade">

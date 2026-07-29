@@ -20,8 +20,8 @@ const cards = computed(() => [
 <template>
     <AuthenticatedLayout>
         <Head title="Product-wise Sales Report" />
-        <ReportToolbar title="Product-wise Sales Report" route-name="reports.sales.product-wise" :filters="filters" :options="options" show-product show-category show-brand />
-        <ReportSummaryCards :cards="cards" />
+        <ReportToolbar title="Product-wise Sales Report" category="Sales Reports" route-name="reports.sales.product-wise" :filters="filters" :options="options" show-product show-category show-brand />
+        <ReportSummaryCards :cards="cards" subtitle="Product performance summary" />
         <div class="theme-table-card overflow-x-auto">
             <table class="w-full text-left min-w-[1000px]">
                 <thead>

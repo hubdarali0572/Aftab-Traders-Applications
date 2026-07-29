@@ -39,8 +39,8 @@ const paidValues = computed(() => (props.chart || []).map((m) => Number(m.paymen
 <template>
     <AuthenticatedLayout>
         <Head title="Monthly Sales Report" />
-        <ReportToolbar title="Monthly Sales Report" subtitle="Month-wise sales summary" route-name="reports.sales.monthly" :filters="filters" :options="options" :show-search="false" />
-        <ReportSummaryCards :cards="cards" />
+        <ReportToolbar title="Monthly Sales Report" subtitle="Month-wise sales summary" category="Sales Reports" route-name="reports.sales.monthly" :filters="filters" :options="options" :show-search="false" />
+        <ReportSummaryCards :cards="cards" subtitle="Monthly totals for selected period" />
 
         <div class="theme-form-card mb-6 overflow-hidden">
             <div class="theme-form-section-header">

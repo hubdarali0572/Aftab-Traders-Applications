@@ -31,9 +31,9 @@ const submit = () => {
                 <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight dark:text-slate-100">{{ $t('Edit Expense Head') }}</h2>
                 <p class="text-sm text-slate-800 mt-1 font-medium dark:text-slate-400">{{ $t('Update existing expense head details.') }}</p>
             </div>
-            <Link :href="route('expense-heads.index')" class="theme-form-back-link">
+            <Link :href="route('expenses.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="text-slate-900">{{ $t('Back to List') }}</span>
+                <span class="text-slate-900">{{ $t('Back to Expenses') }}</span>
             </Link>
         </div>
 

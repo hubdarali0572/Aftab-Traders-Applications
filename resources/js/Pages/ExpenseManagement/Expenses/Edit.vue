@@ -8,14 +8,13 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     expense: Object,
-    expenseHeads: Array,
     warehouses: Array,
 });
 
 const form = useForm({
     expense_no: props.expense.expense_no,
     expense_date: (props.expense.expense_date || '').toString().slice(0, 10),
-    expense_head_id: props.expense.expense_head_id,
+    expense_name: props.expense.expense_name ?? '',
     warehouse_id: props.expense.warehouse_id ?? '',
     employee_name: props.expense.employee_name ?? '',
     payee_name: props.expense.payee_name ?? '',
@@ -62,16 +61,14 @@ const submit = () => form.put(route('expenses.update', props.expense.id));
                                 <InputError :message="form.errors.expense_date" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
-                                <InputLabel for="expense_head_id" :value="$t('Expense Head')" class="theme-form-label ml-1" />
-                                <select id="expense_head_id" v-model="form.expense_head_id" class="theme-form-input w-full" required>
-                                    <option v-for="h in expenseHeads" :key="h.id" :value="h.id">{{ h.head_code }} — {{ h.name }}</option>
-                                </select>
-                                <InputError :message="form.errors.expense_head_id" class="mt-2 ml-1" />
+                                <InputLabel for="expense_name" :value="$t('Expense Name')" class="theme-form-label ml-1" />
+                                <TextInput id="expense_name" type="text" class="theme-form-input" v-model="form.expense_name" required placeholder="e.g. Office Rent, Fuel, Salaries" />
+                                <InputError :message="form.errors.expense_name" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col">
                                 <InputLabel for="warehouse_id" :value="$t('Warehouse')" class="theme-form-label ml-1" />
-                                <select id="warehouse_id" v-model="form.warehouse_id" class="theme-form-input w-full" required>
-                                    <option value="" disabled>{{ $t('Select warehouse') }}</option>
+                                <select id="warehouse_id" v-model="form.warehouse_id" class="theme-form-input w-full">
+                                    <option value="">{{ $t('Company-wide (no warehouse)') }}</option>
                                     <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
                                 </select>
                                 <InputError :message="form.errors.warehouse_id" class="mt-2 ml-1" />

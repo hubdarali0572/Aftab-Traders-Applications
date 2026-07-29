@@ -2,18 +2,17 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
     expenses: Object,
-    expenseHeads: Array,
+    summary: Object,
     filters: Object,
 });
 
 const page = usePage();
 const showFlash = ref(false);
 const searchQuery = ref(props.filters?.search ?? '');
-const expenseHeadId = ref(props.filters?.expense_head_id ?? '');
 const statusFilter = ref(props.filters?.status ?? '');
 const paymentMethod = ref(props.filters?.payment_method ?? '');
 let timer = null;
@@ -57,7 +56,6 @@ const confirmDelete = () => {
 const applySearch = () => {
     router.get(route('expenses.index'), {
         search: searchQuery.value || undefined,
-        expense_head_id: expenseHeadId.value || undefined,
         status: statusFilter.value || undefined,
         payment_method: paymentMethod.value || undefined,
     }, { preserveState: true, replace: true });
@@ -65,7 +63,6 @@ const applySearch = () => {
 
 const clearSearch = () => {
     searchQuery.value = '';
-    expenseHeadId.value = '';
     statusFilter.value = '';
     paymentMethod.value = '';
     applySearch();
@@ -88,7 +85,14 @@ const statusClass = (status) => ({
 }[status] || 'bg-slate-100 text-slate-500');
 
 const hasFilters = () =>
-    props.filters?.search || props.filters?.expense_head_id || props.filters?.status || props.filters?.payment_method;
+    props.filters?.search || props.filters?.status || props.filters?.payment_method;
+
+const overviewStats = computed(() => [
+    { title: 'Total Records', value: props.summary?.total_count ?? 0, tone: 'text-indigo-700', bg: 'bg-indigo-50 dark:bg-indigo-500/10', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+    { title: 'Financial Amount', value: `$${money(props.summary?.financial_amount)}`, tone: 'text-indigo-700', bg: 'bg-indigo-50 dark:bg-indigo-500/10', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', highlight: true },
+    { title: 'Today', value: `$${money(props.summary?.today_amount)}`, tone: 'text-violet-700', bg: 'bg-violet-50 dark:bg-violet-500/10', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
+    { title: 'This Month', value: `$${money(props.summary?.month_amount)}`, tone: 'text-sky-700', bg: 'bg-sky-50 dark:bg-sky-500/10', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
+]);
 </script>
 
 <template>
@@ -100,10 +104,37 @@ const hasFilters = () =>
                 <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Expenses') }}</h2>
                 <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Track and manage all business expenses with full details.') }}</p>
             </div>
-            <Link :href="route('expenses.create')" class="theme-btn-primary">
+            <div class="flex flex-wrap gap-2">
+                <Link :href="route('expense-history.index')" class="theme-form-back-link px-4 py-2 text-sm font-bold">{{ $t('Expense History') }}</Link>
+                <Link :href="route('expenses.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 {{ $t('Add Expense') }}
             </Link>
+            </div>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="theme-table-card mb-6 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-950/30 dark:to-slate-800">
+                <h3 class="text-sm font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">{{ $t('Expense Overview') }}</h3>
+                <p class="text-xs text-slate-400 mt-0.5">{{ $t('Financial amount includes approved and paid expenses only.') }}</p>
+            </div>
+            <div class="p-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div
+                    v-for="stat in overviewStats"
+                    :key="stat.title"
+                    class="flex items-start gap-3 p-4 rounded-xl border transition-shadow hover:shadow-md"
+                    :class="stat.highlight ? 'border-indigo-200 dark:border-indigo-800 bg-indigo-50/40 dark:bg-indigo-950/20' : 'border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800/50'"
+                >
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" :class="stat.bg">
+                        <svg class="w-5 h-5" :class="stat.tone" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="stat.icon" /></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight">{{ $t(stat.title) }}</p>
+                        <p class="text-base font-black mt-1 truncate" :class="stat.tone">{{ stat.value }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <transition name="fade">
@@ -125,11 +156,7 @@ const hasFilters = () =>
         <div class="theme-table-card">
             <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50">
                 <form @submit.prevent="applySearch" class="flex flex-col xl:flex-row gap-3">
-                    <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search expense #, payee, employee, invoice, head..." />
-                    <select v-model="expenseHeadId" class="theme-form-input w-full xl:w-52">
-                        <option value="">{{ $t('All Heads') }}</option>
-                        <option v-for="h in expenseHeads" :key="h.id" :value="h.id">{{ h.head_code }} — {{ h.name }}</option>
-                    </select>
+                    <input v-model="searchQuery" type="text" class="theme-form-input flex-1" placeholder="Search expense #, name, payee, employee, invoice..." />
                     <select v-model="statusFilter" class="theme-form-input w-full xl:w-40">
                         <option value="">{{ $t('All Status') }}</option>
                         <option value="draft">{{ $t('Draft') }}</option>
@@ -157,7 +184,7 @@ const hasFilters = () =>
                         <tr class="theme-table-header">
                             <th class="theme-table-header-cell">{{ $t('Expense #') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Date') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Expense Head') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Expense Name') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Employee') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Payee') }}</th>
@@ -179,8 +206,7 @@ const hasFilters = () =>
                                 {{ formatDate(e.expense_date) }}
                             </td>
                             <td class="px-6 py-3">
-                                <div class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ e.expense_head?.name || '—' }}</div>
-                                <div class="text-[11px] text-slate-400">{{ e.expense_head?.head_code }}</div>
+                                <div class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ e.expense_name || '—' }}</div>
                             </td>
                             <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-300">{{ e.warehouse?.name || '—' }}</td>
                             <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-300">{{ e.employee_name || '—' }}</td>

@@ -91,7 +91,15 @@ class ExpenseHeadController extends Controller
 
     public function destroy(string $id)
     {
-        ExpenseHead::findOrFail($id)->delete();
+        $expenseHead = ExpenseHead::withCount('expenses')->findOrFail($id);
+
+        if ($expenseHead->expenses_count > 0) {
+            return redirect()
+                ->route('expense-heads.index')
+                ->with('danger', 'Cannot delete expense head with linked expense records.');
+        }
+
+        $expenseHead->delete();
 
         return redirect()->route('expense-heads.index')->with('success', 'Expense head deleted successfully');
     }

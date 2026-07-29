@@ -233,18 +233,18 @@ const navItems = [
         name: "Expense Management",
         icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
         active:
-            route().current("expense-heads.*") ||
-            route().current("expenses.*"),
+            route().current("expenses.*") ||
+            route().current("expense-history.*"),
         children: [
-            {
-                name: "Expense Heads",
-                route: "expense-heads.index",
-                active: route().current("expense-heads.*"),
-            },
             {
                 name: "Expenses",
                 route: "expenses.index",
                 active: route().current("expenses.*"),
+            },
+            {
+                name: "Expense History",
+                route: "expense-history.index",
+                active: route().current("expense-history.*"),
             },
         ],
     },
@@ -253,81 +253,11 @@ const navItems = [
         icon: "M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
         active: route().current("reports.*"),
         children: [
-            {
-                name: "All Reports",
-                route: "reports.index",
-                active: route().current("reports.index"),
-            },
-            {
-                name: "Daily Sales",
-                route: "reports.sales.daily",
-                active: route().current("reports.sales.daily"),
-            },
-            {
-                name: "Monthly Sales",
-                route: "reports.sales.monthly",
-                active: route().current("reports.sales.monthly"),
-            },
-            {
-                name: "Customer-wise Sales",
-                route: "reports.sales.customer-wise",
-                active: route().current("reports.sales.customer-wise"),
-            },
-            {
-                name: "Product-wise Sales",
-                route: "reports.sales.product-wise",
-                active: route().current("reports.sales.product-wise"),
-            },
-            {
-                name: "Current Stock",
-                route: "reports.inventory.current-stock",
-                active: route().current("reports.inventory.current-stock"),
-            },
-            {
-                name: "Low Stock",
-                route: "reports.inventory.low-stock",
-                active: route().current("reports.inventory.low-stock"),
-            },
-            {
-                name: "Stock Movement",
-                route: "reports.inventory.stock-movement",
-                active: route().current("reports.inventory.stock-movement"),
-            },
-            {
-                name: "Damaged Stock",
-                route: "reports.inventory.damaged-stock",
-                active: route().current("reports.inventory.damaged-stock"),
-            },
-            {
-                name: "Customer Ledger",
-                route: "reports.customers.ledger",
-                active: route().current("reports.customers.ledger"),
-            },
-            {
-                name: "Outstanding Balance",
-                route: "reports.customers.outstanding",
-                active: route().current("reports.customers.outstanding"),
-            },
-            {
-                name: "Payment History",
-                route: "reports.customers.payment-history",
-                active: route().current("reports.customers.payment-history"),
-            },
-            {
-                name: "Sales History",
-                route: "reports.customers.sales-history",
-                active: route().current("reports.customers.sales-history"),
-            },
-            {
-                name: "Expense Report",
-                route: "reports.financial.expenses",
-                active: route().current("reports.financial.expenses"),
-            },
-            {
-                name: "Profit & Loss",
-                route: "reports.financial.profit-loss",
-                active: route().current("reports.financial.profit-loss"),
-            },
+            { name: "All Reports", route: "reports.index", active: route().current("reports.index") },
+            { name: "Profit & Loss", route: "reports.financial.profit-loss", active: route().current("reports.financial.profit-loss") },
+            { name: "Daily Sales", route: "reports.sales.daily", active: route().current("reports.sales.daily") },
+            { name: "Current Stock", route: "reports.inventory.current-stock", active: route().current("reports.inventory.current-stock") },
+            { name: "Outstanding Balance", route: "reports.customers.outstanding", active: route().current("reports.customers.outstanding") },
         ],
     },
     {

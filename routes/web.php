@@ -6,7 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerLedgerController;
 use App\Http\Controllers\DamagedStockController;
 use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\ExpenseHeadController;
+use App\Http\Controllers\ExpenseHistoryController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OpeningStockController;
 use App\Http\Controllers\OrderController;
@@ -134,8 +134,12 @@ Route::middleware('auth')->group(function () {
     Route::redirect('order-return-details', '/order-returns')->name('order-return-details.index');
     Route::redirect('order-return-details/create', '/order-returns/create')->name('order-return-details.create');
 
-    Route::resource('expense-heads', ExpenseHeadController::class);
+    Route::redirect('expense-heads', '/expenses')->name('expense-heads.index');
+    Route::redirect('expense-heads/create', '/expenses/create')->name('expense-heads.create');
+    Route::get('expense-heads/{expense_head}', fn () => redirect()->route('expenses.index'))->name('expense-heads.show');
+    Route::get('expense-heads/{expense_head}/edit', fn () => redirect()->route('expenses.index'))->name('expense-heads.edit');
     Route::resource('expenses', ExpenseController::class);
+    Route::get('expense-history', [ExpenseHistoryController::class, 'index'])->name('expense-history.index');
 
     // Report Management
     Route::prefix('reports')->name('reports.')->group(function () {
@@ -153,10 +157,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/customers/ledger', [CustomerReportController::class, 'ledger'])->name('customers.ledger');
         Route::get('/customers/outstanding', [CustomerReportController::class, 'outstanding'])->name('customers.outstanding');
-        Route::get('/customers/payment-history', [CustomerReportController::class, 'paymentHistory'])->name('customers.payment-history');
-        Route::get('/customers/sales-history', [CustomerReportController::class, 'salesHistory'])->name('customers.sales-history');
-
-        Route::get('/financial/expenses', [FinancialReportController::class, 'expenses'])->name('financial.expenses');
+        Route::redirect('/customers/payment-history', '/reports/customers/ledger')->name('customers.payment-history');
+        Route::redirect('/customers/sales-history', '/sales-history')->name('customers.sales-history');
+        Route::redirect('/financial/expenses', '/expense-history')->name('financial.expenses');
         Route::get('/financial/profit-loss', [FinancialReportController::class, 'profitLoss'])->name('financial.profit-loss');
     });
 

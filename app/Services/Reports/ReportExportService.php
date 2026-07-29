@@ -43,7 +43,6 @@ class ReportExportService
             'user_id' => $request->input('user_id'),
             'payment_status' => $request->input('payment_status'),
             'payment_method' => $request->input('payment_method'),
-            'expense_head_id' => $request->input('expense_head_id'),
             'transaction_type' => $request->input('transaction_type'),
             'aging' => $request->input('aging'),
             'search' => $request->input('search'),

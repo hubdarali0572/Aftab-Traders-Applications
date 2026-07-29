@@ -24,9 +24,9 @@ class FinancialReportController extends Controller
         $paginated = $this->paginateCollection(collect($result['rows']), $request);
 
         if ($csv = $this->maybeCsv($request, $this->export, 'expense-report', [
-            'Date', 'Expense No', 'Head', 'Category', 'Amount', 'Paid To', 'Payment Method', 'Remarks', 'Recorded By', 'Warehouse', 'Status',
+            'Date', 'Expense No', 'Expense Name', 'Amount', 'Paid To', 'Payment Method', 'Remarks', 'Recorded By', 'Warehouse', 'Status',
         ], collect($result['rows'])->map(fn ($r) => [
-            $r['expense_date'], $r['expense_no'], $r['expense_head'], $r['expense_category'], $r['amount'], $r['paid_to'],
+            $r['expense_date'], $r['expense_no'], $r['expense_name'], $r['amount'], $r['paid_to'],
             $r['payment_method'], $r['remarks'], $r['recorded_by'], $r['warehouse'], $r['status'],
         ]))) {
             return $csv;

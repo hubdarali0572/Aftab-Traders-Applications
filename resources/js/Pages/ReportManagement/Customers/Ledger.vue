@@ -18,8 +18,8 @@ const cards = computed(() => [
 <template>
     <AuthenticatedLayout>
         <Head title="Customer Ledger Report" />
-        <ReportToolbar :title="$t('Customer Ledger')" subtitle="Select a customer for full ledger detail" route-name="reports.customers.ledger" :filters="filters" :options="options" show-customer show-transaction-type :transaction-types="transactionTypes" />
-        <ReportSummaryCards :cards="cards" />
+        <ReportToolbar :title="$t('Customer Ledger')" subtitle="Select a customer for full ledger detail" category="Customer Reports" route-name="reports.customers.ledger" :filters="filters" :options="options" show-customer show-transaction-type :transaction-types="transactionTypes" />
+        <ReportSummaryCards :cards="cards" subtitle="Ledger summary for selected filters" />
         <div class="theme-table-card overflow-x-auto">
             <table class="w-full text-left min-w-[1000px]">
                 <thead>

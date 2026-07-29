@@ -43,6 +43,7 @@ const statusClass = (s) => ({
             <ReportToolbar
                 title="Daily Sales Report"
                 subtitle="Invoice-level sales from sales module"
+                category="Sales Reports"
                 route-name="reports.sales.daily"
                 :filters="filters"
                 :options="options"
@@ -51,8 +52,14 @@ const statusClass = (s) => ({
                 show-payment-status
                 show-payment-method
             />
-            <ReportSummaryCards :cards="cards" />
+            <ReportSummaryCards :cards="cards" subtitle="Summary for selected filters" />
             <div class="theme-table-card overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3 print:hidden">
+                    <div>
+                        <h3 class="text-sm font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">{{ $t('Sales Records') }}</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">{{ rows.total || 0 }} {{ $t('records found') }}</p>
+                    </div>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse min-w-[1100px]">
                         <thead>

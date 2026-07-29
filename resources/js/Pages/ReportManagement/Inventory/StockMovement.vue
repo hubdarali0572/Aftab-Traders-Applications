@@ -24,8 +24,8 @@ const cards = computed(() => [
 <template>
     <AuthenticatedLayout>
         <Head title="Stock Movement Report" />
-        <ReportToolbar title="Stock Movement Report" route-name="reports.inventory.stock-movement" :filters="filters" :options="options" show-product show-user show-transaction-type :transaction-types="transactionTypes" />
-        <ReportSummaryCards :cards="cards" />
+        <ReportToolbar title="Stock Movement Report" category="Inventory Reports" route-name="reports.inventory.stock-movement" :filters="filters" :options="options" show-product show-user show-transaction-type :transaction-types="transactionTypes" />
+        <ReportSummaryCards :cards="cards" subtitle="Stock in/out movement summary" />
         <div class="theme-table-card overflow-x-auto">
             <table class="w-full text-left min-w-[1100px]">
                 <thead>

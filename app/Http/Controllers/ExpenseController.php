@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
-use App\Models\ExpenseHead;
 use App\Models\Warehouse;
+use App\Services\ExpenseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -12,52 +12,25 @@ use Inertia\Inertia;
 
 class ExpenseController extends Controller
 {
+    public function __construct(
+        protected ExpenseService $expenses
+    ) {
+    }
+
     public function index(Request $request)
     {
-        $expenses = Expense::query()
-            ->with(['expenseHead', 'warehouse', 'user'])
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('expense_no', 'like', "%{$search}%")
-                        ->orWhere('payee_name', 'like', "%{$search}%")
-                        ->orWhere('employee_name', 'like', "%{$search}%")
-                        ->orWhere('reference_no', 'like', "%{$search}%")
-                        ->orWhere('invoice_no', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%")
-                        ->orWhereHas('expenseHead', function ($h) use ($search) {
-                            $h->where('name', 'like', "%{$search}%")
-                                ->orWhere('head_code', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->when($request->filled('expense_head_id'), function ($query) use ($request) {
-                $query->where('expense_head_id', $request->expense_head_id);
-            })
-            ->when($request->filled('status'), function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->when($request->filled('payment_method'), function ($query) use ($request) {
-                $query->where('payment_method', $request->payment_method);
-            })
-            ->latest('expense_date')
-            ->latest('id')
-            ->paginate(15)
-            ->withQueryString();
-
         return Inertia::render('ExpenseManagement/Expenses/Index', [
-            'expenses' => $expenses,
-            'expenseHeads' => ExpenseHead::where('status', true)->orderBy('name')->get(['id', 'head_code', 'name']),
-            'filters' => $request->only('search', 'expense_head_id', 'status', 'payment_method'),
+            'expenses' => $this->expenses->paginate($request),
+            'summary' => $this->expenses->listSummary($request),
+            'filters' => $this->expenses->filters($request),
         ]);
     }
 
     public function create()
     {
         return Inertia::render('ExpenseManagement/Expenses/Create', [
-            'expenseHeads' => ExpenseHead::where('status', true)->orderBy('name')->get(['id', 'head_code', 'name']),
             'warehouses' => Warehouse::query()->orderBy('name')->get(['id', 'name', 'status']),
-            'suggestedExpenseNo' => $this->nextExpenseNo(),
+            'suggestedExpenseNo' => $this->expenses->generateExpenseNo(),
         ]);
     }
 
@@ -67,7 +40,7 @@ class ExpenseController extends Controller
 
         Expense::create(array_merge($validated, [
             'user_id' => Auth::id(),
-            'expense_no' => $validated['expense_no'] ?: $this->nextExpenseNo(),
+            'expense_no' => $validated['expense_no'] ?: $this->expenses->generateExpenseNo(),
         ]));
 
         return redirect()->route('expenses.index')->with('success', 'Expense recorded successfully');
@@ -75,8 +48,13 @@ class ExpenseController extends Controller
 
     public function show(string $id)
     {
+        $expense = Expense::with(['warehouse', 'user'])->findOrFail($id);
+
         return Inertia::render('ExpenseManagement/Expenses/Show', [
-            'expense' => Expense::with(['expenseHead', 'warehouse', 'user'])->findOrFail($id),
+            'expense' => $expense,
+            'summary' => [
+                'counts_toward_financials' => in_array($expense->status, ExpenseService::FINANCIAL_STATUSES, true),
+            ],
         ]);
     }
 
@@ -84,7 +62,6 @@ class ExpenseController extends Controller
     {
         return Inertia::render('ExpenseManagement/Expenses/Edit', [
             'expense' => Expense::findOrFail($id),
-            'expenseHeads' => ExpenseHead::orderBy('name')->get(['id', 'head_code', 'name']),
             'warehouses' => Warehouse::query()->orderBy('name')->get(['id', 'name', 'status']),
         ]);
     }
@@ -109,7 +86,6 @@ class ExpenseController extends Controller
     protected function validatedExpense(Request $request, ?int $expenseId = null): array
     {
         $request->merge([
-            'expense_head_id' => $request->filled('expense_head_id') ? (int) $request->input('expense_head_id') : null,
             'warehouse_id' => $request->filled('warehouse_id') ? (int) $request->input('warehouse_id') : null,
         ]);
 
@@ -118,7 +94,6 @@ class ExpenseController extends Controller
         $validated['warehouse_id'] = ! empty($validated['warehouse_id'])
             ? (int) $validated['warehouse_id']
             : null;
-        $validated['expense_head_id'] = (int) $validated['expense_head_id'];
 
         return $validated;
     }
@@ -133,8 +108,8 @@ class ExpenseController extends Controller
                 Rule::unique('expenses', 'expense_no')->ignore($expenseId),
             ],
             'expense_date' => 'required|date',
-            'expense_head_id' => 'required|integer|exists:expense_heads,id',
-            'warehouse_id' => 'required|integer|exists:warehouses,id',
+            'expense_name' => 'required|string|max:255',
+            'warehouse_id' => 'nullable|integer|exists:warehouses,id',
             'employee_name' => 'nullable|string|max:255',
             'payee_name' => 'nullable|string|max:255',
             'amount' => 'required|numeric|min:0.01',
@@ -145,21 +120,5 @@ class ExpenseController extends Controller
             'remarks' => 'nullable|string',
             'status' => 'required|in:draft,approved,paid,cancelled',
         ];
-    }
-
-    protected function nextExpenseNo(): string
-    {
-        $prefix = 'EXP-' . now()->format('Ymd') . '-';
-        $latest = Expense::withTrashed()
-            ->where('expense_no', 'like', $prefix . '%')
-            ->orderByDesc('expense_no')
-            ->value('expense_no');
-
-        $sequence = 1;
-        if ($latest && preg_match('/(\d+)$/', $latest, $matches)) {
-            $sequence = ((int) $matches[1]) + 1;
-        }
-
-        return $prefix . str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
     }
 }

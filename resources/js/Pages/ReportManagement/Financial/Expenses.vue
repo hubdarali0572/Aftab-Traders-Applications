@@ -29,7 +29,7 @@ const categoryItems = computed(() => props.summary?.by_category || []);
 <template>
     <AuthenticatedLayout>
         <Head :title="$t('Expense Report')" />
-        <ReportToolbar :title="$t('Expense Report')" route-name="reports.financial.expenses" :filters="filters" :options="options" show-expense-head show-payment-method />
+        <ReportToolbar :title="$t('Expense Report')" route-name="reports.financial.expenses" :filters="filters" :options="options" show-payment-method />
         <ReportSummaryCards :cards="cards" />
 
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6 items-start">
@@ -55,7 +55,7 @@ const categoryItems = computed(() => props.summary?.by_category || []);
                 <div class="theme-form-section-header">
                     <div>
                         <h3 class="theme-form-section-title">{{ $t('Expense by Category') }}</h3>
-                        <p class="mt-1 text-xs text-slate-400">{{ $t('Share of spend by expense head') }}</p>
+                        <p class="mt-1 text-xs text-slate-400">{{ $t('Share of spend by expense name') }}</p>
                     </div>
                 </div>
                 <div class="p-5">
@@ -73,8 +73,7 @@ const categoryItems = computed(() => props.summary?.by_category || []);
                 <thead>
                     <tr class="theme-table-header">
                         <th class="theme-table-header-cell">{{ $t('Date') }}</th>
-                        <th class="theme-table-header-cell">{{ $t('Expense Head') }}</th>
-                        <th class="theme-table-header-cell">{{ $t('Category') }}</th>
+                        <th class="theme-table-header-cell">{{ $t('Expense Name') }}</th>
                         <th class="theme-table-header-cell text-right">{{ $t('Amount') }}</th>
                         <th class="theme-table-header-cell">{{ $t('Paid To') }}</th>
                         <th class="theme-table-header-cell">{{ $t('Payment Method') }}</th>
@@ -85,15 +84,14 @@ const categoryItems = computed(() => props.summary?.by_category || []);
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     <tr v-for="(r, i) in rows.data" :key="i" class="theme-table-row">
                         <td class="px-6 py-3 text-sm">{{ formatDate(r.expense_date) }}</td>
-                        <td class="px-6 py-3 font-bold">{{ r.expense_head }}</td>
-                        <td class="px-6 py-3 text-sm text-slate-500">{{ r.expense_category }}</td>
+                        <td class="px-6 py-3 font-bold">{{ r.expense_name }}</td>
                         <td class="px-6 py-3 text-right font-black text-rose-600">${{ money(r.amount) }}</td>
                         <td class="px-6 py-3 text-sm">{{ r.paid_to || '—' }}</td>
                         <td class="px-6 py-3 text-sm capitalize">{{ r.payment_method }}</td>
                         <td class="px-6 py-3 text-sm max-w-xs truncate">{{ r.remarks || '—' }}</td>
                         <td class="px-6 py-3 text-sm">{{ r.recorded_by || '—' }}</td>
                     </tr>
-                    <tr v-if="!rows.data?.length"><td colspan="8" class="px-6 py-12 text-center text-slate-400">{{ $t('No expenses.') }}</td></tr>
+                    <tr v-if="!rows.data?.length"><td colspan="7" class="px-6 py-12 text-center text-slate-400">{{ $t('No expenses.') }}</td></tr>
                 </tbody>
             </table>
             <div class="theme-table-footer flex justify-between print:hidden">

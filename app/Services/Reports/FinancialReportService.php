@@ -9,6 +9,7 @@ use App\Models\PurchaseReturn;
 use App\Models\Sale;
 use App\Models\SaleReturn;
 use App\Models\Stock;
+use App\Services\ExpenseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,14 +22,11 @@ class FinancialReportService
     public function expenses(Request $request): array
     {
         $query = Expense::query()
-            ->with(['expenseHead', 'warehouse', 'user'])
+            ->with(['warehouse', 'user'])
             ->where('expenses.status', '!=', 'cancelled');
 
         $this->export->applyDateRange($query, $request, 'expense_date');
 
-        if ($request->filled('expense_head_id')) {
-            $query->where('expenses.expense_head_id', $request->expense_head_id);
-        }
         if ($request->filled('warehouse_id')) {
             $query->where('expenses.warehouse_id', $request->warehouse_id);
         }
@@ -39,17 +37,16 @@ class FinancialReportService
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('expense_no', 'like', "%{$search}%")
+                    ->orWhere('expense_name', 'like', "%{$search}%")
                     ->orWhere('payee_name', 'like', "%{$search}%")
-                    ->orWhere('reference_no', 'like', "%{$search}%")
-                    ->orWhereHas('expenseHead', fn ($h) => $h->where('name', 'like', "%{$search}%"));
+                    ->orWhere('reference_no', 'like', "%{$search}%");
             });
         }
 
         $rows = $query->latest('expense_date')->get()->map(fn ($e) => [
             'expense_date' => $e->expense_date?->format('Y-m-d'),
             'expense_no' => $e->expense_no,
-            'expense_head' => $e->expenseHead?->name,
-            'expense_category' => $e->expenseHead?->head_code,
+            'expense_name' => $e->expense_name,
             'amount' => (float) $e->amount,
             'paid_to' => $e->payee_name,
             'payment_method' => $e->payment_method,
@@ -59,16 +56,21 @@ class FinancialReportService
             'status' => $e->status,
         ])->values();
 
-        $byCategory = $rows->groupBy('expense_head')->map(fn ($items, $head) => [
-            'name' => $head ?: 'Uncategorized',
+        $financialRows = $rows->whereIn('status', ExpenseService::FINANCIAL_STATUSES);
+
+        $byCategory = $financialRows->groupBy('expense_name')->map(fn ($items, $name) => [
+            'name' => $name ?: 'Uncategorized',
             'amount' => (float) $items->sum('amount'),
             'count' => $items->count(),
         ])->values();
 
         $monthly = Expense::query()
-            ->where('expenses.status', '!=', 'cancelled')
-            ->when($request->filled('expense_head_id'), fn ($q) => $q->where('expense_head_id', $request->expense_head_id));
+            ->whereIn('expenses.status', ExpenseService::FINANCIAL_STATUSES);
         $this->export->applyDateRange($monthly, $request, 'expense_date');
+
+        if ($request->filled('search')) {
+            $monthly->where('expense_name', 'like', '%'.$request->search.'%');
+        }
 
         $trend = $monthly
             ->selectRaw("DATE_FORMAT(expense_date, '%Y-%m') as month, SUM(amount) as total")
@@ -82,8 +84,9 @@ class FinancialReportService
             ]);
 
         $summary = [
-            'total_expenses' => (float) $rows->sum('amount'),
-            'expense_count' => $rows->count(),
+            'total_expenses' => (float) $financialRows->sum('amount'),
+            'expense_count' => $financialRows->count(),
+            'all_records_count' => $rows->count(),
             'by_category' => $byCategory,
             'monthly_trend' => $trend,
         ];
@@ -117,7 +120,7 @@ class FinancialReportService
             $purchaseReturnsQuery->where('warehouse_id', $request->warehouse_id);
         }
 
-        $expensesQuery = Expense::query()->where('expenses.status', '!=', 'cancelled');
+        $expensesQuery = Expense::query()->whereIn('expenses.status', ExpenseService::FINANCIAL_STATUSES);
         $this->export->applyDateRange($expensesQuery, $request, 'expense_date');
         if ($request->filled('warehouse_id')) {
             $expensesQuery->where('expenses.warehouse_id', $request->warehouse_id);
@@ -166,11 +169,9 @@ class FinancialReportService
         $operatingExpenses = (float) (clone $expensesQuery)->sum('amount');
         $netProfit = $grossProfit - $operatingExpenses;
 
-        $expenseByHead = (clone $expensesQuery)
-            ->join('expense_heads', 'expenses.expense_head_id', '=', 'expense_heads.id')
-            ->where('expenses.status', '!=', 'cancelled')
-            ->selectRaw('expense_heads.name as name, SUM(expenses.amount) as amount')
-            ->groupBy('expense_heads.id', 'expense_heads.name')
+        $expenseByName = (clone $expensesQuery)
+            ->selectRaw('expenses.expense_name as name, SUM(expenses.amount) as amount')
+            ->groupBy('expenses.expense_name')
             ->orderByDesc('amount')
             ->get()
             ->map(fn ($r) => ['name' => $r->name, 'amount' => (float) $r->amount]);
@@ -186,7 +187,7 @@ class FinancialReportService
             ->pluck('total', 'month');
 
         $monthlyExpenses = Expense::query()
-            ->where('expenses.status', '!=', 'cancelled')
+            ->whereIn('expenses.status', ExpenseService::FINANCIAL_STATUSES)
             ->when($request->filled('warehouse_id'), fn ($q) => $q->where('warehouse_id', $request->warehouse_id))
             ->where('expense_date', '>=', now()->subMonths(11)->startOfMonth())
             ->selectRaw("DATE_FORMAT(expense_date, '%Y-%m') as month, SUM(amount) as total")
@@ -222,7 +223,7 @@ class FinancialReportService
                 'net_profit' => $netProfit,
                 'total_revenue' => $salesRevenue,
             ],
-            'expense_distribution' => $expenseByHead,
+            'expense_distribution' => $expenseByName,
             'monthly_trend' => $monthlyTrend,
         ];
     }

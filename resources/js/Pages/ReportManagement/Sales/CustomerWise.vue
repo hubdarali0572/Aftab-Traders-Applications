@@ -21,8 +21,8 @@ const cards = computed(() => [
 <template>
     <AuthenticatedLayout>
         <Head title="Customer-wise Sales Report" />
-        <ReportToolbar title="Customer-wise Sales Report" route-name="reports.sales.customer-wise" :filters="filters" :options="options" show-customer />
-        <ReportSummaryCards :cards="cards" />
+        <ReportToolbar title="Customer-wise Sales Report" category="Sales Reports" route-name="reports.sales.customer-wise" :filters="filters" :options="options" show-customer />
+        <ReportSummaryCards :cards="cards" subtitle="Aggregated by customer" />
         <div class="theme-table-card overflow-x-auto">
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
@@ -49,7 +49,7 @@ const cards = computed(() => [
                         <td class="px-6 py-3 text-right text-amber-600 font-bold">${{ money(r.remaining_balance) }}</td>
                         <td class="px-6 py-3">{{ formatDate(r.last_purchase_date) }}</td>
                         <td class="px-6 py-3 text-right print:hidden">
-                            <Link :href="route('reports.customers.sales-history', { customer_id: r.customer_id })" class="text-xs font-bold text-indigo-600">{{ $t('View') }}</Link>
+                            <Link :href="route('sales-history.index', { customer_id: r.customer_id })" class="text-xs font-bold text-indigo-600">{{ $t('View') }}</Link>
                         </td>
                     </tr>
                     <tr v-if="!rows.data?.length"><td colspan="9" class="px-6 py-12 text-center text-slate-400">{{ $t('No data.') }}</td></tr>

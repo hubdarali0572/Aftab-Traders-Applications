@@ -17,7 +17,7 @@ const props = defineProps({
             </div>
             <div class="flex gap-3">
                 <Link :href="route('expense-heads.edit', expenseHead.id)" class="theme-btn-primary px-6 py-2">{{ $t('Edit') }}</Link>
-                <Link :href="route('expense-heads.index')" class="theme-form-back-link">{{ $t('Back') }}</Link>
+                <Link :href="route('expenses.index')" class="theme-form-back-link">{{ $t('Back to Expenses') }}</Link>
             </div>
         </div>
 

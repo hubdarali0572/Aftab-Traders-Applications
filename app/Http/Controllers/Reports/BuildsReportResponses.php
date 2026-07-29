@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Reports;
 
 use App\Models\Brand;
 use App\Models\Customer;
-use App\Models\ExpenseHead;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
@@ -25,7 +24,6 @@ trait BuildsReportResponses
             'categories' => ProductCategory::orderBy('name')->get(['id', 'name']),
             'brands' => Brand::orderBy('name')->get(['id', 'name']),
             'users' => User::orderBy('name')->get(['id', 'name']),
-            'expenseHeads' => ExpenseHead::orderBy('name')->get(['id', 'name', 'head_code']),
         ];
     }
 

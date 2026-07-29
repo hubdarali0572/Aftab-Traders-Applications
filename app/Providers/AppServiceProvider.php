@@ -62,7 +62,6 @@ class AppServiceProvider extends ServiceProvider
             'order-details' => 'App\Models\OrderDetail',
             'order-return' => 'App\Models\OrderReturn',
             'order-return-detail' => 'App\Models\OrderReturnDetail',
-            'expense-head' => 'App\Models\ExpenseHead',
             'expense' => 'App\Models\Expense',
             // Add other models here as needed
         ]);

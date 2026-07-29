@@ -19,8 +19,8 @@ const cards = computed(() => [
 <template>
     <AuthenticatedLayout>
         <Head title="Outstanding Balance Report" />
-        <ReportToolbar title="Outstanding Balance Report" route-name="reports.customers.outstanding" :filters="filters" :options="options" :show-date="false" show-customer show-aging />
-        <ReportSummaryCards :cards="cards" />
+        <ReportToolbar title="Outstanding Balance Report" category="Customer Reports" route-name="reports.customers.outstanding" :filters="filters" :options="options" :show-date="false" show-customer show-aging />
+        <ReportSummaryCards :cards="cards" subtitle="Receivable balances and aging" />
         <div class="theme-table-card overflow-x-auto">
             <table class="w-full text-left min-w-[1000px]">
                 <thead>
