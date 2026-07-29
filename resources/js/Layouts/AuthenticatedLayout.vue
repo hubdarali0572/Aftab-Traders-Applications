@@ -157,28 +157,16 @@ const navItems = [
             route().current("customer-ledgers.*"),
         children: [
             {
-                name: "Wholesale Customers",
-                route: "customers.wholesale",
-                active: route().current("customers.wholesale"),
-            },
-            {
-                name: "Retail Customers",
-                route: "customers.retail",
-                active: route().current("customers.retail"),
-            },
-            {
-                name: "Customer Profile",
+                name: "Customers",
                 route: "customers.index",
                 active:
                     route().current("customers.index") ||
                     route().current("customers.show") ||
                     route().current("customers.create") ||
-                    route().current("customers.edit"),
-            },
-            {
-                name: "Opening Balance",
-                route: "customers.opening-balances",
-                active: route().current("customers.opening-balances"),
+                    route().current("customers.edit") ||
+                    route().current("customers.wholesale") ||
+                    route().current("customers.retail") ||
+                    route().current("customers.customer-ledger"),
             },
             {
                 name: "Customer Ledger",
@@ -186,13 +174,9 @@ const navItems = [
                 active:
                     route().current("customer-ledgers.index") ||
                     route().current("customer-ledgers.show") ||
-                    route().current("customer-ledgers.edit"),
+                    route().current("customer-ledgers.edit") ||
+                    route().current("customer-ledgers.create"),
             },
-            {
-                name: "Outstanding Balance",
-                route: "customers.outstanding",
-                active: route().current("customers.outstanding"),
-            }
         ],
     },
     {

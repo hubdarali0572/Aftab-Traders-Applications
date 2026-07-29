@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\CustomerLedger;
 use App\Services\CustomerLedgerService;
+use App\Services\CustomerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,30 +19,42 @@ class CustomerLedgerController extends Controller
     ];
 
     public function __construct(
-        protected CustomerLedgerService $ledgerService
+        protected CustomerLedgerService $ledgerService,
+        protected CustomerService $customerService
     ) {
     }
 
     public function index(Request $request)
     {
-        $ledgers = CustomerLedger::query()
+        $baseQuery = CustomerLedger::query()
             ->with(['customer', 'user'])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('reference_no', 'like', "%{$search}%")
-                        ->orWhereHas('customer', fn ($c) => $c->where('customer_name', 'like', "%{$search}%"));
+                        ->orWhereHas('customer', fn ($c) => $c->where('customer_name', 'like', "%{$search}%")
+                            ->orWhere('customer_code', 'like', "%{$search}%"));
                 });
             })
             ->when($request->filled('customer_id'), fn ($q) => $q->where('customer_id', $request->customer_id))
-            ->when($request->filled('transaction_type'), fn ($q) => $q->where('transaction_type', $request->transaction_type))
-            ->latest()
+            ->when($request->filled('transaction_type'), fn ($q) => $q->where('transaction_type', $request->transaction_type));
+
+        $summary = [
+            'total_entries' => (clone $baseQuery)->count(),
+            'total_debit' => (float) (clone $baseQuery)->sum('debit'),
+            'total_credit' => (float) (clone $baseQuery)->sum('credit'),
+        ];
+
+        $ledgers = (clone $baseQuery)
+            ->orderByDesc('transaction_date')
+            ->orderByDesc('id')
             ->paginate(15)
             ->withQueryString();
 
         return Inertia::render('InventoryManagement/CustomerLedgers/Index', [
             'ledgers' => $ledgers,
-            'customers' => Customer::select('id', 'customer_name', 'customer_code')->get(),
+            'summary' => $summary,
+            'customers' => Customer::select('id', 'customer_name', 'customer_code')->orderBy('id', 'asc')->get(),
             'filters' => $request->only('search', 'customer_id', 'transaction_type'),
             'transactionTypes' => $this->transactionTypes,
         ]);
@@ -49,10 +62,13 @@ class CustomerLedgerController extends Controller
 
     public function create(Request $request)
     {
+        $isPayment = $request->query('mode') === 'payment';
+
         return Inertia::render('InventoryManagement/CustomerLedgers/Create', [
-            'customers' => Customer::select('id', 'customer_name', 'customer_code')->orderBy('customer_name')->get(),
-            'transactionTypes' => $this->transactionTypes,
+            'customers' => Customer::where('status', true)->select('id', 'customer_name', 'customer_code')->orderBy('id', 'asc')->get(),
+            'transactionTypes' => CustomerService::MANUAL_TRANSACTION_TYPES,
             'defaultCustomerId' => $request->query('customer_id'),
+            'defaultMode' => $isPayment ? 'payment' : 'entry',
         ]);
     }
 
@@ -61,7 +77,7 @@ class CustomerLedgerController extends Controller
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'transaction_date' => 'required|date',
-            'transaction_type' => 'required|in:' . implode(',', $this->transactionTypes),
+            'transaction_type' => 'required|in:' . implode(',', CustomerService::MANUAL_TRANSACTION_TYPES),
             'reference_no' => 'nullable|string|max:255',
             'debit' => 'required|numeric|min:0',
             'credit' => 'required|numeric|min:0',
@@ -69,9 +85,17 @@ class CustomerLedgerController extends Controller
             'status' => 'boolean',
         ]);
 
-        if ((float) $request->debit <= 0 && (float) $request->credit <= 0) {
-            return redirect()->back()->withInput()->with('error', 'Either debit or credit amount must be greater than zero.');
+        $amountError = $this->customerService->validateManualLedgerAmounts(
+            $request->transaction_type,
+            (float) $request->debit,
+            (float) $request->credit
+        );
+
+        if ($amountError) {
+            return redirect()->back()->withInput()->with('error', $amountError);
         }
+
+        $this->customerService->assertActiveForTransaction((int) $request->customer_id);
 
         DB::transaction(function () use ($request) {
             $entry = CustomerLedger::create([
@@ -93,7 +117,11 @@ class CustomerLedgerController extends Controller
             $this->ledgerService->recalculateBalances((int) $request->customer_id);
         });
 
-        return redirect()->route('customer-ledgers.index')->with('success', 'Ledger entry recorded successfully');
+        $redirect = $request->filled('redirect_customer_id')
+            ? route('customers.show', $request->redirect_customer_id)
+            : route('customer-ledgers.index');
+
+        return redirect($redirect)->with('success', 'Ledger entry recorded successfully');
     }
 
     public function show(string $id)
@@ -114,8 +142,8 @@ class CustomerLedgerController extends Controller
 
         return Inertia::render('InventoryManagement/CustomerLedgers/Edit', [
             'ledger' => $ledger,
-            'customers' => Customer::select('id', 'customer_name', 'customer_code')->get(),
-            'transactionTypes' => $this->transactionTypes,
+            'customers' => Customer::where('status', true)->select('id', 'customer_name', 'customer_code')->orderBy('id', 'asc')->get(),
+            'transactionTypes' => CustomerService::MANUAL_TRANSACTION_TYPES,
         ]);
     }
 
@@ -130,7 +158,7 @@ class CustomerLedgerController extends Controller
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'transaction_date' => 'required|date',
-            'transaction_type' => 'required|in:' . implode(',', $this->transactionTypes),
+            'transaction_type' => 'required|in:' . implode(',', CustomerService::MANUAL_TRANSACTION_TYPES),
             'reference_no' => 'nullable|string|max:255',
             'debit' => 'required|numeric|min:0',
             'credit' => 'required|numeric|min:0',
@@ -138,9 +166,17 @@ class CustomerLedgerController extends Controller
             'status' => 'boolean',
         ]);
 
-        if ((float) $request->debit <= 0 && (float) $request->credit <= 0) {
-            return redirect()->back()->withInput()->with('error', 'Either debit or credit amount must be greater than zero.');
+        $amountError = $this->customerService->validateManualLedgerAmounts(
+            $request->transaction_type,
+            (float) $request->debit,
+            (float) $request->credit
+        );
+
+        if ($amountError) {
+            return redirect()->back()->withInput()->with('error', $amountError);
         }
+
+        $this->customerService->assertActiveForTransaction((int) $request->customer_id);
 
         $oldCustomerId = (int) $ledger->customer_id;
 

@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Sale;
 use App\Models\Warehouse;
 use App\Services\CustomerLedgerService;
+use App\Services\CustomerService;
 use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,8 @@ class SaleController extends Controller
 
     public function __construct(
         protected InventoryPostingService $posting,
-        protected CustomerLedgerService $ledgerService
+        protected CustomerLedgerService $ledgerService,
+        protected CustomerService $customerService
     ) {
     }
 
@@ -55,7 +57,7 @@ class SaleController extends Controller
     public function create()
     {
         return Inertia::render('InventoryManagement/Sales/Create', [
-            'customers' => Customer::select('id', 'customer_name', 'customer_code')->get(),
+            'customers' => Customer::where('status', true)->select('id', 'customer_name', 'customer_code')->orderBy('id', 'asc')->get(),
             'warehouses' => Warehouse::select('id', 'name')->get(),
             'saleTypes' => $this->saleTypes,
             'paymentMethods' => $this->paymentMethods,
@@ -84,6 +86,10 @@ class SaleController extends Controller
             'status' => 'boolean',
         ]);
 
+        if ($request->filled('customer_id')) {
+            $this->customerService->assertActiveForTransaction((int) $request->customer_id);
+        }
+
         $data = $request->all();
         if (empty($data['customer_id'])) {
             $data['customer_id'] = null;
@@ -111,7 +117,7 @@ class SaleController extends Controller
     {
         return Inertia::render('InventoryManagement/Sales/Edit', [
             'sale' => Sale::findOrFail($id),
-            'customers' => Customer::select('id', 'customer_name', 'customer_code')->get(),
+            'customers' => Customer::where('status', true)->select('id', 'customer_name', 'customer_code')->orderBy('id', 'asc')->get(),
             'warehouses' => Warehouse::select('id', 'name')->get(),
             'saleTypes' => $this->saleTypes,
             'paymentMethods' => $this->paymentMethods,
@@ -150,6 +156,10 @@ class SaleController extends Controller
             ));
         $mustResyncLedger = $sale->sale_status === 'completed'
             || $request->sale_status === 'completed';
+
+        if ($request->filled('customer_id')) {
+            $this->customerService->assertActiveForTransaction((int) $request->customer_id);
+        }
 
         $data = $request->all();
         if (empty($data['customer_id'])) {

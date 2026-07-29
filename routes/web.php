@@ -113,6 +113,7 @@ Route::middleware('auth')->group(function () {
     Route::get('customers/opening-balances', [CustomerController::class, 'openingBalances'])->name('customers.opening-balances');
     Route::get('customers/outstanding', [CustomerController::class, 'outstanding'])->name('customers.outstanding');
     Route::get('customers/sales-history', [CustomerController::class, 'salesHistory'])->name('customers.sales-history');
+    Route::get('customers/{customer}/ledger', [CustomerController::class, 'ledger'])->name('customers.customer-ledger');
     Route::resource('customers', CustomerController::class);
     // customer Ledger Routes
     Route::resource('customer-ledgers', CustomerLedgerController::class);

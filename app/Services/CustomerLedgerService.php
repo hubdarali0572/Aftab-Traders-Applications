@@ -82,4 +82,9 @@ class CustomerLedgerService
 
         return $latest ? (float) $latest->balance : 0;
     }
+
+    public function deleteAllForCustomer(int $customerId): void
+    {
+        CustomerLedger::where('customer_id', $customerId)->delete();
+    }
 }

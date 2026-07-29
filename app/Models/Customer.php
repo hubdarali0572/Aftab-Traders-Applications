@@ -55,6 +55,21 @@ class Customer extends Model
         return $this->hasMany(Sale::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function saleReturns(): HasMany
+    {
+        return $this->hasMany(SaleReturn::class);
+    }
+
+    public function orderReturns(): HasMany
+    {
+        return $this->hasMany(OrderReturn::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
