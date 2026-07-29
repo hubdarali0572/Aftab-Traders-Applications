@@ -20,6 +20,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseDetailController;
 use App\Http\Controllers\PurchaseExpenseController;
+use App\Http\Controllers\PurchaseHistoryController;
 use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\PurchaseReturnDetailController;
 use App\Http\Controllers\RoleController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SaleReturnDetailController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\StockHistoryController;
 use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
@@ -81,6 +83,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('warehouses', WarehouseController::class);
     // stocks Routes (quantities auto-updated; create registers warehouse/product thresholds)
     Route::resource('stocks', StockController::class)->except(['destroy']);
+    Route::get('stock-history', [StockHistoryController::class, 'index'])->name('stock-history.index');
+    Route::get('stock-history/transfers/{transfer}', [StockHistoryController::class, 'showTransfer'])->name('stock-history.transfers.show');
+    Route::get('stock-history/damaged/{item}', [StockHistoryController::class, 'showDamaged'])->name('stock-history.damaged.show');
     // opening_stocks Routes
     Route::resource('opening-stocks', OpeningStockController::class);
     // stock_adjustments Routes
@@ -91,13 +96,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('damaged-stocks', DamagedStockController::class);
     // purchases Routes
     Route::resource('purchases', PurchaseController::class);
-    // purchase Detail Routes
+    // purchase line items (legacy routes redirect to purchases module)
     Route::resource('purchase-details', PurchaseDetailController::class);
     // purchase Return Routes
     Route::resource('purchase-returns', PurchaseReturnController::class);
-    // purchase Return Detail Routes
+    // purchase history (read-only financial timeline)
+    Route::get('purchase-history', [PurchaseHistoryController::class, 'index'])->name('purchase-history.index');
+    Route::get('purchase-history/{purchase}', [PurchaseHistoryController::class, 'show'])->name('purchase-history.show');
+    // purchase return line items (legacy routes redirect to purchase-returns module)
     Route::resource('purchase-return-details', PurchaseReturnDetailController::class);
-    // purchase Expenses Routes
+    // purchase Expenses (legacy routes redirect to purchases module)
     Route::resource('purchase-expenses', PurchaseExpenseController::class);
     // customers Routes
     Route::get('customers/wholesale', [CustomerController::class, 'wholesale'])->name('customers.wholesale');

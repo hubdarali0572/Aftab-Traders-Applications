@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Services\InventoryPostingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Inertia\Inertia;
 use InvalidArgumentException;
 
 class PurchaseDetailController extends Controller
@@ -20,37 +17,14 @@ class PurchaseDetailController extends Controller
     ) {
     }
 
-    public function index(Request $request)
+    public function index()
     {
-        $details = PurchaseDetail::query()
-            ->with(['purchase', 'product'])
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->whereHas('product', fn ($p) => $p->where('name', 'like', "%{$search}%"))
-                        ->orWhereHas('purchase', fn ($p) => $p->where('purchase_no', 'like', "%{$search}%"));
-                });
-            })
-            ->when($request->filled('purchase_id'), function ($query) use ($request) {
-                $query->where('purchase_id', $request->purchase_id);
-            })
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
-
-        return Inertia::render('InventoryManagement/PurchaseDetails/Index', [
-            'details' => $details,
-            'purchases' => Purchase::select('id', 'purchase_no')->get(),
-            'filters' => $request->only('search', 'purchase_id'),
-        ]);
+        return redirect()->route('purchases.index');
     }
 
     public function create()
     {
-        return Inertia::render('InventoryManagement/PurchaseDetails/Create', [
-            'purchases' => Purchase::select('id', 'purchase_no')->get(),
-            'products' => Product::select('id', 'name')->get(),
-        ]);
+        return redirect()->route('purchases.create');
     }
 
     public function store(Request $request)
@@ -79,6 +53,8 @@ class PurchaseDetailController extends Controller
             - (float) ($request->discount ?? 0)
             + (float) ($request->tax ?? 0);
 
+        $purchaseId = (int) $request->purchase_id;
+
         try {
             DB::transaction(function () use ($request, $lineTotal) {
                 $detail = PurchaseDetail::create(array_merge($request->all(), [
@@ -93,23 +69,21 @@ class PurchaseDetailController extends Controller
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('purchase-details.index')->with('success', 'Purchase line item added');
+        return redirect()->route('purchases.show', $purchaseId)->with('success', 'Purchase line item added');
     }
 
     public function show(string $id)
     {
-        return Inertia::render('InventoryManagement/PurchaseDetails/Show', [
-            'detail' => PurchaseDetail::with(['purchase', 'product', 'user'])->findOrFail($id),
-        ]);
+        $detail = PurchaseDetail::findOrFail($id);
+
+        return redirect()->route('purchases.show', $detail->purchase_id);
     }
 
     public function edit(string $id)
     {
-        return Inertia::render('InventoryManagement/PurchaseDetails/Edit', [
-            'detail' => PurchaseDetail::findOrFail($id),
-            'purchases' => Purchase::select('id', 'purchase_no')->get(),
-            'products' => Product::select('id', 'name')->get(),
-        ]);
+        $detail = PurchaseDetail::findOrFail($id);
+
+        return redirect()->route('purchases.edit', $detail->purchase_id);
     }
 
     public function update(Request $request, string $id)
@@ -155,12 +129,13 @@ class PurchaseDetailController extends Controller
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('purchase-details.index')->with('success', 'Purchase line item updated');
+        return redirect()->route('purchases.show', $detail->purchase_id)->with('success', 'Purchase line item updated');
     }
 
     public function destroy(string $id)
     {
         $detail = PurchaseDetail::findOrFail($id);
+        $purchaseId = $detail->purchase_id;
 
         try {
             DB::transaction(function () use ($detail) {
@@ -171,6 +146,6 @@ class PurchaseDetailController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
 
-        return redirect()->back()->with('success', 'Purchase line item removed');
+        return redirect()->route('purchases.show', $purchaseId)->with('success', 'Purchase line item removed');
     }
 }

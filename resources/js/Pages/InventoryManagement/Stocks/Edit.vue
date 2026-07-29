@@ -30,7 +30,7 @@ const submit = () => {
             </div>
             <Link :href="route('stocks.index')" class="theme-form-back-link">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="text-slate-900">{{ $t('Back to Stock List') }}</span>
+                <span class="text-slate-900">{{ $t('Back to Total Stock') }}</span>
             </Link>
         </div>
 

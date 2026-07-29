@@ -51,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
             'purchase-return' => 'App\Models\PurchaseReturn',
             'purchase-return-detail' => 'App\Models\PurchaseReturnDetail',
             'purchase-expense' => 'App\Models\PurchaseExpense',
+            'purchase-transaction' => 'App\Models\PurchaseTransaction',
             'customers' => 'App\Models\Customer',
             'customer-ledgers' => 'App\Models\CustomerLedger',
             'sales' => 'App\Models\Sale',

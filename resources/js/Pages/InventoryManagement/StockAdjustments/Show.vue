@@ -20,11 +20,11 @@ const correctionType = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="`${$t('Inventory Correction')} · ${adjustment.reference_no}`" />
+        <Head :title="`${$t('Current Stock')} · ${adjustment.reference_no}`" />
         <div class="max-w-8xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h2 class="text-2xl font-black text-slate-900 dark:text-slate-100">{{ adjustment.reference_no }}</h2>
-                <p class="text-sm text-slate-500 mt-1">{{ $t('Inventory correction record — not a customer sale') }}</p>
+                <p class="text-sm text-slate-500 mt-1">{{ $t('Current stock record — not a customer sale') }}</p>
             </div>
             <div class="flex gap-3 shrink-0">
                 <Link :href="route('stock-adjustments.edit', adjustment.id)" class="theme-btn-primary px-6 py-2 rounded-full">{{ $t('Edit') }}</Link>

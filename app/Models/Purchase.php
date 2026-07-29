@@ -72,6 +72,11 @@ class Purchase extends Model
         return $this->hasMany(PurchaseExpense::class);
     }
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(PurchaseTransaction::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

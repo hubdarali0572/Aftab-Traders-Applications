@@ -343,12 +343,14 @@ class InventoryPostingService
         $subtotal = (float) $header->details()->sum('line_total');
         $grand = $subtotal - (float) $header->discount + (float) $header->tax
             + (float) $header->shipping_cost + (float) $header->other_charges;
-        $due = max(0, $grand - (float) $header->paid_amount);
+        $returnsTotal = (float) $header->returns()->sum('total_amount');
+        $netPayable = max(0, $grand - $returnsTotal);
+        $due = max(0, $netPayable - (float) $header->paid_amount);
 
         $paymentStatus = 'unpaid';
         if ($header->paid_amount > 0 && $due > 0) {
             $paymentStatus = 'partial';
-        } elseif ($due <= 0 && $grand > 0) {
+        } elseif ($due <= 0 && $netPayable > 0) {
             $paymentStatus = 'paid';
         }
 
@@ -405,6 +407,11 @@ class InventoryPostingService
             'total_quantity' => $header->details()->sum('quantity'),
             'total_amount' => $header->details()->sum('total_price'),
         ]);
+
+        $purchase = Purchase::find($header->purchase_id);
+        if ($purchase) {
+            $this->recalcPurchaseTotals($purchase);
+        }
     }
 
     public function syncPurchaseReturnStock(PurchaseReturn $purchaseReturn): void

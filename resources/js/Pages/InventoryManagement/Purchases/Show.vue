@@ -11,6 +11,7 @@ const props = defineProps({ purchase: Object });
         <div class="max-w-8xl mx-auto mb-8 flex justify-between items-center">
             <h2 class="text-2xl font-black text-slate-900">{{ purchase.purchase_no }}</h2>
             <div class="flex gap-3">
+                <Link :href="route('purchase-history.show', purchase.id)" class="theme-btn-primary px-6 py-2 rounded-full bg-slate-700 hover:bg-slate-800">{{ $t('History') }}</Link>
                 <Link :href="route('purchases.edit', purchase.id)" class="theme-btn-primary px-6 py-2 rounded-full">{{ $t('Edit') }}</Link>
                 <Link :href="route('purchases.index')" class="theme-form-back-link">{{ $t('Back') }}</Link>
             </div>
@@ -49,7 +50,10 @@ const props = defineProps({ purchase: Object });
             </div>
 
             <div class="theme-form-card p-8" v-if="purchase.details?.length">
-                <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">{{ $t('Line Items') }}</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500">{{ $t('Purchase Items') }}</h3>
+                    <Link :href="route('purchases.edit', purchase.id)" class="text-xs font-bold text-indigo-600 hover:underline">{{ $t('Edit Items') }}</Link>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead><tr class="theme-table-header"><th class="theme-table-header-cell">{{ $t('Product') }}</th><th class="theme-table-header-cell text-right">{{ $t('Qty') }}</th><th class="theme-table-header-cell text-right">{{ $t('Free') }}</th><th class="theme-table-header-cell text-right">{{ $t('Unit Price') }}</th><th class="theme-table-header-cell text-right">{{ $t('Line Total') }}</th></tr></thead>
@@ -69,6 +73,30 @@ const props = defineProps({ purchase: Object });
             <div class="theme-form-card p-8" v-if="purchase.remarks">
                 <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">{{ $t('Remarks') }}</h3>
                 <p class="text-sm text-slate-600 italic">"{{ purchase.remarks }}"</p>
+            </div>
+
+            <div class="theme-form-card p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500">{{ $t('Purchase Returns') }}</h3>
+                    <Link :href="route('purchase-returns.create', { purchase_id: purchase.id })" class="text-xs font-bold text-indigo-600 hover:underline">{{ $t('New Return') }}</Link>
+                </div>
+                <div v-if="purchase.returns?.length" class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead><tr class="theme-table-header"><th class="theme-table-header-cell">{{ $t('Ref #') }}</th><th class="theme-table-header-cell">{{ $t('Return Date') }}</th><th class="theme-table-header-cell text-right">{{ $t('Total Qty') }}</th><th class="theme-table-header-cell text-right">{{ $t('Total Amount') }}</th><th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th></tr></thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr v-for="r in purchase.returns" :key="r.id" class="theme-table-row">
+                                <td class="px-4 py-3 font-bold">{{ r.reference_no }}</td>
+                                <td class="px-4 py-3">{{ r.return_date }}</td>
+                                <td class="px-4 py-3 text-right">{{ r.total_quantity }}</td>
+                                <td class="px-4 py-3 text-right font-bold">${{ r.total_amount }}</td>
+                                <td class="px-4 py-3 text-right">
+                                    <Link :href="route('purchase-returns.show', r.id)" class="text-xs font-bold text-indigo-600 hover:underline">{{ $t('View') }}</Link>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p v-else class="text-sm text-slate-500">{{ $t('No returns linked to this purchase yet.') }}</p>
             </div>
         </div>
     </AuthenticatedLayout>

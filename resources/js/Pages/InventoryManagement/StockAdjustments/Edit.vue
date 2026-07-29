@@ -33,10 +33,10 @@ const submit = () => form.put(route('stock-adjustments.update', props.adjustment
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="$t('Edit Inventory Correction')" />
+        <Head :title="$t('Edit Current Stock')" />
         <div class="max-w-8xl mx-auto mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ $t('Edit Inventory Correction') }}</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ $t('Edit Current Stock') }}</h2>
                 <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">{{ adjustment.reference_no }} · {{ $t('Not for customer sales') }}</p>
             </div>
             <Link :href="route('stock-adjustments.index')" class="theme-form-back-link text-sm font-bold shrink-0">{{ $t('Back to List') }}</Link>

@@ -38,16 +38,20 @@ const props = defineProps({ purchaseReturn: Object });
             </div>
 
             <div class="theme-form-card p-8" v-if="purchaseReturn.details?.length">
-                <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">{{ $t('Return Line Items') }}</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-500">{{ $t('Return Items') }}</h3>
+                    <Link :href="route('purchase-returns.edit', purchaseReturn.id)" class="text-xs font-bold text-indigo-600 hover:underline">{{ $t('Edit Items') }}</Link>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
-                        <thead><tr class="theme-table-header"><th class="theme-table-header-cell">{{ $t('Product') }}</th><th class="theme-table-header-cell text-right">{{ $t('Qty') }}</th><th class="theme-table-header-cell text-right">{{ $t('Unit Price') }}</th><th class="theme-table-header-cell text-right">{{ $t('Total') }}</th></tr></thead>
+                        <thead><tr class="theme-table-header"><th class="theme-table-header-cell">{{ $t('Product') }}</th><th class="theme-table-header-cell text-right">{{ $t('Qty') }}</th><th class="theme-table-header-cell text-right">{{ $t('Unit Price') }}</th><th class="theme-table-header-cell text-right">{{ $t('Total') }}</th><th class="theme-table-header-cell">{{ $t('Reason') }}</th></tr></thead>
                         <tbody class="divide-y divide-slate-100">
                             <tr v-for="d in purchaseReturn.details" :key="d.id" class="theme-table-row">
                                 <td class="px-4 py-3 font-bold">{{ d.product?.name }}</td>
                                 <td class="px-4 py-3 text-right">{{ d.quantity }}</td>
                                 <td class="px-4 py-3 text-right">${{ d.unit_price }}</td>
                                 <td class="px-4 py-3 text-right font-bold">${{ d.total_price }}</td>
+                                <td class="px-4 py-3">{{ d.reason || '—' }}</td>
                             </tr>
                         </tbody>
                     </table>

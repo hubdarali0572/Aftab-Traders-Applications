@@ -86,18 +86,18 @@ const typeLabel = (type) => {
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="$t('Inventory Correction')" />
+        <Head :title="$t('Current Stock')" />
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Inventory Correction') }}</h2>
+                <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Current Stock') }}</h2>
                 <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Add or remove warehouse stock for corrections and counts. Not for customer sales — use Sales module to sell products.') }}</p>
             </div>
             <Link :href="route('stock-adjustments.create')" class="theme-btn-primary shrink-0">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M12 5v14m7-7H5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                {{ $t('New Correction') }}
+                {{ $t('Add Current Stock') }}
             </Link>
         </div>
 
@@ -191,8 +191,8 @@ const typeLabel = (type) => {
 
         <ConfirmModal 
             :show="isModalOpen" 
-            title="Delete Inventory Correction"
-            message="Are you sure you want to permanently remove this correction record? Stock changes will be reversed. This is not a sales record."
+            :title="$t('Delete Current Stock')"
+            :message="$t('Are you sure you want to permanently remove this current stock record? Stock changes will be reversed. This is not a sales record.')"
             @close="closeModal" 
             @confirm="confirmDelete" 
         />

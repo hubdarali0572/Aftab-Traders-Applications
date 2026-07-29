@@ -78,11 +78,6 @@ const submit = () => {
                                 <InputError :message="form.errors.category_type" class="mt-2 ml-1" />
                             </div>
                             <div class="flex flex-col md:col-span-2">
-                                <InputLabel for="image" value="Image URL" class="theme-form-label ml-1" />
-                                <TextInput id="image" type="text" class="theme-form-input" v-model="form.image" placeholder="Optional image URL" />
-                                <InputError :message="form.errors.image" class="mt-2 ml-1" />
-                            </div>
-                            <div class="flex flex-col md:col-span-2">
                                 <InputLabel for="description" :value="$t('Description')" class="theme-form-label ml-1" />
                                 <textarea id="description" class="theme-form-input min-h-[120px] resize-y" v-model="form.description" placeholder="Short description..."></textarea>
                                 <InputError :message="form.errors.description" class="mt-2 ml-1" />

@@ -83,19 +83,20 @@ const navItems = [
         icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
         active:
             route().current("stocks.*") ||
-            route().current("opening-stocks.*") ||
+            route().current("stock-history.*") ||
+            // route().current("opening-stocks.*") ||
             route().current("stock-adjustments.*") ||
             route().current("stock-transfers.*") ||
             route().current("damaged-stocks.*"),
         children: [
             
+            // {
+            //     name: "Opening Stock",
+            //     route: "opening-stocks.index",
+            //     active: route().current("opening-stocks.*"),
+            // },
             {
-                name: "Opening Stock",
-                route: "opening-stocks.index",
-                active: route().current("opening-stocks.*"),
-            },
-            {
-                name: "Inventory Correction",
+                name: "Current Stock",
                 route: "stock-adjustments.index",
                 active: route().current("stock-adjustments.*"),
             },
@@ -110,9 +111,16 @@ const navItems = [
                 active: route().current("damaged-stocks.*"),
             },
             {
-                name: "Stock",
+                name: "Total Stock",
                 route: "stocks.index",
-                active: route().current("stocks.*"),
+                active:
+                    route().current("stocks.*") &&
+                    !route().current("stock-history.*"),
+            },
+            {
+                name: "Stock History",
+                route: "stock-history.index",
+                active: route().current("stock-history.*"),
             },
         ],
     },
@@ -121,10 +129,8 @@ const navItems = [
         icon: "M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z",
         active:
             route().current("purchases.*") ||
-            route().current("purchase-details.*") ||
             route().current("purchase-returns.*") ||
-            route().current("purchase-return-details.*") ||
-            route().current("purchase-expenses.*"),
+            route().current("purchase-history.*"),
         children: [
             {
                 name: "Purchases",
@@ -132,24 +138,14 @@ const navItems = [
                 active: route().current("purchases.*"),
             },
             {
-                name: "Purchase Details",
-                route: "purchase-details.index",
-                active: route().current("purchase-details.*"),
-            },
-            {
                 name: "Purchase Returns",
                 route: "purchase-returns.index",
                 active: route().current("purchase-returns.*"),
             },
             {
-                name: "Purchase Return Details",
-                route: "purchase-return-details.index",
-                active: route().current("purchase-return-details.*"),
-            },
-            {
-                name: "Purchase Expenses",
-                route: "purchase-expenses.index",
-                active: route().current("purchase-expenses.*"),
+                name: "Purchase History",
+                route: "purchase-history.index",
+                active: route().current("purchase-history.*"),
             },
         ],
     },

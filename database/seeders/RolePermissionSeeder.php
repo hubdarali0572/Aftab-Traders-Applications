@@ -42,6 +42,7 @@ class RolePermissionSeeder extends Seeder
             'purchase details',
             'purchase return',
             'purchase return details',
+            'purchase history',
             'purchase expense',
             'expense head',
             'expense',

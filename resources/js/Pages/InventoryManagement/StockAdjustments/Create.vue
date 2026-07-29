@@ -23,10 +23,10 @@ const submit = () => form.post(route('stock-adjustments.store'));
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="$t('New Inventory Correction')" />
+        <Head :title="$t('New Current Stock')" />
         <div class="max-w-8xl mx-auto mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ $t('New Inventory Correction') }}</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ $t('New Current Stock') }}</h2>
                 <p class="text-sm text-slate-500 mt-1 dark:text-slate-400">{{ $t('Correct warehouse stock only. Use Sales module to sell products to customers.') }}</p>
             </div>
             <Link :href="route('stock-adjustments.index')" class="theme-form-back-link text-sm font-bold shrink-0">{{ $t('Back to List') }}</Link>
