@@ -25,6 +25,9 @@ class Order extends Model
         'tax',
         'other_charges',
         'grand_total',
+        'paid_amount',
+        'due_amount',
+        'payment_status',
         'order_status',
         'converted_sale_id',
         'remarks',
@@ -39,6 +42,8 @@ class Order extends Model
         'tax' => 'decimal:2',
         'other_charges' => 'decimal:2',
         'grand_total' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
+        'due_amount' => 'decimal:2',
     ];
 
     public function customer(): BelongsTo

@@ -152,6 +152,8 @@ class InventoryReportService
             'purchase_return' => 'Purchase Return',
             'sale' => 'Sale',
             'sale_return' => 'Sales Return',
+            'order' => 'Order',
+            'order_return' => 'Order Return',
             'transfer_in' => 'Stock Transfer In',
             'transfer_out' => 'Stock Transfer Out',
             'adjustment' => 'Stock Adjustment',

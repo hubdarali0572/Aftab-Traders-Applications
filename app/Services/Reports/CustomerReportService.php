@@ -35,6 +35,8 @@ class CustomerReportService
             'opening_balance' => 'Opening Balance',
             'sale' => 'Sales',
             'sale_return' => 'Sales Returns',
+            'order' => 'Orders',
+            'order_return' => 'Order Returns',
             'payment_received' => 'Payments',
             'debit_note' => 'Debit Note',
             'credit_note' => 'Credit Note',

@@ -182,7 +182,7 @@ class CustomerService
         }
 
         $hasSystemLedger = CustomerLedger::where('customer_id', $customer->id)
-            ->whereIn('transaction_type', ['sale', 'sale_return'])
+            ->whereIn('transaction_type', ['sale', 'sale_return', 'order', 'order_return'])
             ->exists();
 
         if ($hasSystemLedger) {

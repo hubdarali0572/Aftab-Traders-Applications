@@ -10,9 +10,8 @@ use App\Http\Controllers\ExpenseHeadController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OpeningStockController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\OrderDetailController;
+use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\OrderReturnController;
-use App\Http\Controllers\OrderReturnDetailController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSellingPriceController;
@@ -127,14 +126,13 @@ Route::middleware('auth')->group(function () {
     Route::redirect('sale-return-details/create', '/sale-returns/create')->name('sale-return-details.create');
 
     // Order Management
-    Route::post('orders/{order}/convert-to-sale', [OrderController::class, 'convertToSale'])
-        ->name('orders.convert-to-sale');
     Route::resource('orders', OrderController::class);
-    Route::resource('order-details', OrderDetailController::class);
-    Route::post('order-returns/{order_return}/convert-to-sale-return', [OrderReturnController::class, 'convertToSaleReturn'])
-        ->name('order-returns.convert-to-sale-return');
     Route::resource('order-returns', OrderReturnController::class);
-    Route::resource('order-return-details', OrderReturnDetailController::class);
+    Route::get('orders-history', [OrderHistoryController::class, 'index'])->name('orders-history.index');
+    Route::redirect('order-details', '/orders')->name('order-details.index');
+    Route::redirect('order-details/create', '/orders/create')->name('order-details.create');
+    Route::redirect('order-return-details', '/order-returns')->name('order-return-details.index');
+    Route::redirect('order-return-details/create', '/order-returns/create')->name('order-return-details.create');
 
     Route::resource('expense-heads', ExpenseHeadController::class);
     Route::resource('expenses', ExpenseController::class);

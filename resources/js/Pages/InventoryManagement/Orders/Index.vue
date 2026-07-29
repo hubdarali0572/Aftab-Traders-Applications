@@ -2,13 +2,25 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     orders: Object,
+    summary: Object,
     filters: Object,
     orderStatuses: Array,
 });
+
+const money = (v) => `$${Number(v || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+const overviewStats = computed(() => [
+    { title: 'Total Orders', value: props.summary?.total_orders ?? 0, tone: 'text-indigo-700', bg: 'bg-indigo-50 dark:bg-indigo-500/10' },
+    { title: 'Total Order Amount', value: money(props.summary?.total_order_amount), tone: 'text-emerald-700', bg: 'bg-emerald-50 dark:bg-emerald-500/10' },
+    { title: 'Total Order Returns', value: props.summary?.total_order_returns ?? 0, tone: 'text-violet-700', bg: 'bg-violet-50 dark:bg-violet-500/10' },
+    { title: 'Total Return Amount', value: money(props.summary?.total_return_amount), tone: 'text-amber-700', bg: 'bg-amber-50 dark:bg-amber-500/10' },
+    { title: 'Products Ordered', value: props.summary?.total_products_ordered ?? 0, tone: 'text-sky-700', bg: 'bg-sky-50 dark:bg-sky-500/10' },
+    { title: 'Outstanding Balance', value: money(props.summary?.total_outstanding), tone: 'text-rose-700', bg: 'bg-rose-50 dark:bg-rose-500/10' },
+]);
 
 const searchQuery = ref(props.filters?.search ?? '');
 const orderStatus = ref(props.filters?.order_status ?? '');
@@ -18,7 +30,6 @@ const selectedId = ref(null);
 const statusClass = (status) => ({
     pending: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
     confirmed: 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400',
-    processing: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400',
     completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
     cancelled: 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400',
 }[status] ?? 'bg-slate-100 text-slate-500');
@@ -60,7 +71,7 @@ const clearSearch = () => {
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h2 class="text-2xl font-black text-slate-700 tracking-tight dark:text-slate-100">{{ $t('Orders') }}</h2>
-                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage customer orders before conversion to sales.') }}</p>
+                <p class="text-sm text-slate-500 mt-1 font-medium dark:text-slate-400">{{ $t('Manage customer orders with items, stock, and customer ledger in one workflow.') }}</p>
             </div>
             <Link :href="route('orders.create')" class="theme-btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,6 +79,13 @@ const clearSearch = () => {
                 </svg>
                 {{ $t('New Order') }}
             </Link>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+            <div v-for="stat in overviewStats" :key="stat.title" class="theme-table-card p-4 flex flex-col gap-1">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ $t(stat.title) }}</p>
+                <p class="text-lg font-black" :class="stat.tone">{{ stat.value }}</p>
+            </div>
         </div>
 
         <div class="theme-table-card">
@@ -93,8 +111,8 @@ const clearSearch = () => {
                             <th class="theme-table-header-cell">{{ $t('Date') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Customer') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Warehouse') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Type') }}</th>
                             <th class="theme-table-header-cell text-right">{{ $t('Grand Total') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Payment') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Status') }}</th>
                             <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
@@ -105,8 +123,8 @@ const clearSearch = () => {
                             <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-400">{{ order.order_date }}</td>
                             <td class="px-6 py-3 text-sm font-bold text-slate-800 dark:text-slate-200">{{ order.customer?.customer_name }}</td>
                             <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-400">{{ order.warehouse?.name }}</td>
-                            <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-400 capitalize">{{ order.order_type }}</td>
                             <td class="px-6 py-3 text-sm text-right font-bold text-slate-700 dark:text-slate-300">${{ order.grand_total }}</td>
+                            <td class="px-6 py-3 text-sm capitalize font-bold text-slate-600">{{ order.payment_status || '—' }}</td>
                             <td class="px-6 py-3">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase" :class="statusClass(order.order_status)">
                                     {{ order.order_status }}

@@ -1,11 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import OrderReturnItemsEditor from '@/Components/Inventory/OrderReturnItemsEditor.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { computed, watch } from 'vue';
 
 const props = defineProps({
     orderReturn: Object,
@@ -13,86 +14,89 @@ const props = defineProps({
     returnStatuses: Array,
 });
 
+const page = usePage();
+
+const mapItems = () => (props.orderReturn.details?.length
+    ? props.orderReturn.details.map((d) => ({
+        product_id: d.product_id,
+        quantity: d.quantity,
+        reason: d.reason ?? '',
+        remarks: d.remarks ?? '',
+    }))
+    : [{ product_id: '', quantity: '', reason: '', remarks: '' }]);
+
 const form = useForm({
     reference_no: props.orderReturn.reference_no,
     order_id: props.orderReturn.order_id,
     return_date: props.orderReturn.return_date ? props.orderReturn.return_date.substring(0, 10) : '',
+    return_reason: props.orderReturn.return_reason ?? '',
     return_status: props.orderReturn.return_status,
-    remarks: props.orderReturn.remarks || '',
+    remarks: props.orderReturn.remarks ?? '',
     status: Boolean(props.orderReturn.status),
+    items: mapItems(),
 });
 
-const selectedOrder = computed(() => props.orders.find((order) => order.id == form.order_id));
+const selectedOrder = computed(() => props.orders.find((o) => String(o.id) === String(form.order_id)));
+const orderDetails = computed(() => selectedOrder.value?.details ?? []);
+
+watch(() => form.order_id, () => {
+    if (!props.orderReturn.details?.length) {
+        form.items = [{ product_id: '', quantity: '', reason: '', remarks: '' }];
+    }
+});
 
 const submit = () => form.put(route('order-returns.update', props.orderReturn.id));
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="$t('Edit Order Return')" />
-        <div class="max-w-8xl mx-auto mb-5 flex justify-between items-center">
-            <h2 class="text-2xl font-black text-slate-800">{{ $t('Edit Order Return') }}</h2>
-            <Link :href="route('order-returns.index')" class="theme-form-back-link">{{ $t('Back to List') }}</Link>
+        <Head :title="`${orderReturn.reference_no} — ${$t('Edit Order Return')}`" />
+        <div class="max-w-8xl mx-auto mb-6 flex justify-between items-center">
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">{{ $t('Edit Order Return') }}</h2>
+            <Link :href="route('order-returns.index')" class="theme-form-back-link text-sm font-bold">{{ $t('Back') }}</Link>
         </div>
 
-        <form @submit.prevent="submit" class="theme-form-card p-8 md:p-10 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <InputLabel :value="$t('Reference No')" />
-                    <TextInput v-model="form.reference_no" class="w-full" required />
-                    <InputError :message="form.errors.reference_no" />
-                </div>
-                <div>
-                    <InputLabel :value="$t('Return Date')" />
-                    <TextInput type="date" v-model="form.return_date" class="w-full" required />
-                    <InputError :message="form.errors.return_date" />
-                </div>
-                <div>
-                    <InputLabel value="Order" />
-                    <select v-model="form.order_id" class="theme-form-input w-full" required>
-                        <option value="" disabled>{{ $t('Select Order') }}</option>
-                        <option v-for="order in orders" :key="order.id" :value="order.id">
-                            {{ order.order_no }} - {{ order.customer?.customer_name }}
-                        </option>
-                    </select>
-                    <InputError :message="form.errors.order_id" />
-                </div>
+        <div v-if="page.props.flash?.error" class="mb-6 p-4 border-l-4 border-rose-500 bg-rose-50 text-rose-800 rounded-r-xl text-sm font-bold">{{ page.props.flash.error }}</div>
 
+        <form @submit.prevent="submit" class="max-w-8xl mx-auto theme-form-card p-8 md:p-10 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-8 gap-y-6">
                 <div>
-                    <InputLabel :value="$t('Customer')" />
-                    <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedOrder?.customer?.customer_name || '—' }}</div>
+                    <InputLabel :value="$t('Return Reference No.')" class="theme-form-label ml-1" />
+                    <TextInput v-model="form.reference_no" class="w-full theme-form-input bg-slate-50" readonly />
                 </div>
                 <div>
-                    <InputLabel :value="$t('Warehouse')" />
-                    <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedOrder?.warehouse?.name || '—' }}</div>
+                    <InputLabel :value="$t('Return Date')" class="theme-form-label ml-1" />
+                    <TextInput type="date" v-model="form.return_date" class="w-full theme-form-input" required />
                 </div>
                 <div>
-                    <InputLabel value="Order Reference" />
-                    <div class="theme-form-input bg-slate-50 dark:bg-slate-700/50">{{ selectedOrder?.order_no || '—' }}</div>
+                    <InputLabel :value="$t('Original Order')" class="theme-form-label ml-1" />
+                    <select v-model="form.order_id" class="theme-form-input w-full" required>
+                        <option v-for="order in orders" :key="order.id" :value="order.id">{{ order.order_no }}</option>
+                    </select>
                 </div>
                 <div>
-                    <InputLabel :value="$t('Return Status')" />
+                    <InputLabel :value="$t('Return Status')" class="theme-form-label ml-1" />
                     <select v-model="form.return_status" class="theme-form-input w-full">
                         <option v-for="s in returnStatuses" :key="s" :value="s">{{ s.charAt(0).toUpperCase() + s.slice(1) }}</option>
                     </select>
-                    <InputError :message="form.errors.return_status" />
                 </div>
-                <div>
-                    <InputLabel :value="$t('Status')" />
-                    <button type="button" @click="form.status = !form.status" class="mt-2 relative inline-flex h-6 w-11 items-center rounded-full" :class="form.status ? 'bg-indigo-600' : 'bg-slate-300'">
-                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition" :class="form.status ? 'translate-x-6' : 'translate-x-1'" />
-                    </button>
+                <div class="md:col-span-2">
+                    <InputLabel :value="$t('Return Reason')" class="theme-form-label ml-1" />
+                    <TextInput v-model="form.return_reason" class="w-full theme-form-input" />
                 </div>
+            </div>
+
+            <div class="border-t border-slate-100 dark:border-slate-700 pt-8">
+                <OrderReturnItemsEditor v-model="form.items" :order-details="orderDetails" :errors="form.errors" />
             </div>
 
             <div>
-                <InputLabel :value="$t('Remarks')" />
-                <textarea v-model="form.remarks" class="theme-form-input w-full h-24"></textarea>
-                <InputError :message="form.errors.remarks" />
+                <InputLabel :value="$t('Remarks')" class="theme-form-label ml-1" />
+                <textarea v-model="form.remarks" class="theme-form-input w-full h-24 mt-1"></textarea>
             </div>
 
-            <div class="flex justify-center">
-                <PrimaryButton :disabled="form.processing">{{ $t('Update Return') }}</PrimaryButton>
+            <div class="flex justify-center pt-2">
+                <PrimaryButton class="theme-btn-primary px-12 py-4 rounded-full" :disabled="form.processing">{{ $t('Update Return') }}</PrimaryButton>
             </div>
         </form>
     </AuthenticatedLayout>

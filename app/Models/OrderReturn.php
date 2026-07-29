@@ -22,6 +22,7 @@ class OrderReturn extends Model
         'warehouse_id',
         'total_quantity',
         'total_amount',
+        'return_reason',
         'return_status',
         'converted_sale_return_id',
         'remarks',

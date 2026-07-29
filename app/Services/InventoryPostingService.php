@@ -6,6 +6,10 @@ use App\Models\DamagedStock;
 use App\Models\DamagedStockItem;
 use App\Models\OpeningStock;
 use App\Models\OpeningStockItem;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderReturn;
+use App\Models\OrderReturnDetail;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseReturn;
@@ -649,6 +653,247 @@ class InventoryPostingService
 
         return (float) DB::table('stocks')
             ->where('warehouse_id', Sale::whereKey($saleId)->value('warehouse_id'))
+            ->where('product_id', $productId)
+            ->value('average_cost');
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Order                                                               */
+    /* ------------------------------------------------------------------ */
+
+    public function postOrderDetail(OrderDetail $detail): void
+    {
+        $header = $detail->order ?? Order::find($detail->order_id);
+        if (! $header) {
+            return;
+        }
+
+        $this->stock->reverse('order-details', $detail->id);
+
+        if ($header->order_status === 'completed') {
+            $this->stock->post(
+                (int) $header->warehouse_id,
+                (int) $detail->product_id,
+                'order',
+                'order-details',
+                (int) $detail->id,
+                $header->order_no,
+                $header->order_date,
+                0,
+                (float) $detail->quantity,
+                (float) $detail->unit_price,
+                $detail->remarks
+            );
+        }
+
+        $this->recalcOrderTotals($header);
+        $this->syncOrderCustomerLedger($header);
+    }
+
+    public function reverseOrderDetail(OrderDetail $detail): void
+    {
+        $this->stock->reverse('order-details', $detail->id);
+        $header = Order::find($detail->order_id);
+        if ($header) {
+            $this->recalcOrderTotals($header);
+            $this->syncOrderCustomerLedger($header);
+        }
+    }
+
+    public function syncOrderStock(Order $order): void
+    {
+        $order->load('details');
+
+        foreach ($order->details as $detail) {
+            $this->stock->reverse('order-details', $detail->id);
+        }
+
+        if ($order->order_status === 'completed') {
+            foreach ($order->details as $detail) {
+                $this->postOrderDetail($detail);
+            }
+        } else {
+            $this->recalcOrderTotals($order);
+            $this->syncOrderCustomerLedger($order);
+        }
+    }
+
+    protected function recalcOrderTotals(Order $header): void
+    {
+        $subtotal = (float) $header->details()->sum('line_total');
+        $grand = $subtotal - (float) $header->discount + (float) $header->tax + (float) $header->other_charges;
+        $due = max(0, $grand - (float) $header->paid_amount);
+
+        $paymentStatus = 'unpaid';
+        if ($header->paid_amount > 0 && $due > 0) {
+            $paymentStatus = 'partial';
+        } elseif ($due <= 0 && $grand > 0) {
+            $paymentStatus = 'paid';
+        }
+
+        $header->update([
+            'subtotal' => $subtotal,
+            'grand_total' => max(0, $grand),
+            'due_amount' => $due,
+            'payment_status' => $paymentStatus,
+        ]);
+    }
+
+    public function syncOrderCustomerLedger(Order $order): void
+    {
+        $this->customerLedger->reverse('orders', $order->id);
+
+        if (! $order->customer_id || $order->order_status !== 'completed') {
+            return;
+        }
+
+        $order->refresh();
+
+        if ((float) $order->grand_total > 0) {
+            $this->customerLedger->post(
+                (int) $order->customer_id,
+                'order',
+                $order->order_date,
+                'orders',
+                (int) $order->id,
+                $order->order_no,
+                (float) $order->grand_total,
+                0,
+                'Customer order'
+            );
+        }
+
+        if ((float) $order->paid_amount > 0) {
+            $this->customerLedger->post(
+                (int) $order->customer_id,
+                'payment_received',
+                $order->order_date,
+                'orders',
+                (int) $order->id,
+                $order->order_no,
+                0,
+                (float) $order->paid_amount,
+                'Payment against order'
+            );
+        }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Order Return                                                        */
+    /* ------------------------------------------------------------------ */
+
+    public function postOrderReturnDetail(OrderReturnDetail $detail): void
+    {
+        $header = $detail->orderReturn ?? OrderReturn::find($detail->order_return_id);
+        if (! $header) {
+            return;
+        }
+
+        $this->stock->reverse('order-return-detail', $detail->id);
+
+        if ($header->return_status === 'completed') {
+            $unitCost = $this->getOrderReturnUnitCost($header->order_id, $detail->product_id);
+
+            $this->stock->post(
+                (int) $header->warehouse_id,
+                (int) $detail->product_id,
+                'order_return',
+                'order-return-detail',
+                (int) $detail->id,
+                $header->reference_no,
+                $header->return_date,
+                (float) $detail->quantity,
+                0,
+                $unitCost,
+                $detail->reason ?? $detail->remarks
+            );
+        }
+
+        $this->recalcOrderReturnTotals($header);
+        $this->syncOrderReturnCustomerLedger($header);
+    }
+
+    public function reverseOrderReturnDetail(OrderReturnDetail $detail): void
+    {
+        $this->stock->reverse('order-return-detail', $detail->id);
+        $header = OrderReturn::find($detail->order_return_id);
+        if ($header) {
+            $this->recalcOrderReturnTotals($header);
+            $this->syncOrderReturnCustomerLedger($header);
+        }
+    }
+
+    protected function recalcOrderReturnTotals(OrderReturn $header): void
+    {
+        $header->update([
+            'total_quantity' => $header->details()->sum('quantity'),
+            'total_amount' => $header->details()->sum('line_total'),
+        ]);
+    }
+
+    public function syncOrderReturnStock(OrderReturn $orderReturn): void
+    {
+        $orderReturn->load('details');
+
+        foreach ($orderReturn->details as $detail) {
+            $this->stock->reverse('order-return-detail', $detail->id);
+        }
+
+        if ($orderReturn->return_status === 'completed') {
+            foreach ($orderReturn->details as $detail) {
+                $this->postOrderReturnDetail($detail);
+            }
+        } else {
+            $this->recalcOrderReturnTotals($orderReturn);
+            $this->syncOrderReturnCustomerLedger($orderReturn);
+        }
+    }
+
+    public function syncOrderReturnCustomerLedger(OrderReturn $orderReturn): void
+    {
+        $this->customerLedger->reverse('order-return', $orderReturn->id);
+
+        if (! $orderReturn->customer_id || $orderReturn->return_status !== 'completed') {
+            return;
+        }
+
+        $orderReturn->refresh();
+
+        if ((float) $orderReturn->total_amount > 0) {
+            $this->customerLedger->post(
+                (int) $orderReturn->customer_id,
+                'order_return',
+                $orderReturn->return_date,
+                'order-return',
+                (int) $orderReturn->id,
+                $orderReturn->reference_no,
+                0,
+                (float) $orderReturn->total_amount,
+                'Order return credit note'
+            );
+        }
+    }
+
+    protected function getOrderReturnUnitCost(int $orderId, int $productId): float
+    {
+        $orderDetail = OrderDetail::where('order_id', $orderId)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($orderDetail) {
+            $movement = DB::table('stock_movements')
+                ->where('reference_type', 'order-details')
+                ->where('reference_id', $orderDetail->id)
+                ->orderByDesc('id')
+                ->first();
+
+            if ($movement && $movement->unit_cost !== null) {
+                return (float) $movement->unit_cost;
+            }
+        }
+
+        return (float) DB::table('stocks')
+            ->where('warehouse_id', Order::whereKey($orderId)->value('warehouse_id'))
             ->where('product_id', $productId)
             ->value('average_cost');
     }
