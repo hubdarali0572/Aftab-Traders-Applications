@@ -419,6 +419,7 @@ export default {
     'Reorder Level': 'ری آرڈر لیول',
     'Purchase Order': 'پرچیز آرڈر',
     'Sale Invoice': 'سیل انوائس',
+    "Type": "قسم",
     Receipt: 'رسید',
     Voucher: 'واؤچر',
     Transaction: 'لین دین',

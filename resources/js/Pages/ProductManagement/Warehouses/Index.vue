@@ -72,11 +72,10 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                         <tr class="theme-table-header">
                             <th class="theme-table-header-cell">{{ $t('Code') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Name') }}</th>
+                            <th class="theme-table-header-cell">{{ $t('Type') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Contact Person') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Phone') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Email') }}</th>
                             <th class="theme-table-header-cell">{{ $t('City') }}</th>
-                            <th class="theme-table-header-cell">{{ $t('Default') }}</th>
                             <th class="theme-table-header-cell">{{ $t('Status') }}</th>
                             <th class="theme-table-header-cell text-right">{{ $t('Actions') }}</th>
                         </tr>
@@ -85,13 +84,10 @@ const clearSearch = () => { searchQuery.value = ''; applySearch(); };
                         <tr v-for="warehouse in warehouses.data" :key="warehouse.id" class="theme-table-row group">
                             <td class="px-6 py-2"><div class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ warehouse.code }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ warehouse.name }}</div></td>
+                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ warehouse.email || '—' }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ warehouse.contact_person || '—' }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ warehouse.phone || '—' }}</div></td>
-                            <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ warehouse.email || '—' }}</div></td>
                             <td class="px-6 py-2"><div class="text-sm text-slate-600 dark:text-slate-300">{{ warehouse.city || '—' }}</div></td>
-                            <td class="px-6 py-2">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold" :class="warehouse.is_default ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'">{{ warehouse.is_default ? 'Yes' : 'No' }}</span>
-                            </td>
                             <td class="px-6 py-2">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold" :class="warehouse.status ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'">{{ warehouse.status ? 'Active' : 'Inactive' }}</span>
                             </td>
